@@ -1,0 +1,28 @@
+[package]
+name = "pqz-ledger"
+version = "0.1.0"
+edition = "2021"
+description = "PQZ-Audit Experiment 5 / (t,n) panel / rejection checks: in-process ledger SIMULATION (provisional)"
+publish = false
+
+[lib]
+name = "pqz_ledger"
+path = "src/lib.rs"
+
+[dependencies]
+ml-dsa = "0.1.1"
+sha3 = "0.12.0"
+rand_chacha = "0.10.0"
+rand_core = "0.10"
+
+[features]
+default = []
+# TEST-ONLY: lets the mutation tests switch single defences off. Never enabled in
+# the benchmark or the rejection binary builds used for reported numbers.
+mutation = []
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+debug = false

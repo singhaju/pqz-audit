@@ -1,0 +1,22 @@
+[package]
+name = "pqz-attack-w36"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "w33 stage C attack / tamper experiment on the Plonky3 (C1) proofs of R_Exec, R_RC, R_Auth and the Auth+Exec pair; port of bench/pqz-attack-w30-fixed; correctness only, no timing"
+
+[workspace]
+
+[dependencies]
+pqz-plonky3-w36 = { path = "../pqz-plonky3-w36" }
+p3-uni-stark = "=0.8.0"
+
+[[bin]]
+name = "attack"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+debug = false

@@ -1,0 +1,25 @@
+[package]
+name = "pqz-exp9-w46"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "Experiment 9 harness (PQZ side): one fresh process per run, WHOLE (one-proof R_Exec over all N) and BLOCK COVER (openings + run proofs + requester) per query; see ../zksql-w36/README.md"
+
+# own workspace root (same as the crates it uses)
+[workspace]
+
+[dependencies]
+# The ONLY two lines that name the proof stack (w46: P2r packed format + old format).
+pqz_int = { package = "pqz-integrated-w46", path = "../pqz-integrated-w46" }
+pqz_p3 = { package = "pqz-plonky3-w46", path = "../pqz-plonky3-w46" }
+
+pqz_eval = { path = "../pqz-eval" }
+p3-field = "=0.8.0"
+p3-matrix = "=0.8.0"
+p3-uni-stark = "=0.8.0"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+debug = false

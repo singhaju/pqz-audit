@@ -1,0 +1,26 @@
+diff --git a/zk-set/emp-zk-set/zk_set_intersection.hpp b/zk-set/emp-zk-set/zk_set_intersection.hpp
+index f3b5821..cbc9b4a 100644
+--- a/zk-set/emp-zk-set/zk_set_intersection.hpp
++++ b/zk-set/emp-zk-set/zk_set_intersection.hpp
+@@ -45,7 +45,7 @@ bool ZKSet<IO>::intersectionInternal(emp::Bit *lhs, emp::Bit *rhs, emp::Bit *mhs
+         // store the intersection into 
+         std::set<__uint128_t> mval_set;
+         for(int i = 0; i < mcount; ++i)
+-            mval_set.insert((__uint128_t)mval[i]);
++            mval_set.emplace((__uint128_t)mval[i]);
+         set_minus_origin(lhs_not_mhs_index, lval, mval_set,
+                 lcount, mcount);
+         set_minus_origin(rhs_not_mhs_index, rval, mval_set,
+diff --git a/zk-set/emp-zk-set/zk_set_subset.hpp b/zk-set/emp-zk-set/zk_set_subset.hpp
+index 7891bd0..b6bd821 100644
+--- a/zk-set/emp-zk-set/zk_set_subset.hpp
++++ b/zk-set/emp-zk-set/zk_set_subset.hpp
+@@ -23,7 +23,7 @@ bool ZKSet<IO>::subsetInternal(emp::Bit *lhs, emp::Bit *rhs,
+         vector<int> rhs_not_lhs_index;
+         std::set<__uint128_t> lval_set;
+         for(int i = 0; i < lcount; ++i)
+-            lval_set.insert((__uint128_t)lval[i]);
++            lval_set.emplace((__uint128_t)lval[i]);
+         set_minus(rhs_not_lhs_index, rval, lval_set,
+                 rcount, lcount);
+ 

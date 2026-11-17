@@ -1,0 +1,67 @@
+[package]
+name = "pqz-plonky3-w36"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "w35 (laptop prototype): the w33 Plonky3 0.8.0 AIRs plus R_RC chunk AIR with tag fingerprint (D1, D1b) and R_Exec run AIR (D4); see README.md"
+
+[workspace]
+
+[features]
+default = ["parallel"]
+parallel = ["p3-maybe-rayon/parallel", "p3-uni-stark/parallel", "p3-dft/parallel"]
+
+[dependencies]
+p3-air = "=0.8.0"
+p3-blake3 = "=0.8.0"
+p3-challenger = "=0.8.0"
+p3-commit = "=0.8.0"
+p3-dft = "=0.8.0"
+p3-field = "=0.8.0"
+p3-fri = "=0.8.0"
+p3-goldilocks = "=0.8.0"
+p3-koala-bear = "=0.8.0"
+p3-matrix = "=0.8.0"
+p3-maybe-rayon = "=0.8.0"
+p3-merkle-tree = "=0.8.0"
+p3-poseidon2 = "=0.8.0"
+p3-poseidon2-air = "=0.8.0"
+p3-symmetric = "=0.8.0"
+p3-uni-stark = "=0.8.0"
+p3-util = "=0.8.0"
+serde = { version = "1", features = ["derive"] }
+bincode = { version = "1", default-features = false }
+# Stage B: StdRng for the hiding (ZK) variant only; same version that p3-fri 0.8.0 resolves to (Cargo.lock)
+rand = { version = "=0.10.3", default-features = false, features = ["std_rng"] }
+
+[dev-dependencies]
+# READ-ONLY path dependency on the w30 crate (generator, reference function and winterfell prover for the cross-check
+# tests only; nothing in ../pqz-proof-w30 is modified, build artefacts go to this crate's target/)
+pqz-proof = { path = "../pqz-proof-w30" }
+winterfell = { version = "=0.13.1", default-features = false, features = ["std"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+debug = false
+
+[[bin]]
+name = "spike"
+path = "src/bin/spike.rs"
+
+[[bin]]
+name = "pchild"
+path = "src/bin/pchild.rs"
+
+[[bin]]
+name = "pchild3"
+path = "src/bin/pchild3.rs"
+
+[[bin]]
+name = "sectable"
+path = "src/bin/sectable.rs"
+
+[[bin]]
+name = "pverify3"
+path = "src/bin/pverify3.rs"

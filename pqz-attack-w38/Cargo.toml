@@ -1,0 +1,22 @@
+[package]
+name = "pqz-attack-w38"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "w38 attack / tamper experiment on the Plonky3 (C1) proofs: the w36 harness (default, old format) plus the packed P2r format (fmt=p2r); correctness only, no timing"
+
+[workspace]
+
+[dependencies]
+pqz-plonky3-w38 = { path = "../pqz-plonky3-w38" }
+p3-uni-stark = "=0.8.0"
+
+[[bin]]
+name = "attack"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+debug = false

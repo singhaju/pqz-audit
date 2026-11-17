@@ -1,0 +1,27 @@
+[package]
+name = "pqz-bl-dopiv-par"
+version = "0.1.0"
+edition = "2021"
+description = "DOPIV (IEEE TSC 2022) public integrity verification, run as code for the PQZ-Audit comparison"
+
+[workspace]
+
+[lib]
+name = "pqz_bl_dopiv_par"
+path = "src/lib.rs"
+
+[[bin]]
+name = "dopiv-bench-par"
+path = "src/bin/dopiv-bench-par.rs"
+
+[dependencies]
+sha3 = "=0.10.8"
+blake3 = "=1.8.7" # w30 (F2): same version as the w29 prover lock
+
+rayon = "1.12"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+debug = false

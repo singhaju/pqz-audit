@@ -1,0 +1,22 @@
+[package]
+name = "pqz-bl-dopiv"
+version = "0.1.0"
+edition = "2021"
+description = "DOPIV (IEEE TSC 2022) public integrity verification, run as code for the PQZ-Audit comparison"
+
+[lib]
+name = "pqz_bl_dopiv"
+path = "src/lib.rs"
+
+[[bin]]
+name = "dopiv-bench"
+path = "src/bin/dopiv-bench.rs"
+
+[dependencies]
+sha3 = "=0.10.8"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+debug = false

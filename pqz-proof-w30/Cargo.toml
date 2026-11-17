@@ -1,0 +1,31 @@
+[package]
+name = "pqz-proof"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "PROVISIONAL hash-based STARK (winterfell 0.13.1) prototypes of the PQZK relations R_RC, R_Auth, R_Exec for PQZ-Audit"
+
+[features]
+default = ["concurrent"]
+concurrent = ["winterfell/concurrent", "dep:rayon"]
+# w25 pilot: commit to the proof with Blake3-256 instead of SHA3-256 (the in-circuit hash, Rescue, is unchanged)
+blake3 = []
+
+[dependencies]
+# w30: direct dependency only to build one rayon ThreadPool per chunk (same version as the one winterfell uses, see Cargo.lock)
+rayon = { version = "=1.12.0", optional = true }
+winterfell = { version = "=0.13.1", default-features = false, features = ["std"] }
+
+[[bin]]
+name = "proofbench"
+path = "src/bin/proofbench.rs"
+
+[[bin]]
+name = "cover"
+path = "src/bin/cover.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+debug = false

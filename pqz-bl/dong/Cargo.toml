@@ -1,0 +1,30 @@
+[package]
+name = "pqz-bl-dong"
+version = "0.1.0"
+edition = "2021"
+description = "Dong et al. (IEEE TNSM 2026) Challenge / ProofGen / ProofVerify, implemented from the paper's equations and timed (pqz-bl baseline)"
+
+# stand-alone crate (not part of any workspace)
+[workspace]
+
+[lib]
+name = "pqz_bl_dong"
+path = "src/lib.rs"
+
+[[bin]]
+name = "dong-bench"
+path = "src/bin/dong-bench.rs"
+
+[dependencies]
+bls12_381 = { version = "=0.8.0", features = ["experimental"] }
+digest09 = { package = "digest", version = "=0.9.0" }
+sha2 = "=0.10.9"
+rand_chacha = "=0.3.1"
+rand_core = "=0.6.4"
+ff = "=0.13.1"
+
+[profile.release]
+opt-level = 3
+debug = false
+lto = false
+codegen-units = 1

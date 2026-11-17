@@ -1,0 +1,2 @@
+2026-11-17: API skeleton is the full implementation already (compiles). Extra (additive): plain/zk::prove_run_bytes_par, MIN_TRACE_ROWS, PRunAir::build_trace(perm,words,start,block_size), build_trace_par(perm,words,block_size,ckpts), build_trace_kinds. zk pads all runs to >=512 rows (fast1 hiding budget).
+Additive after READY: prove_run_bytes_par, MIN_TRACE_ROWS, run_rows uses MIN_TRACE_ROWS, PRunAir::{n_rows_for,build_trace_kinds}, PRunLayout.cols (PLayout). No signature of the promised API changed.

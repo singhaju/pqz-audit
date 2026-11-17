@@ -1,0 +1,27 @@
+[package]
+name = "pqz-proof"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "PROVISIONAL hash-based STARK (winterfell 0.13.1) prototypes of the PQZK relations R_RC, R_Auth, R_Exec for PQZ-Audit"
+
+[features]
+default = ["concurrent"]
+concurrent = ["winterfell/concurrent"]
+
+[dependencies]
+winterfell = { version = "=0.13.1", default-features = false, features = ["std"] }
+
+[[bin]]
+name = "proofbench"
+path = "src/bin/proofbench.rs"
+
+[[bin]]
+name = "cover"
+path = "src/bin/cover.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+debug = false
