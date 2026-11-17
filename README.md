@@ -84,3 +84,9 @@ paper (1180 + 1300 attack trials) were not re-run for this package.
 
 ## Demo
 `bash demo/run.sh` builds `pqz-integrated-w46` (about 1 minute the first time) and runs one small audit (N = 10,000, packed format P2r) in about 1 second, then prints the main timings. It is the existing program `w35`; the numbers are laptop smoke values, not paper numbers.
+
+- `bash demo/run.sh`: build and run one small audit (N = 10,000) and print the main timings.
+- `bash demo/explain.sh`: the same pipeline step by step (10 steps) with real values: records, ciphertext and tags, a block, R_e, chunk proofs, the anchor and Omega, the auth proof, pruning, the run proof, requester check.
+- `demo/guide.html`: open in a browser (offline). Clickable guide with 13 sections, diagrams, real outputs and links to the code on GitHub. Arrow keys move between sections.
+
+All demo numbers are from a laptop run and are not paper numbers. The STARKs are plain mode (not zero-knowledge) and the chain is simulated in one process.

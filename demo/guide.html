@@ -1,0 +1,1324 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PQZ-Audit demo guide</title><style>:root{--bg:#f6f7f9;--fg:#1b1f24;--mut:#5b6573;--card:#fff;--bd:#cfd6df;--acc:#1f5fbf;--hit:#d9f2dd;--hitb:#2a8a3d;--grey:#e3e6ea;--code:#f1f3f6;--codefg:#1b1f24;--c:#6a737d;--s:#0a7a45;--n:#b4530a;--k:#7a2fb5;--warn:#fff4d6;--warnb:#c99700;--side:#eef1f5}
+@media (prefers-color-scheme:dark){:root{--bg:#14171b;--fg:#e7eaee;--mut:#9aa6b4;--card:#1c2026;--bd:#39414b;--acc:#7fb0ff;--hit:#1f3d28;--hitb:#58c26f;--grey:#2a2f36;--code:#101317;--codefg:#e7eaee;--c:#8b96a3;--s:#7fd79f;--n:#f0a35e;--k:#c79bf2;--warn:#3a3217;--warnb:#c9a22a;--side:#191d22}}
+*{box-sizing:border-box}
+html{font-size:18px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,"Segoe UI",Roboto,sans-serif;font-size:18px;line-height:1.55;display:flex;min-height:100vh}
+body{display:block}
+#side{position:fixed;left:0;top:0;bottom:0;width:300px;overflow-y:auto;background:var(--side);border-right:1px solid var(--bd);padding:12px 8px}
+.brand{font-weight:700;font-size:20px;padding:6px 8px 12px}.brand small{display:block;font-weight:400;font-size:18px;color:var(--mut)}
+.nav{display:block;padding:6px 8px;border-radius:8px;color:var(--fg);text-decoration:none;font-size:18px;line-height:1.3;border:1px solid transparent;margin:2px 0}
+.nav .num{display:inline-block;width:1.7em;font-weight:700;color:var(--acc)}
+.nav .bd{display:block;margin-left:1.7em;font-size:18px;color:var(--mut)}
+.nav:hover{background:var(--card)}.nav.on{background:var(--card);border-color:var(--acc)}
+.keys{padding:10px 8px;color:var(--mut);font-size:18px}
+main{margin-left:300px;padding:20px 28px 60px;max-width:1300px}
+section{display:none}section.on{display:block}
+.sh{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px}
+h2{font-size:30px;margin:6px 0}h3{font-size:22px;margin:22px 0 6px;color:var(--acc)}
+.badge{background:var(--card);border:1px solid var(--bd);border-radius:999px;padding:2px 12px;font-size:18px;color:var(--mut)}
+p,li{font-size:18px}code{font-family:ui-monospace,"DejaVu Sans Mono",Menlo,monospace;font-size:18px;background:var(--code);padding:0 4px;border-radius:4px;word-break:break-all}
+.try{background:var(--card);border:1px solid var(--bd);border-left:6px solid var(--acc);border-radius:8px;padding:10px 14px;margin:10px 0}
+.try-h{font-weight:700;color:var(--acc)}.cmd{font-family:ui-monospace,"DejaVu Sans Mono",monospace;font-size:18px;word-break:break-all}.prompt{color:var(--mut)}
+pre{font-family:ui-monospace,"DejaVu Sans Mono",Menlo,monospace;font-size:18px;line-height:1.4;margin:6px 0;overflow-x:auto;background:var(--code);color:var(--codefg);border:1px solid var(--bd);border-radius:6px;padding:8px 10px;tab-size:4}
+pre.out{max-height:420px;overflow:auto}.try-n{font-size:18px;color:var(--mut);margin-top:4px}
+.diag-wrap{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px;margin:12px 0;overflow-x:auto}
+svg.diagram{width:100%;min-width:760px;height:auto;display:block}
+svg text{fill:var(--fg);font-family:system-ui,"Segoe UI",Roboto,sans-serif}
+.t{font-size:17px}.ts{font-size:16px;fill:var(--mut)}.tb{font-size:19px;font-weight:700}.tv{font-size:24px;font-weight:700;font-family:ui-monospace,monospace}.s15{font-size:16px}.s14{font-size:15px}
+.tchip{font-size:15px;font-weight:700;fill:#fff}.chip{fill:var(--acc)}
+.box{fill:var(--card);stroke:var(--bd);stroke-width:2}.box.big{stroke:var(--acc)}.box.hit{fill:var(--hit);stroke:var(--hitb)}.box.small{fill:var(--code)}
+.box.dashed{stroke-dasharray:7 5;fill:none}.box.grey{fill:var(--grey);stroke:var(--bd)}.box.hatch{fill:var(--card);stroke:var(--hitb);stroke-dasharray:3 3}
+.box.result{fill:var(--hit);stroke:var(--hitb);stroke-width:3}.box.ledger{fill:var(--side);stroke:var(--acc)}
+.bar{fill:var(--acc)}.tick{fill:var(--grey)}.tickhit{fill:var(--hitb)}
+.ar{stroke:var(--mut);stroke-width:2.5}.ar.dash{stroke-dasharray:7 5}.ahead{fill:var(--mut)}
+.jump{cursor:pointer}.jump:hover .box,.jump:focus .box{stroke:var(--acc);stroke-width:4}.jump:hover .chip{opacity:.8}
+.snip{margin:12px 0}.snip-h{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;font-family:ui-monospace,monospace;font-size:18px}
+.snip-h a{color:var(--acc);word-break:break-all}.lines{color:var(--mut)}.snip-note{color:var(--mut);font-size:18px}
+pre.code.collapsed{max-height:19em;overflow:hidden;position:relative}
+pre.code.collapsed::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3em;background:linear-gradient(transparent,var(--code))}
+.more,.pn button{font-size:18px;padding:5px 14px;border-radius:8px;border:1px solid var(--acc);background:var(--card);color:var(--acc);cursor:pointer}
+.c{color:var(--c);font-style:italic}.s{color:var(--s)}.n{color:var(--n)}.k{color:var(--k);font-weight:600}
+.honest{background:var(--warn);border:1px solid var(--warnb);border-radius:8px;padding:8px 14px;margin:16px 0}
+.pn{display:flex;justify-content:space-between;margin-top:26px}
+.tablewrap{overflow-x:auto}table{border-collapse:collapse;font-size:18px}th,td{border:1px solid var(--bd);padding:6px 10px;text-align:left;vertical-align:top}th{background:var(--side)}
+a{color:var(--acc)}
+@media (max-width:900px){#side{position:static;width:100%;border-right:0}body{display:block}main{margin-left:0;padding:14px 16px}}
+</style></head><body><nav id="side"><div class="brand">PQZ-Audit demo guide<small>laptop demo run, not a paper number</small></div><a href="#s1" data-n="1" class="nav"><span class="num">1</span><span class="nt">Overview and how to run</span><span class="bd">0.54 s total (N = 10,000)</span></a><a href="#s2" data-n="2" class="nav"><span class="num">2</span><span class="nt">Log generation and record format</span><span class="bd">0.0003 s (N = 10,000)</span></a><a href="#s3" data-n="3" class="nav"><span class="num">3</span><span class="nt">Record encryption and search tag</span><span class="bd">0.25 s (phase P3a, N = 10,000)</span></a><a href="#s4" data-n="4" class="nav"><span class="num">4</span><span class="nt">Record consistency proof R_RC</span><span class="bd">0.086 s proving, 5120 rows (N = 10,000)</span></a><a href="#s5" data-n="5" class="nav"><span class="num">5</span><span class="nt">Blocks, EAPAT and block-cover stream</span><span class="bd">0.083 s ingest (N = 10,000)</span></a><a href="#s6" data-n="6" class="nav"><span class="num">6</span><span class="nt">Blockchain: epoch anchoring and canonical state Omega</span><span class="bd">0.0040 s anchor (N = 10,000)</span></a><a href="#s7" data-n="7" class="nav"><span class="num">7</span><span class="nt">Authorization proof R_Auth</span><span class="bd">0.0038 s proving, 64 rows</span></a><a href="#s8" data-n="8" class="nav"><span class="num">8</span><span class="nt">Query execution: block pruning, exact predicate, selective HE aggregation</span><span class="bd">0.0056 s planning (N = 10,000)</span></a><a href="#s9" data-n="9" class="nav"><span class="num">9</span><span class="nt">Execution proof R_Exec (Plonky3 STARK)</span><span class="bd">0.023 s proving, 1024 rows</span></a><a href="#s10" data-n="10" class="nav"><span class="num">10</span><span class="nt">Auditor check</span><span class="bd">0.084 s (N = 10,000)</span></a><a href="#s11" data-n="11" class="nav"><span class="num">11</span><span class="nt">Requester verification and result</span><span class="bd">0.0020 s (N = 10,000)</span></a><a href="#s12" data-n="12" class="nav"><span class="num">12</span><span class="nt">Attack tests (Exp 8)</span><span class="bd">ledger 0.3 s; proofs 18 s smoke</span></a><a href="#s13" data-n="13" class="nav"><span class="num">13</span><span class="nt">Map of all experiments to code</span><span class="bd"></span></a><div class="keys">Keys: left / right arrow</div></nav><main><section id="s1" data-n="1"><div class="sh"><h2>1. Overview and how to run</h2><span class="badge">laptop time: 0.54 s total (N = 10,000)</span></div><div class="try"><div class="try-h">Try it</div><div class="cmd"><span class="prompt">$</span> bash demo/run.sh</div><pre class="out">build w35 (release), then: w35 run --setting P3 --n 10000 --layouts clustered --runs 1 --chunk 4 --gap-merge 1 --fmt p2r --limit-s 60
+result: count 100, sum of b 78435187
+20 blocks of 500 records, 5 chunks of 4 blocks, sigma = 100
+R_RC proofs: 5120 rows, 837561 B, security 127 / 49 / 73 bits (conjectured / unique / list)
+R_Auth proof: 64 rows, 126213 B   R_Exec proof: 1024 rows, 152901 B
+requester accepted: 0.0020 s       total 0.543 s       peak memory 51800 KB</pre><div class="try-n">Key numbers of one run.sh-style run (N = 10,000, from its raw.csv). run.sh prints them as a table. laptop demo run, not a paper number.</div></div><div class="diag-wrap"><svg class="diagram" viewBox="0 0 1000 335" role="img" aria-label="Pipeline: LP, CSP, AA, blockchain, requester"><defs><marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahead"/></marker></defs><g class="jump" data-go="2" tabindex="0" role="link"><rect x="10" y="40" width="170" height="150" rx="10" class="box big"/><text x="95.0" y="70" class="tb" text-anchor="middle">LP</text><text x="95.0" y="92" class="ts" text-anchor="middle">log provider</text><text x="95.0" y="122" class="t s15" text-anchor="middle">makes records</text><text x="95.0" y="144" class="t s15" text-anchor="middle">encrypts + tags</text><text x="95.0" y="166" class="t s15" text-anchor="middle">R_RC chunk proofs</text></g><g class="jump" data-go="2" tabindex="0" role="link"><rect x="11.0" y="205" width="52" height="28" rx="14" class="chip"/><text x="37.0" y="225" class="tchip" text-anchor="middle">§2</text></g><g class="jump" data-go="3" tabindex="0" role="link"><rect x="69.0" y="205" width="52" height="28" rx="14" class="chip"/><text x="95.0" y="225" class="tchip" text-anchor="middle">§3</text></g><g class="jump" data-go="4" tabindex="0" role="link"><rect x="127.0" y="205" width="52" height="28" rx="14" class="chip"/><text x="153.0" y="225" class="tchip" text-anchor="middle">§4</text></g><line x1="182" y1="115" x2="203" y2="115" class="ar" marker-end="url(#ah1)"/><g class="jump" data-go="5" tabindex="0" role="link"><rect x="205" y="40" width="170" height="150" rx="10" class="box big"/><text x="290.0" y="70" class="tb" text-anchor="middle">CSP</text><text x="290.0" y="92" class="ts" text-anchor="middle">cloud server</text><text x="290.0" y="122" class="t s15" text-anchor="middle">stores the blocks</text><text x="290.0" y="144" class="t s15" text-anchor="middle">prunes + searches</text><text x="290.0" y="166" class="t s15" text-anchor="middle">run proof R_Exec</text></g><g class="jump" data-go="5" tabindex="0" role="link"><rect x="206.0" y="205" width="52" height="28" rx="14" class="chip"/><text x="232.0" y="225" class="tchip" text-anchor="middle">§5</text></g><g class="jump" data-go="8" tabindex="0" role="link"><rect x="264.0" y="205" width="52" height="28" rx="14" class="chip"/><text x="290.0" y="225" class="tchip" text-anchor="middle">§8</text></g><g class="jump" data-go="9" tabindex="0" role="link"><rect x="322.0" y="205" width="52" height="28" rx="14" class="chip"/><text x="348.0" y="225" class="tchip" text-anchor="middle">§9</text></g><line x1="377" y1="115" x2="398" y2="115" class="ar" marker-end="url(#ah1)"/><g class="jump" data-go="10" tabindex="0" role="link"><rect x="400" y="40" width="170" height="150" rx="10" class="box big"/><text x="485.0" y="70" class="tb" text-anchor="middle">AA</text><text x="485.0" y="92" class="ts" text-anchor="middle">auditor</text><text x="485.0" y="122" class="t s15" text-anchor="middle">checks the proofs</text><text x="485.0" y="144" class="t s15" text-anchor="middle">rebuilds R_e</text><text x="485.0" y="166" class="t s15" text-anchor="middle">signs A_e</text></g><g class="jump" data-go="10" tabindex="0" role="link"><rect x="459.0" y="205" width="52" height="28" rx="14" class="chip"/><text x="485.0" y="225" class="tchip" text-anchor="middle">§10</text></g><line x1="572" y1="115" x2="593" y2="115" class="ar" marker-end="url(#ah1)"/><g class="jump" data-go="6" tabindex="0" role="link"><rect x="595" y="40" width="170" height="150" rx="10" class="box big"/><text x="680.0" y="70" class="tb" text-anchor="middle">Blockchain</text><text x="680.0" y="92" class="ts" text-anchor="middle">simulated</text><text x="680.0" y="122" class="t s15" text-anchor="middle">anchors A_e</text><text x="680.0" y="144" class="t s15" text-anchor="middle">canonical state</text><text x="680.0" y="166" class="t s15" text-anchor="middle">Omega_e</text></g><g class="jump" data-go="6" tabindex="0" role="link"><rect x="654.0" y="205" width="52" height="28" rx="14" class="chip"/><text x="680.0" y="225" class="tchip" text-anchor="middle">§6</text></g><line x1="767" y1="115" x2="788" y2="115" class="ar" marker-end="url(#ah1)"/><g class="jump" data-go="7" tabindex="0" role="link"><rect x="790" y="40" width="170" height="150" rx="10" class="box big"/><text x="875.0" y="70" class="tb" text-anchor="middle">Requester</text><text x="875.0" y="92" class="ts" text-anchor="middle">TPA</text><text x="875.0" y="122" class="t s15" text-anchor="middle">R_Auth proof</text><text x="875.0" y="144" class="t s15" text-anchor="middle">verifies everything</text><text x="875.0" y="166" class="t s15" text-anchor="middle">gets count + sum</text></g><g class="jump" data-go="7" tabindex="0" role="link"><rect x="820.0" y="205" width="52" height="28" rx="14" class="chip"/><text x="846.0" y="225" class="tchip" text-anchor="middle">§7</text></g><g class="jump" data-go="11" tabindex="0" role="link"><rect x="878.0" y="205" width="52" height="28" rx="14" class="chip"/><text x="904.0" y="225" class="tchip" text-anchor="middle">§11</text></g><path d="M 275 240 C 275 310, 880 310, 880 238" class="ar dash" fill="none" marker-end="url(#ah1)"/><text x="580" y="318" class="ts" text-anchor="middle">answer: blocks, Bloom openings, run proof, count, sum</text><text x="500" y="22" class="ts" text-anchor="middle">arrows = who hands what to whom (left to right). Click a box or a number.</text></svg></div><h3>What it does</h3><p>The demo audits 10,000 encrypted log records and returns a verified count and sum without the auditor or the requester seeing any plaintext. It runs the real code path (w35, <code>--fmt p2r</code>): make records, encrypt them, prove them, anchor an epoch, prove access and query, then verify. Everything runs in <b>one process</b>.</p><h3>What it contains</h3><ul><li>Five actors are drawn, because the program plays five: the log provider (LP), the cloud (CSP), the auditor (AA), the ledger, and the requester. In this demo the requester is the TPA, and the "auditor check" is the AA's <code>aa_finalize</code>.</li><li>Click a box or a number chip to jump to the section. Arrow keys move between sections.</li><li>Real totals for N = 10,000: 20 blocks of 500, 5 chunks of 4 blocks, query result count 100 and sum 78,435,187; the requester receives 288,118 bytes (block list 2,580 + openings 6,048 + run proofs 153,261 + auth proof 126,213).</li></ul><h3>Code</h3><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/demo/run.sh#L5-L14" target="_blank" rel="noopener">demo/run.sh:5-14</a><span class="lines">10 lines</span></div><div class="snip-note">What run.sh runs.</div><pre class="code">set -e
+cd <span class="s">&quot;$(dirname &quot;</span>$<span class="n">0</span><span class="s">&quot;)/../pqz-integrated-w46&quot;</span>
+cargo build --release --locked --bin w35 <span class="n">2</span>&gt;&amp;<span class="n">1</span> | tail -<span class="n">2</span>
+OUT=<span class="s">&quot;$(mktemp -d)&quot;</span>
+./target/release/w35 run --setting P3 --n <span class="n">10000</span> --layouts clustered --runs <span class="n">1</span> \
+  --chunk <span class="n">4</span> --gap-merge <span class="n">1</span> --fmt p2r --limit-s <span class="n">60</span> --out <span class="s">&quot;$OUT&quot;</span> &gt; <span class="s">&quot;$OUT/stdout.txt&quot;</span> <span class="n">2</span>&gt;&amp;<span class="n">1</span>
+python3 - <span class="s">&quot;$OUT/raw.csv&quot;</span> &lt;&lt;&#x27;PY&#x27;
+import csv, sys
+r = list(csv.DictReader(open(sys.argv[<span class="n">1</span>])))[<span class="n">0</span>]
+rows = [(<span class="s">&quot;records N&quot;</span>, <span class="s">&quot;n&quot;</span>), (<span class="s">&quot;query result: matching records&quot;</span>, <span class="s">&quot;result_count&quot;</span>), (<span class="s">&quot;query result: sum&quot;</span>, <span class="s">&quot;result_sum&quot;</span>),</pre></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L1097-L1124" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:1097-1124</a><span class="lines">28 lines</span></div><div class="snip-note">Phases P3a to P5 of the pipeline.</div><pre class="code collapsed">    <span class="c">// P3a: log (tags, descriptors, w34 summaries, stream words)</span>
+    <span class="k">let</span> (log, s) = stage35(&amp;<span class="k">mut</span> o, <span class="n">0</span>, || build_log(&amp;records, &amp;keys));
+    o.p3a_s = s;
+    <span class="c">// P3a2: w35 ingest</span>
+    <span class="k">let</span> (w, s) = stage35(&amp;<span class="k">mut</span> o, <span class="n">1</span>, || World35::prepare_fmt(log, chunk, fmt));
+    o.p3a2_s = s;
+    o.n_chunks = w.plan.len();
+    <span class="c">// P3b: chunk proofs (the LPs)</span>
+    <span class="k">let</span> (res, s) = stage35(&amp;<span class="k">mut</span> o, <span class="n">2</span>, || w.prove_chunks());
+    <span class="k">let</span> (proofs, rc_st) = res?;
+    o.rc = rc_st;
+    o.p3b_s = s;
+    <span class="c">// P4a: AA finalization</span>
+    <span class="k">let</span> (res, s) = stage35(&amp;<span class="k">mut</span> o, <span class="n">3</span>, || aa_finalize_fmt(&amp;proofs, &amp;w.blocks, &amp;w.material(), AaChecks::ON, fmt));
+    <span class="k">let</span> aa = res.map_err(|e| RunError::new(<span class="n">5</span>, e))?;
+    o.aa_check_s = s;
+    o.aa_verify_s = aa.verify_s;
+    o.aa_native_s = aa.native_s;
+    <span class="c">// P4b: anchor the w35 epoch root</span>
+    <span class="k">let</span> (res, s) = stage35(&amp;<span class="k">mut</span> o, <span class="n">4</span>, || commit_epoch(&amp;<span class="k">mut</span> lc, aa.r_e, aa.n_e, aa.g_e));
+    <span class="k">let</span> (led_st, omega) = res?;
+    o.led = led_st;
+    o.p4b_s = s;
+    <span class="c">// P5: Auth</span>
+    <span class="k">let</span> (res, s) = stage35(&amp;<span class="k">mut</span> o, <span class="n">5</span>, || auth_stage(&amp;omega, <span class="n">1</span>, <span class="s">&quot;P1: A = x&quot;</span>, seed));
+    <span class="k">let</span> (auth, auth_st) = res?;
+    o.auth = auth_st;
+    o.p5_s = s;</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L1152-L1175" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:1152-1175</a><span class="lines">24 lines</span></div><div class="snip-note">Phase P6b (run proofs) and P7 (requester).</div><pre class="code collapsed">    <span class="c">// P6b: run proofs (R_Exec stream mode, one proof per run)</span>
+    <span class="k">let</span> (res, s) = stage35(&amp;<span class="k">mut</span> o, <span class="n">7</span>, || prove_runs(&amp;w, &amp;ranges, ctx));
+    <span class="k">let</span> (runs, ex_st) = res?;
+    o.exec = ex_st;
+    o.p6b_s = s;
+    <span class="k">let</span> claim: (u64, u64) = (runs.iter().map(|r| r.stmt.count).sum(), runs.iter().map(|r| r.stmt.sum).sum());
+    <span class="k">let</span> resp = CspResponse { blocks: w.blocks.clone(), runs, openings, claim };
+    o.n_openings = resp.openings.iter().map(|(_, v)| v.len()).sum();
+    <span class="c">// P7: the requester. The anchor comes from the A_e the ledger holds.</span>
+    <span class="k">let</span> a = lc.chain.epoch(EPOCH).a.clone();
+    <span class="k">let</span> an = Anchor { r_e: a.r_e, n_e: a.n_e, g_e: a.g_e };
+    <span class="k">let</span> (res, s) = stage35(&amp;<span class="k">mut</span> o, <span class="n">8</span>, || verify_requester35_fmt(&amp;an, &amp;formula, &amp;auth, &amp;resp, ReqChecks::ON, fmt));
+    <span class="k">let</span> (tm, result) = res?;
+    o.req_native_s = tm.native_s;
+    o.req_auth_s = tm.auth_s;
+    o.req_runs_s = tm.runs_s;
+    o.p7_s = s;
+    o.req_bytes = requester_bytes(&amp;resp, &amp;auth);
+    o.req_bytes_blocklist = resp.block_list_bytes();
+    o.req_bytes_openings = resp.openings_bytes();
+    o.req_bytes_runs = resp.runs_bytes();
+    o.req_bytes_auth = auth.bytes.len();
+    o.result = result;
+    o.total_s = o.p3a_s + o.p3a2_s + o.p3b_s + o.aa_check_s + o.p4b_s + o.p5_s + o.p6a_s + o.p6b_s + o.p7_s;</pre><button class="more" type="button">Show more</button></div><div class="honest"><b>Honest note.</b> Numbers: laptop demo run, not a paper number. The STARKs are plain mode (not zero-knowledge). The blockchain is simulated in this process (no network). One process plays all roles.</div><div class="pn"><button type="button" class="prev">&larr; previous</button><button type="button" class="next">next &rarr;</button></div></section><section id="s2" data-n="2"><div class="sh"><h2>2. Log generation and record format</h2><span class="badge">laptop time: 0.0003 s (N = 10,000)</span></div><div class="try"><div class="try-h">Try it</div><div class="cmd"><span class="prompt">$</span> bash demo/explain.sh</div><pre class="out">   id    a     b       c    d    P1 (a = 7)?
+    0  497  783962  439  889    -
+    1  384  883110   49  680    -
+    2  381  171752   37  500    -
+    3  190  720674  733  540    -
+    4  222  594764   84  581    -
+    5  205 1012751  568  958    -
+    6  362  902838  470  153    -
+    7  720  841426  962  827    -
+    8  653  234943  436  203    -
+  ...
+  4 of 16 records are hits (clustered = consecutive ids). Example record: Record { id: 11, ts: 11, a: 7, b: 756994, c: 381, d: 3 }</pre><div class="try-n">Real output of explain.sh on the laptop (N = 2000 for the later steps). Only lines of this step are shown; the full run prints all 10 steps.</div></div><div class="diag-wrap"><svg class="diagram" viewBox="0 0 1000 235" role="img" aria-label="A record as field boxes"><defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahead"/></marker></defs><rect x="20" y="40" width="150" height="86" rx="10" class="box"/><text x="95" y="72" class="tb" text-anchor="middle">id</text><text x="95" y="106" class="tv" text-anchor="middle">11</text><rect x="182" y="40" width="150" height="86" rx="10" class="box"/><text x="257" y="72" class="tb" text-anchor="middle">ts</text><text x="257" y="106" class="tv" text-anchor="middle">11</text><rect x="344" y="40" width="150" height="86" rx="10" class="box hit"/><text x="419" y="72" class="tb" text-anchor="middle">a</text><text x="419" y="106" class="tv" text-anchor="middle">7</text><rect x="506" y="40" width="150" height="86" rx="10" class="box"/><text x="581" y="72" class="tb" text-anchor="middle">b</text><text x="581" y="106" class="tv" text-anchor="middle">756994</text><rect x="668" y="40" width="150" height="86" rx="10" class="box"/><text x="743" y="72" class="tb" text-anchor="middle">c</text><text x="743" y="106" class="tv" text-anchor="middle">381</text><rect x="830" y="40" width="150" height="86" rx="10" class="box"/><text x="905" y="72" class="tb" text-anchor="middle">d</text><text x="905" y="106" class="tv" text-anchor="middle">3</text><text x="20" y="24" class="ts" text-anchor="start">One log record (hit example: record id 11, from explain.sh step 1)</text><text x="263" y="150" class="ts" text-anchor="middle">P1 asks: a = 7</text><path d="M 263 130 L 263 138" class="ar" fill="none"/><text x="20" y="180" class="t s15" text-anchor="start">a, b, c, d are 4 x u32 = 16 bytes of data. id and ts are the position and time (ts = id here).</text><text x="20" y="204" class="t s15" text-anchor="start">Non-hit example (id 0): a=497  b=783962  c=439  d=889. Hits have a=7 and d=3.</text></svg></div><h3>What it does</h3><p>The generator makes N records with four attributes a, b, c, d. In the clustered layout the hits for the query (a = 7) sit in consecutive ids, so whole blocks can be skipped later. The generator is seeded, so the demo is repeatable.</p><h3>What it contains</h3><ul><li>A record is <code>id, ts, a, b, c, d</code>. a, b, c, d are 32-bit numbers (16 bytes).</li><li>Real example from explain.sh: record 11 has a = 7, b = 756,994, c = 381, d = 3, and is a hit. Records 11 to 14 are the 4 hits among 16.</li><li>The query predicate in the demo is P1 only (a = 7).</li></ul><h3>Code</h3><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-eval/src/gen.rs#L12-L60" target="_blank" rel="noopener">pqz-eval/src/gen.rs:12-60</a><span class="lines">49 lines</span></div><div class="snip-note">The generator.</div><pre class="code collapsed"><span class="c">/// Generate `n` records, of which exactly `sigma_count` satisfy P1..P4.</span>
+<span class="c">///</span>
+<span class="c">/// Records are ordered by `ts == id`. `layout` decides where the hits are.</span>
+<span class="k">pub</span> <span class="k">fn</span> r#gen(n: usize, sigma_count: usize, layout: Layout, seed: u64) -&gt; Vec&lt;Record&gt; {
+    assert!(sigma_count &lt;= n, <span class="s">&quot;sigma_count must not exceed n&quot;</span>);
+    <span class="k">let</span> <span class="k">mut</span> rng = ChaCha20Rng::seed_from_u64(seed);
+
+    <span class="k">let</span> <span class="k">mut</span> records: Vec&lt;Record&gt; = (<span class="n">0</span>..n)
+        .map(|i| {
+            <span class="k">let</span> id = i <span class="k">as</span> u64;
+            Record {
+                id,
+                ts: id,
+                a: non_hit_excluding(&amp;<span class="k">mut</span> rng, A_DOMAIN, X),
+                b: rng.next_u32() &amp; (B_DOMAIN - <span class="n">1</span>),
+                c: non_hit_excluding(&amp;<span class="k">mut</span> rng, A_DOMAIN, Z),
+                d: uniform_below(&amp;<span class="k">mut</span> rng, A_DOMAIN),
+            }
+        })
+        .collect();
+
+    <span class="k">let</span> hit_ids = <span class="k">match</span> layout {
+        Layout::Clustered =&gt; {
+            <span class="k">let</span> offset = uniform_below(&amp;<span class="k">mut</span> rng, (n - sigma_count + <span class="n">1</span>) <span class="k">as</span> u32) <span class="k">as</span> usize;
+            (offset..offset + sigma_count).collect::&lt;Vec&lt;_&gt;&gt;()
+        }
+        Layout::Scattered =&gt; {
+            <span class="k">let</span> <span class="k">mut</span> ids: Vec&lt;usize&gt; = (<span class="n">0</span>..n).collect();
+            <span class="k">for</span> i <span class="k">in</span> <span class="n">0</span>..sigma_count {
+                <span class="k">let</span> j = i + uniform_below(&amp;<span class="k">mut</span> rng, (n - i) <span class="k">as</span> u32) <span class="k">as</span> usize;
+                ids.swap(i, j);
+            }
+            ids.truncate(sigma_count);
+            ids
+        }
+    };
+
+    <span class="k">for</span> idx <span class="k">in</span> hit_ids {
+        <span class="k">let</span> r = &amp;<span class="k">mut</span> records[idx];
+        r.a = X;
+        <span class="c">// B_DOMAIN - Y is a power of two (2^19), so masking is unbiased.</span>
+        <span class="k">let</span> span = B_DOMAIN - Y;
+        r.b = Y + (rng.next_u32() &amp; (span - <span class="n">1</span>));
+        r.c = uniform_below(&amp;<span class="k">mut</span> rng, Z);
+        r.d = W;
+    }
+
+    records
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-eval/src/lib.rs#L34-L44" target="_blank" rel="noopener">pqz-eval/src/lib.rs:34-44</a><span class="lines">11 lines</span></div><div class="snip-note">The record struct.</div><pre class="code"><span class="c">/// A log record. `ts == id` in the generated data, so ordering by `id` is</span>
+<span class="c">/// ordering by timestamp.</span>
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+<span class="k">pub</span> <span class="k">struct</span> Record {
+    <span class="k">pub</span> id: u64,
+    <span class="k">pub</span> ts: u64,
+    <span class="k">pub</span> a: u32,
+    <span class="k">pub</span> b: u32,
+    <span class="k">pub</span> c: u32,
+    <span class="k">pub</span> d: u32,
+}</pre></div><div class="honest"><b>Honest note.</b> Synthetic data. Generation took 0.0003 s at N = 10,000 on this laptop.</div><div class="pn"><button type="button" class="prev">&larr; previous</button><button type="button" class="next">next &rarr;</button></div></section><section id="s3" data-n="3"><div class="sh"><h2>3. Record encryption and search tag</h2><span class="badge">laptop time: 0.25 s (phase P3a, N = 10,000)</span></div><div class="try"><div class="try-h">Try it</div><div class="cmd"><span class="prompt">$</span> bash demo/explain.sh</div><pre class="out">  plaintext      : id=11 ts=11 a=7 b=756994 c=381 d=3   (16 bytes of attributes)
+  ciphertext     : 3279b4e3740f76dea2561928a309d4071278b7ffbb88864c8fba8456b1131a7c  (32 bytes = 16 data + 16 AES-GCM tag)
+  search tags    : 45 tags of 16 bytes, sorted. first three:
+                   0b37bfdac9c9d820979df28439e64299
+                   0c508782907a78b7a6ef6aa0d7bd6789
+                   0d1c1e9524b859f9b02b2fe83877be0c
+  decrypt check  : round trip OK (key holder only)
+  Merkle leaf    : 4194fad7b82f7ea9555e4fdb3f54847786927be4856292fd37635d34c878332a</pre><div class="try-n">Real output of explain.sh on the laptop (N = 2000 for the later steps). Only lines of this step are shown; the full run prints all 10 steps.</div></div><div class="diag-wrap"><svg class="diagram" viewBox="0 0 1000 370" role="img" aria-label="Record encryption: plaintext to ciphertext, tags and leaf"><defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahead"/></marker></defs><rect x="20" y="30" width="280" height="96" rx="10" class="box"/><text x="160" y="58" class="tb" text-anchor="middle">plaintext (16 B)</text><text x="160" y="82" class="t s15" text-anchor="middle">a=7 b=756994</text><text x="160" y="106" class="t s15" text-anchor="middle">c=381 d=3</text><line x1="302" y1="78" x2="358" y2="78" class="ar" marker-end="url(#ah3)"/><rect x="360" y="30" width="290" height="96" rx="10" class="box"/><text x="505" y="58" class="tb" text-anchor="middle">AES-256-GCM</text><text x="505" y="82" class="t s15" text-anchor="middle">key = HKDF(master, id)</text><text x="505" y="106" class="t s15" text-anchor="middle">nonce = id, aad = (id, ts)</text><line x1="652" y1="78" x2="708" y2="78" class="ar" marker-end="url(#ah3)"/><rect x="710" y="30" width="270" height="96" rx="10" class="box hit"/><text x="845" y="58" class="tb" text-anchor="middle">ciphertext (32 B)</text><text x="845" y="82" class="t s15" text-anchor="middle">16 B data + 16 B GCM tag</text><text x="845" y="106" class="t s15" text-anchor="middle">3279b4e3…131a7c</text><rect x="20" y="160" width="460" height="96" rx="10" class="box"/><text x="250" y="188" class="tb" text-anchor="middle">45 search tags (16 B each, keyed SHA3)</text><text x="250" y="212" class="t s15" text-anchor="middle">a: 1 equality   b: 21 prefix</text><text x="250" y="236" class="t s15" text-anchor="middle">c: 1 equality + 21 prefix   d: 1 equality</text><line x1="482" y1="208" x2="538" y2="208" class="ar" marker-end="url(#ah3)"/><rect x="540" y="160" width="440" height="96" rx="10" class="box hit"/><text x="760" y="188" class="tb" text-anchor="middle">Merkle leaf</text><text x="760" y="212" class="t s15" text-anchor="middle">SHA3(0x00 | id | ciphertext | tags)</text><text x="760" y="236" class="t s15" text-anchor="middle">4194fad7…c878332a</text><path d="M 845 128 C 845 150, 760 140, 760 158" class="ar" fill="none" marker-end="url(#ah3)"/><path d="M 250 158 L 250 130" class="ar" fill="none"/><rect x="20" y="288" width="960" height="64" rx="10" class="box dashed"/><text x="500" y="314" class="t s15" text-anchor="middle">Not in this demo path: the paper&#x27;s BFV homomorphic ciphertext of b (one per record).</text><text x="500" y="338" class="t s15" text-anchor="middle">It exists only in pqz-eval (he.rs), used by Exp 3 and Exp 6. No signature per record: ML-DSA-65 signs the block header (step 5).</text></svg></div><h3>What it does</h3><p>Each record is encrypted on its own with AES-256-GCM. The key comes from the master key and the record id, so a leak of one key does not open other records. The LP also adds 45 keyed hash tags that let the cloud find a = 7 without reading anything. The Merkle leaf commits to id, ciphertext and tags.</p><h3>What it contains</h3><ul><li>Real values for record 11: ciphertext <code>3279b4e3…131a7c</code> (32 bytes = 16 data + 16 GCM tag); 45 tags of 16 bytes; first tag <code>0b37bfda…e64299</code>; leaf <code>4194fad7…c878332a</code>.</li><li>Tag count 45 = a equality (1) + b prefixes (21) + c equality and prefixes (1 + 21) + d equality (1).</li><li>Decrypt check passes only with the key.</li></ul><h3>Code</h3><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-eval/src/eapat.rs#L71-L119" target="_blank" rel="noopener">pqz-eval/src/eapat.rs:71-119</a><span class="lines">49 lines</span></div><div class="snip-note">Key, nonce, AAD and AES-GCM.</div><pre class="code collapsed"><span class="c">/// Per-record key: `HKDF-SHA3-256(master, &quot;rec&quot; || id_le)`.</span>
+<span class="k">fn</span> record_key(master: &amp;[u8; <span class="n">32</span>], id: u64) -&gt; [u8; <span class="n">32</span>] {
+    <span class="k">let</span> hk = Hkdf::&lt;Sha3_256&gt;::new(<span class="k">None</span>, master);
+    <span class="k">let</span> <span class="k">mut</span> info = [<span class="n">0u8</span>; <span class="n">11</span>];
+    info[..<span class="n">3</span>].copy_from_slice(b<span class="s">&quot;rec&quot;</span>);
+    info[<span class="n">3</span>..].copy_from_slice(&amp;id.to_le_bytes());
+    <span class="k">let</span> <span class="k">mut</span> key = [<span class="n">0u8</span>; <span class="n">32</span>];
+    hk.expand(&amp;info, &amp;<span class="k">mut</span> key).expect(<span class="s">&quot;32 bytes is a valid HKDF length&quot;</span>);
+    key
+}
+
+<span class="c">/// GCM nonce. The record key is unique per id and the nonce is the id itself,</span>
+<span class="c">/// so (key, nonce) is never reused; uniqueness does not depend on a counter</span>
+<span class="c">/// staying alive across restarts.</span>
+<span class="k">fn</span> nonce_for(id: u64) -&gt; [u8; <span class="n">12</span>] {
+    <span class="k">let</span> <span class="k">mut</span> n = [<span class="n">0u8</span>; <span class="n">12</span>];
+    n[..<span class="n">8</span>].copy_from_slice(&amp;id.to_le_bytes());
+    n
+}
+
+<span class="k">fn</span> aad_for(id: u64, ts: u64) -&gt; [u8; <span class="n">16</span>] {
+    <span class="k">let</span> <span class="k">mut</span> aad = [<span class="n">0u8</span>; <span class="n">16</span>];
+    aad[..<span class="n">8</span>].copy_from_slice(&amp;id.to_le_bytes());
+    aad[<span class="n">8</span>..].copy_from_slice(&amp;ts.to_le_bytes());
+    aad
+}
+
+<span class="c">/// AEAD-encrypt the four attributes of a record. Timed separately in</span>
+<span class="c">/// `exp1_construction`.</span>
+<span class="k">pub</span> <span class="k">fn</span> aead_encrypt(keys: &amp;EpochKeys, r: &amp;Record) -&gt; Vec&lt;u8&gt; {
+    <span class="k">let</span> cipher = Aes256Gcm::new_from_slice(&amp;record_key(&amp;keys.master, r.id)).expect(<span class="s">&quot;256-bit key&quot;</span>);
+    <span class="k">let</span> nonce_bytes = nonce_for(r.id);
+    <span class="k">let</span> nonce = Nonce::&lt;Aes256Gcm&gt;::try_from(&amp;nonce_bytes[..]).expect(<span class="s">&quot;96-bit nonce&quot;</span>);
+    <span class="k">let</span> aad = aad_for(r.id, r.ts);
+    <span class="k">let</span> <span class="k">mut</span> pt = [<span class="n">0u8</span>; <span class="n">16</span>];
+    pt[..<span class="n">4</span>].copy_from_slice(&amp;r.a.to_le_bytes());
+    pt[<span class="n">4</span>..<span class="n">8</span>].copy_from_slice(&amp;r.b.to_le_bytes());
+    pt[<span class="n">8</span>..<span class="n">12</span>].copy_from_slice(&amp;r.c.to_le_bytes());
+    pt[<span class="n">12</span>..].copy_from_slice(&amp;r.d.to_le_bytes());
+    cipher
+        .encrypt(
+            &amp;nonce,
+            Payload {
+                msg: &amp;pt,
+                aad: &amp;aad,
+            },
+        )
+        .expect(<span class="s">&quot;AEAD encryption&quot;</span>)
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-eval/src/search.rs#L103-L114" target="_blank" rel="noopener">pqz-eval/src/search.rs:103-114</a><span class="lines">12 lines</span></div><div class="snip-note">The 45 tags of a record.</div><pre class="code"><span class="c">/// The tags stored for one record: equality tags for a, c, d and prefix tags</span>
+<span class="c">/// for b and c (45 tags). Sorted so `rps_eval` can binary-search.</span>
+<span class="k">pub</span> <span class="k">fn</span> tags_for_record(r: &amp;Record, key: &amp;TagKey) -&gt; Vec&lt;Tag&gt; {
+    <span class="k">let</span> <span class="k">mut</span> tags = Vec::with_capacity(<span class="n">45</span>);
+    tags.push(eq_tag(key, ATTR_A, r.a));
+    tags.extend(prefix_tags(key, ATTR_B, r.b));
+    tags.push(eq_tag(key, ATTR_C, r.c));
+    tags.extend(prefix_tags(key, ATTR_C, r.c));
+    tags.push(eq_tag(key, ATTR_D, r.d));
+    tags.sort_unstable();
+    tags
+}</pre></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-eval/src/eapat.rs#L149-L170" target="_blank" rel="noopener">pqz-eval/src/eapat.rs:149-170</a><span class="lines">22 lines</span></div><div class="snip-note">Encrypt a record and make its leaf.</div><pre class="code collapsed"><span class="c">/// Full per-record encryption: AEAD ciphertext plus all search tags.</span>
+<span class="k">pub</span> <span class="k">fn</span> encrypt_record(keys: &amp;EpochKeys, r: &amp;Record) -&gt; EncryptedRecord {
+    EncryptedRecord {
+        id: r.id,
+        ts: r.ts,
+        ciphertext: aead_encrypt(keys, r),
+        tags: tags_for_record(r, &amp;keys.tag_key),
+    }
+}
+
+<span class="c">/// Merkle leaf: `SHA3(0x00 || id || ciphertext || tags...)`.</span>
+<span class="k">pub</span> <span class="k">fn</span> leaf_hash(r: &amp;EncryptedRecord) -&gt; [u8; <span class="n">32</span>] {
+    <span class="k">let</span> <span class="k">mut</span> parts: Vec&lt;&amp;[u8]&gt; = Vec::with_capacity(<span class="n">3</span> + r.tags.len());
+    <span class="k">let</span> id = r.id.to_le_bytes();
+    parts.push(&amp;[<span class="n">0x00</span>]);
+    parts.push(&amp;id);
+    parts.push(&amp;r.ciphertext);
+    <span class="k">for</span> t <span class="k">in</span> &amp;r.tags {
+        parts.push(t);
+    }
+    sha3_parts(&amp;parts)
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/lib.rs#L281-L299" target="_blank" rel="noopener">pqz-integrated-w46/src/lib.rs:281-299</a><span class="lines">19 lines</span></div><div class="snip-note">The per-record loop in the demo.</div><pre class="code collapsed">    <span class="k">for</span> (g, chunk) <span class="k">in</span> records.chunks(BLOCK).enumerate() {
+        <span class="k">let</span> q_start = seq_start + (g * BLOCK) <span class="k">as</span> u64;
+        <span class="k">let</span> hdr_idx = words.len();
+        words.push(header_word(EPOCH, g <span class="k">as</span> u64, BLOCK <span class="k">as</span> u64, PID, q_start)); <span class="c">// slots 5-6 are set below (w35 v3: hd_g)</span>
+        <span class="k">let</span> tag_start = tags.len();
+        <span class="k">let</span> <span class="k">mut</span> leaves: Vec&lt;Hash&gt; = Vec::with_capacity(BLOCK);
+        <span class="k">for</span> (i, r) <span class="k">in</span> chunk.iter().enumerate() {
+            <span class="k">let</span> seq = q_start + i <span class="k">as</span> u64;
+            <span class="k">let</span> enc = encrypt_record(keys, r);
+            assert_eq!(enc.tags.len(), TAGS_PER_RECORD);
+            <span class="k">let</span> h_ct = h_ct_of(&amp;enc.ciphertext);
+            <span class="k">let</span> d = descriptor_h(r.id, seq, &amp;h_ct, &amp;enc.tags);
+            h_cts.push(h_ct);
+            leaves.push(leaf_hash(&amp;h(&amp;[&amp;u64b(EPOCH), &amp;u64b(seq), &amp;d])));
+            words.push([PID, EPOCH, seq, r.id, v_of(r), r.b <span class="k">as</span> u64, tag_of_descriptor(&amp;d), <span class="n">0</span>]);
+            tags.extend_from_slice(&amp;enc.tags);
+            descriptors.push(d);
+        }
+        words[hdr_idx] = header_of_block(g, &amp;descriptors[g * BLOCK..(g + <span class="n">1</span>) * BLOCK]);</pre><button class="more" type="button">Show more</button></div><div class="honest"><b>Honest note.</b> The homomorphic ciphertext of b (BFV) is <b>not</b> in this demo path. It exists only in the evaluation crate (<code>pqz-eval/src/he.rs</code>) used by Exp 3 and Exp 6. In the demo the sum is proven inside the STARK instead (section 9). laptop demo run, not a paper number.</div><div class="pn"><button type="button" class="prev">&larr; previous</button><button type="button" class="next">next &rarr;</button></div></section><section id="s4" data-n="4"><div class="sh"><h2>4. Record consistency proof R_RC</h2><span class="badge">laptop time: 0.086 s proving, 5120 rows (N = 10,000)</span></div><div class="try"><div class="try-h">Try it</div><div class="cmd"><span class="prompt">$</span> bash demo/explain.sh</div><pre class="out">  proved 2 chunk proofs in 0.023 s, 322314 bytes in total, ~127 conjectured bits
+  AA check passed in 0.018 s (verifies every chunk proof + rebuilds tag lists, headers, blocks)
+  R_e = a7c9089bc216...6bbb24   N_e = 2000   G_e = 4</pre><div class="try-n">Real output of explain.sh on the laptop (N = 2000 for the later steps). Only lines of this step are shown; the full run prints all 10 steps.</div></div><div class="diag-wrap"><svg class="diagram" viewBox="0 0 1000 295" role="img" aria-label="R_RC chunk chain"><defs><marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahead"/></marker></defs><rect x="15" y="50" width="115" height="100" rx="10" class="box"/><text x="72.5" y="80" class="tb" text-anchor="middle">start</text><text x="72.5" y="104" class="t s15" text-anchor="middle">IV</text><text x="72.5" y="128" class="t s15" text-anchor="middle">(fixed)</text><line x1="132" y1="100" x2="168" y2="100" class="ar" marker-end="url(#ah4)"/><rect x="170" y="50" width="240" height="100" rx="10" class="box hit"/><text x="290.0" y="80" class="tb" text-anchor="middle">chunk 0: blocks 1, 2</text><text x="290.0" y="104" class="t s15" text-anchor="middle">STARK proof pi_0</text><text x="290.0" y="128" class="t s15" text-anchor="middle">(R_RC, plain mode)</text><line x1="412" y1="100" x2="448" y2="100" class="ar" marker-end="url(#ah4)"/><rect x="450" y="50" width="125" height="100" rx="10" class="box"/><text x="512.5" y="80" class="tb" text-anchor="middle">sigma</text><text x="512.5" y="104" class="t s15" text-anchor="middle">chunk-end</text><text x="512.5" y="128" class="t s15" text-anchor="middle">state</text><line x1="577" y1="100" x2="613" y2="100" class="ar" marker-end="url(#ah4)"/><rect x="615" y="50" width="240" height="100" rx="10" class="box hit"/><text x="735.0" y="80" class="tb" text-anchor="middle">chunk 1: blocks 3, 4</text><text x="735.0" y="104" class="t s15" text-anchor="middle">STARK proof pi_1</text><text x="735.0" y="128" class="t s15" text-anchor="middle">(R_RC, plain mode)</text><line x1="857" y1="100" x2="893" y2="100" class="ar" marker-end="url(#ah4)"/><rect x="895" y="50" width="95" height="100" rx="10" class="box"/><text x="942.5" y="80" class="tb" text-anchor="middle">final</text><text x="942.5" y="104" class="t s15" text-anchor="middle">state</text><text x="15" y="30" class="ts" text-anchor="start">Poseidon2 sponge over all words of the epoch stream; each proof covers one chunk (here 2 blocks)</text><text x="500" y="185" class="t s15" text-anchor="middle">public per chunk: s_in, s_out, hdr_first, alpha[3], beta[3], acc[3]</text><text x="500" y="209" class="t s15" text-anchor="middle">sigma_j = s_out of chunk j = s_in of chunk j+1 (links the chunks)</text><text x="500" y="233" class="t s15" text-anchor="middle">first 4 elements of the last state = digest of the whole stream</text><text x="500" y="275" class="ts" text-anchor="middle">explain.sh step 5 (2 chunks): 322,314 bytes in total, about 127 conjectured bits</text></svg></div><h3>What it does</h3><p>R_RC proves that the encrypted records the cloud holds are the ones the LP committed to: block fields, tag lists and headers are absorbed into a Poseidon2 sponge. The stream is cut into chunks, and every chunk gets its own STARK proof, so chunks can be proven and checked independently.</p><h3>What it contains</h3><ul><li>Chunk public values include s_in, s_out, chunk index, hdr_first, and the check values alpha, beta, acc.</li><li>Real N = 10,000 run: 5 chunk proofs, 5,120 trace rows, 837,561 bytes, 127 conjectured bits (49 unique-decoding, 73 list-decoding).</li><li>Real N = 2000 run (explain.sh): 2 chunk proofs, 322,314 bytes.</li></ul><h3>Code</h3><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-plonky3-w46/src/pchunk.rs#L1-L22" target="_blank" rel="noopener">pqz-plonky3-w46/src/pchunk.rs:1-22</a><span class="lines">22 lines</span></div><div class="snip-note">What the chunk proof constrains.</div><pre class="code collapsed"><span class="c">//! w38 stage 3: R_RC over linked chunks of the PACKED stream (two records per absorbed word) with range checks.</span>
+<span class="c">//!</span>
+<span class="c">//! Port of `chunk.rs` (w35 D1/D1b/D1c) to the packed format of `pair.rs`. The row kinds are the countdown of `pair.rs`</span>
+<span class="c">//! (hdr / va / vb, rem, zr, rinv; pad = seen - last), so the old K = (pid, e, seq) columns are gone: pid and e live in the header</span>
+<span class="c">//! word, seq = seq_start + position. A single RC proof (the w33 `rc.rs` role) is ONE chunk with `chunk_index = 0` that holds all</span>
+<span class="c">//! blocks (the verifier then knows the whole final state, whose first 4 elements are the stream digest); there is no separate AIR.</span>
+<span class="c">//!</span>
+<span class="c">//! Packed word (record row): [id_a, v_a, b_a, tag_a, id_b, v_b, b_b, tag_b]; header row: [e, g, m_g, pid, seq_start, hd_lo, hd_hi, 1].</span>
+<span class="c">//! Rows per block: 1 + ceil(B/2). Public values: `ChunkLayout` (46), `total_words` and the chunk size count PACKED words.</span>
+<span class="c">//!</span>
+<span class="c">//! Constraints (degree &lt;= 3):</span>
+<span class="c">//!   R1/R2/R2b  Poseidon2 per row, sponge from the public s_in (chunk 0: s_in = IV(total_words)).</span>
+<span class="c">//!   R3  row 0: word = hdr_first (public), a header row; hdr counter = hdr_before + 1.</span>
+<span class="c">//!   R4  row kinds, countdown, empty half b holds the all-zero half word (so its tag, v, b are 0).</span>
+<span class="c">//!   R5  counter hn&#x27; = hn + hdr&#x27;.  Last real row: zr = 1 (block complete), hn = hdr_before + n_blocks_chunk, out = s_out.</span>
+<span class="c">//!   R6  idx / last / seen as in `pair.rs`.</span>
+<span class="c">//!   D1  three accumulators binding BOTH tags of a record row with distinct powers of alpha, and the header slots 0..6 with powers of beta:</span>
+<span class="c">//!         row 0 / transition:  acc&#x27; = alpha^2 acc + (1-hdr&#x27;) (alpha tag_a&#x27; + tag_b&#x27;) + hdr&#x27; sum_{i&lt;7} beta^i w_i&#x27;</span>
+<span class="c">//!       (an empty half contributes tag 0). Read at row `last`.</span>
+<span class="c">//!   RANGE  (w38 stage 3) for every row with va = 1: v_a, v_b &lt; 2^32 and b_a, b_b &lt; 2^20, by bit columns (32 + 20 per half).</span>
+<span class="c">//!       The empty half is covered too: its word is forced to zero, so its bits are zero. This is what makes Exec P2r sound.</span>
+<span class="c">//! Padding rows are outside every structural rule (pad = seen - last) and are not read by any boundary constraint.</span></pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-plonky3-w46/src/chunk.rs#L127-L143" target="_blank" rel="noopener">pqz-plonky3-w46/src/chunk.rs:127-143</a><span class="lines">17 lines</span></div><div class="snip-note">Public values of one chunk.</div><pre class="code"><span class="c">/// Public inputs of one chunk proof (w30 `RcChunkPublic` + D1b values), field elements as canonical u64.</span>
+#[derive(Clone, Debug, PartialEq, Eq)]
+<span class="k">pub</span> <span class="k">struct</span> RcChunkPublic {
+    <span class="k">pub</span> s_in: State,
+    <span class="k">pub</span> s_out: State,
+    <span class="k">pub</span> chunk_index: usize,
+    <span class="k">pub</span> n_blocks_chunk: usize,
+    <span class="k">pub</span> hdr_before: usize,
+    <span class="k">pub</span> block_size: usize,
+    <span class="c">/// number of words of the WHOLE epoch stream, G * (block_size + 1)</span>
+    <span class="k">pub</span> total_words: usize,
+    <span class="k">pub</span> hdr_first: [u64; <span class="n">8</span>],
+    <span class="k">pub</span> alpha: [u64; NACC],
+    <span class="k">pub</span> acc: [u64; NACC],
+    <span class="c">/// w35 D1c: header-word weights, one per accumulator</span>
+    <span class="k">pub</span> beta: [u64; NACC],
+}</pre></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L396-L417" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:396-417</a><span class="lines">22 lines</span></div><div class="snip-note">Prove all chunks.</div><pre class="code collapsed">    <span class="k">pub</span> <span class="k">fn</span> prove_chunks(&amp;<span class="k">self</span>) -&gt; Res&lt;(Vec&lt;ChunkProof&gt;, ProofStage)&gt; {
+        <span class="k">let</span> <span class="k">mut</span> st = ProofStage::default();
+        <span class="k">let</span> o = opts();
+        <span class="k">let</span> <span class="k">mut</span> out = Vec::with_capacity(<span class="k">self</span>.pubs.len());
+        <span class="k">for</span> p <span class="k">in</span> &amp;<span class="k">self</span>.pubs {
+            <span class="k">let</span> cw = <span class="k">self</span>.block_words(p.hdr_before, p.n_blocks_chunk);
+            <span class="k">let</span> t = Instant::now();
+            <span class="k">let</span> (proof, rows) = <span class="k">match</span> <span class="k">self</span>.fmt {
+                WFmt::Old =&gt; (chunk::plain::prove_chunk(&amp;o, cw, p), chunk::plain::chunk_rows(p.n_words())),
+                WFmt::P2r =&gt; (pchunk::plain::prove_chunk(&amp;o, cw, p), pchunk::plain::chunk_rows(pchunk::pc_n_words(p))),
+            };
+            <span class="k">let</span> proof = proof.map_err(|e| RunError::new(<span class="n">4</span>, format!(<span class="s">&quot;R_RC chunk {} prove failed: {e}&quot;</span>, p.chunk_index)))?;
+            st.rows += rows;
+            sec_note(&amp;<span class="k">mut</span> st, rows);
+            <span class="k">let</span> b = c1::to_bytes(&amp;proof);
+            st.prove_s += t.elapsed().as_secs_f64();
+            st.bytes += b.len();
+            st.chunks += <span class="n">1</span>;
+            out.push(ChunkProof::new(b, p.clone(), <span class="k">self</span>.tag_lists[out.len()].clone()));
+        }
+        <span class="k">Ok</span>((out, st))
+    }</pre><button class="more" type="button">Show more</button></div><div class="honest"><b>Honest note.</b> Plain-mode STARK: it proves correctness, it is not zero-knowledge. A ZK mode exists in <code>pqz-plonky3-w39zk</code> and is not used here. laptop demo run, not a paper number.</div><div class="pn"><button type="button" class="prev">&larr; previous</button><button type="button" class="next">next &rarr;</button></div></section><section id="s5" data-n="5"><div class="sh"><h2>5. Blocks, EAPAT and block-cover stream</h2><span class="badge">laptop time: 0.083 s ingest (N = 10,000)</span></div><div class="try"><div class="try-h">Try it</div><div class="cmd"><span class="prompt">$</span> bash demo/explain.sh</div><pre class="out">  block_index    : 0
+  count          : 16
+  merkle_root    : 10836554cbe0a5569425c9c317c15eb2a766e2e7f5b48068f1a965490e7702d8
+  summary_digest : 1eee03ab45cfee0bd3a779f8c67d901e2cbee5bfd06c52bc608a9cb1a091b6ed  (Bloom filter: 6902 bits, k = 7)
+  prev_header    : 0000000000000000000000000000000000000000000000000000000000000000  (first block)
+  signature      : 3309 bytes (ML-DSA-65), header hash d69e2692d415...57dd9a
+  verify_block   : Ok(())
+  block summary says &#x27;may contain a match&#x27; for P1: true
+  exact predicate on the 16 records selects ids: [11, 12, 13, 14]
+----- From here: the real w35 pipeline on N = 2000 (4 blocks of 500, chunk = 2) -----
+...
+  descriptor D_0 : 178519d3966f45437a4b008f378463a591af8d2327731c0fb5e9b0eaabeddd4e  (SHA3 over pid, id, epoch, seq, H(CT), H(tags))
+  block B_(e,1)  : e=1 g=1 q_start=1 q_next=501 count=500
+                   r_rec  = 74a9e001f06bfa02c6cd1c66853046ff69e09b49b7d96e7591309dca69ccd20a  (Merkle root of the 500 record descriptors)
+                   s_root = 938ff01ecca3a130d5842ffff13c27c847ce8177fa00a99cd42a525ae9144025  (Merkle root of the block Bloom filter)
+                   commitment = 157d232ec57f41254af753abbd955f0b9745bdfb10efc3a9b9ba7e80a30c9459
+  blocks in epoch: 4   R_e = MerkleRoot(B_1..B_4) = a7c9089bc2163ef6fac963d758fd3074ec60efa8cda47a288ddee515736bbb24
+  chunks: 2 (each chunk = 2 blocks), sigma = sponge state kept at the end of each chunk
+   block 1: s_root=938ff01ecca3...144025  sigma=none
+   block 2: s_root=b880c9607ca8...f00718  sigma=chunk-end state
+   block 3: s_root=233938e825e3...06c155  sigma=none
+   block 4: s_root=235d183e5b0a...c40a99  sigma=chunk-end state</pre><div class="try-n">Real output of explain.sh on the laptop (N = 2000 for the later steps). Only lines of this step are shown; the full run prints all 10 steps.</div></div><div class="diag-wrap"><svg class="diagram" viewBox="0 0 1000 415" role="img" aria-label="Blocks with Merkle and Bloom summaries and the epoch root"><defs><marker id="ah5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahead"/></marker></defs><text x="20" y="24" class="tb" text-anchor="start">chunk 0</text><text x="510" y="24" class="tb" text-anchor="start">chunk 1</text><rect x="15" y="30" width="480" height="3" rx="10" class="bar"/><rect x="505" y="30" width="480" height="3" rx="10" class="bar"/><rect x="15" y="42" width="236" height="150" rx="10" class="box"/><text x="133" y="68" class="tb" text-anchor="middle">block B(1,1)</text><text x="133" y="94" class="t s15" text-anchor="middle">count 500, seq 1..500</text><text x="133" y="120" class="t s15" text-anchor="middle">s_root 938ff01ecca3…</text><text x="133" y="146" class="t s15" text-anchor="middle">sigma = none</text><line x1="133" y1="194" x2="133" y2="230" class="ar" marker-end="url(#ah5)"/><rect x="262" y="42" width="236" height="150" rx="10" class="box hit"/><text x="380" y="68" class="tb" text-anchor="middle">block B(1,2)</text><text x="380" y="94" class="t s15" text-anchor="middle">count 500, seq 501..1000</text><text x="380" y="120" class="t s15" text-anchor="middle">s_root b880c9607ca8…</text><text x="380" y="146" class="t s15" text-anchor="middle">sigma = chunk-end state</text><line x1="380" y1="194" x2="380" y2="230" class="ar" marker-end="url(#ah5)"/><rect x="509" y="42" width="236" height="150" rx="10" class="box"/><text x="627" y="68" class="tb" text-anchor="middle">block B(1,3)</text><text x="627" y="94" class="t s15" text-anchor="middle">count 500, seq 1001..1500</text><text x="627" y="120" class="t s15" text-anchor="middle">s_root 233938e825e3…</text><text x="627" y="146" class="t s15" text-anchor="middle">sigma = none</text><line x1="627" y1="194" x2="627" y2="230" class="ar" marker-end="url(#ah5)"/><rect x="756" y="42" width="236" height="150" rx="10" class="box hit"/><text x="874" y="68" class="tb" text-anchor="middle">block B(1,4)</text><text x="874" y="94" class="t s15" text-anchor="middle">count 500, seq 1501..2000</text><text x="874" y="120" class="t s15" text-anchor="middle">s_root 235d183e5b0a…</text><text x="874" y="146" class="t s15" text-anchor="middle">sigma = chunk-end state</text><line x1="874" y1="194" x2="874" y2="230" class="ar" marker-end="url(#ah5)"/><text x="20" y="222" class="ts" text-anchor="start"></text><rect x="53" y="232" width="160" height="34" rx="10" class="box small"/><text x="133" y="255" class="t s15" text-anchor="middle">leaf(B1)</text><rect x="300" y="232" width="160" height="34" rx="10" class="box small"/><text x="380" y="255" class="t s15" text-anchor="middle">leaf(B2)</text><rect x="547" y="232" width="160" height="34" rx="10" class="box small"/><text x="627" y="255" class="t s15" text-anchor="middle">leaf(B3)</text><rect x="794" y="232" width="160" height="34" rx="10" class="box small"/><text x="874" y="255" class="t s15" text-anchor="middle">leaf(B4)</text><path d="M 133 268 L 133 290 L 380 290" class="ar" fill="none"/><path d="M 380 268 L 380 290" class="ar" fill="none"/><path d="M 627 268 L 627 290 L 874 290" class="ar" fill="none"/><path d="M 874 268 L 874 290" class="ar" fill="none"/><rect x="300" y="292" width="160" height="32" rx="10" class="box small"/><text x="380" y="314" class="t s15" text-anchor="middle">node</text><rect x="794" y="292" width="160" height="32" rx="10" class="box small"/><text x="874" y="314" class="t s15" text-anchor="middle">node</text><path d="M 380 326 L 380 340 L 627 340" class="ar" fill="none"/><path d="M 874 326 L 874 340 L 627 340" class="ar" fill="none"/><line x1="627" y1="340" x2="627" y2="358" class="ar" marker-end="url(#ah5)"/><rect x="300" y="360" width="654" height="40" rx="10" class="box hit"/><text x="627" y="386" class="tb s15" text-anchor="middle">R_e = MerkleRoot(B1..B4) = a7c9089bc216…6bbb24   (N_e = 2000, G_e = 4)</text><text x="20" y="300" class="ts" text-anchor="start">Inside block 1:</text><text x="20" y="324" class="t s14" text-anchor="start">r_rec = 74a9e001…ca20a</text><text x="20" y="344" class="t s14" text-anchor="start">(Merkle root of</text><text x="20" y="364" class="t s14" text-anchor="start">the 500 descriptors)</text></svg></div><h3>What it does</h3><p>Records are grouped into blocks. Each block has a Merkle root over its records, a Bloom filter summary, and a header signed with ML-DSA-65. In the w35 pipeline every block is committed by a hash of its fields, and the commitments form the epoch root R_e.</p><h3>What it contains</h3><ul><li>Real values, 16-record block: Merkle root <code>10836554…7702d8</code>, Bloom filter 6,902 bits with k = 7, signature 3,309 bytes, <code>verify_block</code> = Ok.</li><li>Real values, N = 2000: 4 blocks of 500 records; R_e = <code>a7c9089b…6bbb24</code>; block 1 has r_rec <code>74a9e001…</code> and s_root <code>938ff01e…</code>.</li></ul><h3>Code</h3><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-eval/src/eapat.rs#L216-L249" target="_blank" rel="noopener">pqz-eval/src/eapat.rs:216-249</a><span class="lines">34 lines</span></div><div class="snip-note">Block and build_block.</div><pre class="code collapsed"><span class="c">/// A block: header, summary, encrypted records and the header signature.</span>
+#[derive(Clone)]
+<span class="k">pub</span> <span class="k">struct</span> Block {
+    <span class="k">pub</span> header: BlockHeader,
+    <span class="k">pub</span> summary: Bloom,
+    <span class="k">pub</span> records: Vec&lt;EncryptedRecord&gt;,
+    <span class="k">pub</span> signature: Vec&lt;u8&gt;,
+}
+
+<span class="c">/// Build and sign one block. `prev_header_hash` is the previous block&#x27;s</span>
+<span class="c">/// `header.hash()` (`[0;32]` for the first block).</span>
+<span class="k">pub</span> <span class="k">fn</span> build_block(
+    block_index: u64,
+    records: Vec&lt;EncryptedRecord&gt;,
+    prev_header_hash: [u8; <span class="n">32</span>],
+    keys: &amp;EpochKeys,
+) -&gt; Block {
+    <span class="k">let</span> summary = Bloom::build(records.len(), records.iter().flat_map(|r| r.tags.iter()));
+    <span class="k">let</span> leaves: Vec&lt;[u8; <span class="n">32</span>]&gt; = records.iter().map(leaf_hash).collect();
+    <span class="k">let</span> header = BlockHeader {
+        block_index,
+        count: records.len() <span class="k">as</span> u32,
+        merkle_root: merkle_root(&amp;leaves),
+        summary_digest: summary.digest(),
+        prev_header_hash,
+    };
+    <span class="k">let</span> signature = keys.sign(&amp;header.to_bytes());
+    Block {
+        header,
+        summary,
+        records,
+        signature,
+    }
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-eval/src/eapat.rs#L251-L272" target="_blank" rel="noopener">pqz-eval/src/eapat.rs:251-272</a><span class="lines">22 lines</span></div><div class="snip-note">verify_block.</div><pre class="code collapsed"><span class="c">/// Verify a block against the epoch keys: record count, summary digest, Merkle</span>
+<span class="c">/// root and header signature. Any changed leaf or header field fails.</span>
+<span class="k">pub</span> <span class="k">fn</span> verify_block(block: &amp;Block, keys: &amp;EpochKeys) -&gt; Result&lt;(), String&gt; {
+    <span class="k">if</span> block.header.count <span class="k">as</span> usize != block.records.len() {
+        <span class="k">return</span> <span class="k">Err</span>(<span class="s">&quot;record count does not match header&quot;</span>.into());
+    }
+    <span class="k">let</span> summary = Bloom::build(
+        block.records.len(),
+        block.records.iter().flat_map(|r| r.tags.iter()),
+    );
+    <span class="k">if</span> summary.digest() != block.header.summary_digest {
+        <span class="k">return</span> <span class="k">Err</span>(<span class="s">&quot;summary digest mismatch&quot;</span>.into());
+    }
+    <span class="k">let</span> leaves: Vec&lt;[u8; <span class="n">32</span>]&gt; = block.records.iter().map(leaf_hash).collect();
+    <span class="k">if</span> merkle_root(&amp;leaves) != block.header.merkle_root {
+        <span class="k">return</span> <span class="k">Err</span>(<span class="s">&quot;Merkle root mismatch&quot;</span>.into());
+    }
+    <span class="k">if</span> !keys.verify(&amp;block.header.to_bytes(), &amp;block.signature) {
+        <span class="k">return</span> <span class="k">Err</span>(<span class="s">&quot;header signature invalid&quot;</span>.into());
+    }
+    <span class="k">Ok</span>(())
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L203-L242" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:203-242</a><span class="lines">40 lines</span></div><div class="snip-note">Block35 and the epoch root.</div><pre class="code collapsed"><span class="c">/// `g` is 1-based (as `AuditBlock.g`); the header word of the same block carries g - 1.</span>
+#[derive(Clone, Debug, PartialEq, Eq)]
+<span class="k">pub</span> <span class="k">struct</span> Block35 {
+    <span class="k">pub</span> e: u64,
+    <span class="k">pub</span> g: u64,
+    <span class="k">pub</span> q_start: u64,
+    <span class="k">pub</span> q_next: u64,
+    <span class="k">pub</span> count: u64,
+    <span class="k">pub</span> r_rec: Hash,
+    <span class="k">pub</span> s_root: Hash,
+    <span class="k">pub</span> sigma: Option&lt;State&gt;,
+}
+
+<span class="k">impl</span> Block35 {
+    <span class="k">pub</span> <span class="k">fn</span> commitment(&amp;<span class="k">self</span>) -&gt; Hash {
+        <span class="k">let</span> <span class="k">mut</span> se: Vec&lt;u8&gt; = Vec::with_capacity(<span class="n">97</span>);
+        <span class="k">match</span> &amp;<span class="k">self</span>.sigma {
+            <span class="k">None</span> =&gt; se.push(<span class="n">0</span>),
+            <span class="k">Some</span>(s) =&gt; {
+                se.push(<span class="n">1</span>);
+                <span class="k">for</span> x <span class="k">in</span> s {
+                    se.extend_from_slice(&amp;x.to_le_bytes());
+                }
+            }
+        }
+        h(&amp;[b<span class="s">&quot;PQZ-B35&quot;</span>, &amp;u64b(<span class="k">self</span>.e), &amp;u64b(<span class="k">self</span>.g), &amp;u64b(<span class="k">self</span>.q_start), &amp;u64b(<span class="k">self</span>.q_next), &amp;u64b(<span class="k">self</span>.count), &amp;<span class="k">self</span>.r_rec, &amp;<span class="k">self</span>.s_root, &amp;se])
+    }
+    <span class="k">pub</span> <span class="k">fn</span> leaf(&amp;<span class="k">self</span>) -&gt; Hash {
+        leaf_hash(&amp;<span class="k">self</span>.commitment())
+    }
+    <span class="k">pub</span> <span class="k">fn</span> bytes(&amp;<span class="k">self</span>) -&gt; usize {
+        <span class="n">5</span> * <span class="n">8</span> + <span class="n">64</span> + <span class="k">if</span> <span class="k">self</span>.sigma.is_some() { <span class="n">97</span> } <span class="k">else</span> { <span class="n">1</span> }
+    }
+}
+
+<span class="c">/// R_e = MerkleRoot(leaf(B_{e,1}), ..., leaf(B_{e,G_e})) with the w35 commitment.</span>
+<span class="k">pub</span> <span class="k">fn</span> epoch_root35(blocks: &amp;[Block35]) -&gt; Hash {
+    <span class="k">let</span> leaves: Vec&lt;Hash&gt; = blocks.iter().map(|b| b.leaf()).collect();
+    merkle_root(&amp;leaves)
+}</pre><button class="more" type="button">Show more</button></div><div class="honest"><b>Honest note.</b> Steps 3 of explain.sh uses the older single-block code (pqz-eval); steps 4 onward use the w35 blocks. laptop demo run, not a paper number.</div><div class="pn"><button type="button" class="prev">&larr; previous</button><button type="button" class="next">next &rarr;</button></div></section><section id="s6" data-n="6"><div class="sh"><h2>6. Blockchain: epoch anchoring and canonical state Omega</h2><span class="badge">laptop time: 0.0040 s anchor (N = 10,000)</span></div><div class="try"><div class="try-h">Try it</div><div class="cmd"><span class="prompt">$</span> bash demo/explain.sh</div><pre class="out">  A_e = (e=1, R_e=a7c9089bc216...6bbb24, N_e=2000, G_e=4, t_e=1, p_e=6d417b62a0fa...7f40e5)
+  sigma_e (ML-DSA-65 by the AA) : 3309 bytes
+  Gamma_e = H(A_e || sigma_e)   : 271924263076a9455d114c7008ca91115b3bec719398eda89eeddbad1dd6548d
+  Omega_e = H(label, e, Gamma_e, R_pol, v_auth) : 7748df4627feabfbaa2118a127effbcf7a3855232a2cb2f1b7779579b0f29671
+  ledger block height 1: 1 tx, state_root efa8747a81f9...65e7e5, quorum certificate with 3 votes (need 3 of 4)
+  anchor took 0.0041 s (seal 0.0002, tx sign 0.0004, submit+consensus sim 0.0035)
+  light-client read of State[e] with Merkle path + QC: Ok(&quot;verified&quot;)
+  NOTE: the chain is SIMULATED in this process (4 validators, no network).</pre><div class="try-n">Real output of explain.sh on the laptop (N = 2000 for the later steps). Only lines of this step are shown; the full run prints all 10 steps.</div></div><div class="diag-wrap"><svg class="diagram" viewBox="0 0 1000 452" role="img" aria-label="Chain of epoch anchors and one ledger block"><defs><marker id="ah6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahead"/></marker></defs><rect x="10" y="20" width="230" height="170" rx="10" class="box"/><text x="125" y="46" class="tb" text-anchor="middle">genesis values</text><text x="125" y="72" class="t s14" text-anchor="middle">fixed labels:</text><text x="125" y="98" class="t s14" text-anchor="middle">r = H(&quot;PQZ-Audit-Genesis&quot;)</text><text x="125" y="124" class="t s14" text-anchor="middle">p = H(&quot;EAPAT-Genesis&quot;)</text><line x1="242" y1="105" x2="288" y2="105" class="ar" marker-end="url(#ah6)"/><text x="265" y="92" class="ts" text-anchor="middle">p_e</text><rect x="290" y="20" width="520" height="190" rx="10" class="box hit"/><text x="300" y="46" class="tb" text-anchor="start">epoch 1:  A_1 = (e=1, R_e=a7c908…bb24, N_e=2000,</text><text x="300" y="76" class="t s14" text-anchor="start">G_e=4, t_e=1, p_e=6d417b…40e5)</text><text x="300" y="106" class="t s14" text-anchor="start">sigma_1 = ML-DSA-65 signature of the AA (3309 bytes)</text><text x="300" y="136" class="t s14" text-anchor="start">Gamma_1 = H(A_1 || sigma_1) = 271924…548d</text><text x="300" y="166" class="t s14" text-anchor="start">Omega_1 = H(&quot;PQZA-CAAS&quot;, e, Gamma_1, R_pol, v_auth)</text><text x="300" y="196" class="t s14" text-anchor="start">        = 7748df…9671</text><text x="300" y="200" class="ts" text-anchor="start">p_e links to the previous epoch (for e = 1: the genesis value)</text><line x1="812" y1="105" x2="858" y2="105" class="ar dash" marker-end="url(#ah6)"/><rect x="860" y="40" width="130" height="130" rx="10" class="box dashed"/><text x="925" y="70" class="t s14" text-anchor="middle">epoch 2</text><text x="925" y="96" class="t s14" text-anchor="middle">next anchor</text><text x="925" y="122" class="t s14" text-anchor="middle">p_e = Gamma_1</text><text x="925" y="148" class="t s14" text-anchor="middle">(not run)</text><path d="M 550 212 L 550 262" class="ar" fill="none" marker-end="url(#ah6)"/><text x="560" y="244" class="ts" text-anchor="start">anchor transaction (signed, submitted)</text><rect x="10" y="264" width="980" height="176" rx="10" class="box ledger"/><text x="25" y="292" class="tb" text-anchor="start">Ledger block, height 1  (simulated, 4 validators, quorum 3)</text><rect x="25" y="306" width="300" height="118" rx="10" class="box small"/><text x="40" y="332" class="t s14" text-anchor="start">1 transaction:</text><text x="40" y="358" class="t s14" text-anchor="start">Anchor(e, Gamma, p_e,</text><text x="40" y="384" class="t s14" text-anchor="start">R_pol, v_auth, Omega, Omega_prev)</text><rect x="345" y="306" width="310" height="118" rx="10" class="box small"/><text x="360" y="332" class="t s14" text-anchor="start">contract writes State[1]:</text><text x="360" y="358" class="t s14" text-anchor="start">Gamma, R_pol, v_auth, Omega</text><text x="360" y="384" class="t s14" text-anchor="start">state_root = efa874…e7e5</text><rect x="675" y="306" width="300" height="118" rx="10" class="box small"/><text x="690" y="332" class="t s14" text-anchor="start">quorum certificate:</text><text x="690" y="358" class="t s14" text-anchor="start">3 ML-DSA-65 votes</text><text x="690" y="384" class="t s14" text-anchor="start">(needs 3 of 4)</text><line x1="327" y1="365" x2="343" y2="365" class="ar" marker-end="url(#ah6)"/><line x1="657" y1="365" x2="673" y2="365" class="ar" marker-end="url(#ah6)"/></svg></div><h3>What it does</h3><p>The AA signs a small record A_e of the epoch (root R_e, record count, block count, time, link to the previous epoch) and sends it to the ledger. The ledger contract checks it and stores the state. From that state everyone derives the same canonical value Omega_e, which later proofs are bound to. This stops replay, a wrong policy, a changed query, and an omitted block (section 12).</p><h3>What it contains</h3><ul><li>A_e = (e, R_e, N_e, G_e, t_e, p_e) with p_e = Gamma of the previous epoch; sigma_e = Sign_AA(H(A_e)); Gamma_e = H(A_e || sigma_e); Omega_e = H(label, e, Gamma_e, R_pol, v_auth).</li><li>Real N = 2000 run: Gamma_e <code>27192426…548d</code>, Omega_e <code>7748df46…9671</code>; ledger block height 1 with 1 transaction and a quorum certificate of 3 votes (need 3 of 4).</li><li>Contract checks listed in the code: BadEpoch, BadPredecessor, BadOmegaPrev, EpochExists, OmegaRecompute. Defences: reservation_unique, single_use, omega_equality, current_freshness, predicate_binding, block_cover, anchor_binding.</li><li>This section has more than 3 snippets because it is the main point of the design.</li></ul><h3>Code</h3><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-ledger/src/audit.rs#L40-L64" target="_blank" rel="noopener">pqz-ledger/src/audit.rs:40-64</a><span class="lines">25 lines</span></div><div class="snip-note">The epoch record A_e.</div><pre class="code collapsed">#[derive(Clone, Debug, PartialEq, Eq)]
+<span class="k">pub</span> <span class="k">struct</span> EpochA {
+    <span class="k">pub</span> e: u64,
+    <span class="k">pub</span> r_e: Hash,
+    <span class="k">pub</span> n_e: u64,
+    <span class="k">pub</span> g_e: u64,
+    <span class="k">pub</span> t_e: u64,
+    <span class="k">pub</span> p_e: Hash,
+}
+
+<span class="k">impl</span> EpochA {
+    <span class="k">pub</span> <span class="k">fn</span> encode(&amp;<span class="k">self</span>) -&gt; Vec&lt;u8&gt; {
+        <span class="k">let</span> <span class="k">mut</span> b = Vec::with_capacity(<span class="n">96</span>);
+        b.extend_from_slice(&amp;u64b(<span class="k">self</span>.e));
+        b.extend_from_slice(&amp;<span class="k">self</span>.r_e);
+        b.extend_from_slice(&amp;u64b(<span class="k">self</span>.n_e));
+        b.extend_from_slice(&amp;u64b(<span class="k">self</span>.g_e));
+        b.extend_from_slice(&amp;u64b(<span class="k">self</span>.t_e));
+        b.extend_from_slice(&amp;<span class="k">self</span>.p_e);
+        b
+    }
+    <span class="k">pub</span> <span class="k">fn</span> digest(&amp;<span class="k">self</span>) -&gt; Hash {
+        h(&amp;[&amp;<span class="k">self</span>.encode()])
+    }
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-ledger/src/audit.rs#L94-L104" target="_blank" rel="noopener">pqz-ledger/src/audit.rs:94-104</a><span class="lines">11 lines</span></div><div class="snip-note">epoch_root and seal.</div><pre class="code"><span class="k">pub</span> <span class="k">fn</span> epoch_root(blocks: &amp;[AuditBlock]) -&gt; Hash {
+    <span class="k">let</span> leaves: Vec&lt;Hash&gt; = blocks.iter().map(|b| b.leaf()).collect();
+    merkle_root(&amp;leaves)
+}
+
+<span class="k">fn</span> seal(a: EpochA, blocks: Vec&lt;AuditBlock&gt;, aa: &amp;SigKeys, r_pol: &amp;Hash, v_auth: u64) -&gt; AuditEpoch {
+    <span class="k">let</span> sigma = aa.sign(&amp;a.digest());
+    <span class="k">let</span> gamma = h(&amp;[&amp;a.encode(), &amp;sigma]);
+    <span class="k">let</span> omega = omega(a.e, &amp;gamma, r_pol, v_auth);
+    AuditEpoch { a, sigma, gamma, blocks, omega }
+}</pre></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-ledger/src/contract.rs#L206-L210" target="_blank" rel="noopener">pqz-ledger/src/contract.rs:206-210</a><span class="lines">5 lines</span></div><div class="snip-note">Omega.</div><pre class="code"><span class="c">/// Paper Eq. (caas-state): Omega_e = H(&quot;PQZA-CAAS&quot; || e || Gamma_e || R_pol || v_auth).</span>
+<span class="c">/// Integers are 8-byte big-endian (our encoding choice; the paper fixes none).</span>
+<span class="k">pub</span> <span class="k">fn</span> omega(e: u64, gamma: &amp;Hash, r_pol: &amp;Hash, v_auth: u64) -&gt; Hash {
+    h(&amp;[LBL_CAAS, &amp;u64b(e), gamma, r_pol, &amp;u64b(v_auth)])
+}</pre></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-ledger/src/contract.rs#L336-L358" target="_blank" rel="noopener">pqz-ledger/src/contract.rs:336-358</a><span class="lines">23 lines</span></div><div class="snip-note">Contract: apply an Anchor.</div><pre class="code collapsed">    <span class="k">pub</span> <span class="k">fn</span> apply(&amp;<span class="k">mut</span> <span class="k">self</span>, tx: &amp;Tx) -&gt; Result&lt;(), Reject&gt; {
+        <span class="k">match</span> tx {
+            Tx::Anchor { e, gamma, p_e, r_pol, v_auth, omega: om, omega_prev } =&gt; {
+                <span class="k">let</span> (e_last, g_last, om_last) = <span class="k">self</span>.last();
+                <span class="k">if</span> *e != e_last + <span class="n">1</span> {
+                    <span class="k">return</span> <span class="k">Err</span>(Reject::BadEpoch);
+                }
+                <span class="k">if</span> p_e != &amp;g_last {
+                    <span class="k">return</span> <span class="k">Err</span>(Reject::BadPredecessor);
+                }
+                <span class="k">if</span> omega_prev != &amp;om_last {
+                    <span class="k">return</span> <span class="k">Err</span>(Reject::BadOmegaPrev);
+                }
+                <span class="k">if</span> <span class="k">self</span>.state_entry(*e).is_some() {
+                    <span class="k">return</span> <span class="k">Err</span>(Reject::EpochExists);
+                }
+                <span class="k">if</span> *om != omega(*e, gamma, r_pol, *v_auth) {
+                    <span class="k">return</span> <span class="k">Err</span>(Reject::OmegaRecompute);
+                }
+                <span class="k">self</span>.state.put(&amp;key_state(*e), &amp;enc_state(&amp;StateEntry { gamma: *gamma, r_pol: *r_pol, v_auth: *v_auth, omega: *om }));
+                <span class="k">self</span>.set_last(*e, gamma, om);
+                <span class="k">Ok</span>(())
+            }</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-ledger/src/contract.rs#L22-L52" target="_blank" rel="noopener">pqz-ledger/src/contract.rs:22-52</a><span class="lines">31 lines</span></div><div class="snip-note">The defences.</div><pre class="code collapsed"><span class="c">/// Switches for single defences (mutation testing). All `true` = the real system.</span>
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+<span class="k">pub</span> <span class="k">struct</span> Defences {
+    <span class="c">/// authorize requires Priv[RID] = none (no re-reservation of a used RID)</span>
+    <span class="k">pub</span> reservation_unique: bool,
+    <span class="c">/// consume requires Priv[RID] = Authorized (no second consume, no unknown RID)</span>
+    <span class="k">pub</span> single_use: bool,
+    <span class="c">/// authorize requires the presented Omega to equal the canonical State[e].Omega</span>
+    <span class="k">pub</span> omega_equality: bool,
+    <span class="c">/// authorize in mode Current requires e = e_last</span>
+    <span class="k">pub</span> current_freshness: bool,
+    <span class="c">/// consume requires the predicate hash to equal the one authorized</span>
+    <span class="k">pub</span> predicate_binding: bool,
+    <span class="c">/// verifier requires every authenticated block 1..G_e to be present (audit.rs)</span>
+    <span class="k">pub</span> block_cover: bool,
+    <span class="c">/// verifier binds A_e to the ledger (Gamma_e = H(A_e||sigma_e)) and checks the AA signature (audit.rs)</span>
+    <span class="k">pub</span> anchor_binding: bool,
+}
+
+<span class="k">impl</span> Defences {
+    <span class="k">pub</span> <span class="k">const</span> <span class="k">fn</span> all() -&gt; <span class="k">Self</span> {
+        Defences {
+            reservation_unique: <span class="k">true</span>,
+            single_use: <span class="k">true</span>,
+            omega_equality: <span class="k">true</span>,
+            current_freshness: <span class="k">true</span>,
+            predicate_binding: <span class="k">true</span>,
+            block_cover: <span class="k">true</span>,
+            anchor_binding: <span class="k">true</span>,
+        }
+    }</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/lib.rs#L643-L662" target="_blank" rel="noopener">pqz-integrated-w46/src/lib.rs:643-662</a><span class="lines">20 lines</span></div><div class="snip-note">commit_epoch in the demo.</div><pre class="code collapsed"><span class="c">/// P4b. Commit epoch `EPOCH` (R_e, N_e, G_e from the real log) in the ledger simulation. The contract checks the anchor rules (epoch number, p_e, Omega_e).</span>
+<span class="k">pub</span> <span class="k">fn</span> commit_epoch(lc: &amp;<span class="k">mut</span> LedgerCtx, r_e: Hash, n_e: u64, g_e: u64) -&gt; Res&lt;(LedgerStats, Hash)&gt; {
+    <span class="k">let</span> <span class="k">mut</span> st = LedgerStats::default();
+    <span class="k">let</span> t = Instant::now();
+    <span class="k">let</span> tx = lc.chain.next_anchor_root_only(&amp;lc.aa, r_e, n_e, g_e);
+    st.seal_s = t.elapsed().as_secs_f64();
+    <span class="k">let</span> t = Instant::now();
+    <span class="k">let</span> signed = SignedTx::sign(tx, <span class="n">0</span>, &amp;lc.aa, &amp;lc.led.cfg);
+    st.txsign_s = t.elapsed().as_secs_f64();
+    <span class="k">let</span> t = Instant::now();
+    <span class="k">let</span> res = lc.led.submit(vec![signed]);
+    st.submit_s = t.elapsed().as_secs_f64();
+    st.blocks = res.blocks.len();
+    <span class="k">match</span> res.receipts.first() {
+        <span class="k">Some</span>(r) <span class="k">if</span> r.result.is_ok() =&gt; {}
+        other =&gt; <span class="k">return</span> <span class="k">Err</span>(RunError::new(<span class="n">6</span>, format!(<span class="s">&quot;ledger rejected the anchor transaction: {:?}&quot;</span>, other.map(|r| &amp;r.result)))),
+    }
+    <span class="k">let</span> om = lc.chain.epoch(EPOCH).omega;
+    <span class="k">Ok</span>((st, om))
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-ledger/src/ledger.rs#L435-L461" target="_blank" rel="noopener">pqz-ledger/src/ledger.rs:435-461</a><span class="lines">27 lines</span></div><div class="snip-note">Quorum certificate and light-client read.</div><pre class="code collapsed"><span class="c">/// Client-side check: QC of &gt;= quorum distinct validators over the header hash, then Merkle path</span>
+<span class="c">/// from the entry to the header&#x27;s state root. The client trusts the validator keys.</span>
+<span class="k">pub</span> <span class="k">fn</span> verify_qc(header: &amp;BlockHeader, qc: &amp;[Vote], vks: &amp;[VerifyingKey&lt;MlDsa65&gt;], quorum: usize) -&gt; bool {
+    <span class="k">let</span> bh = header.hash();
+    <span class="k">let</span> msg = vote_msg(&amp;bh);
+    <span class="k">let</span> <span class="k">mut</span> seen = vec![<span class="k">false</span>; vks.len()];
+    <span class="k">let</span> <span class="k">mut</span> good = <span class="n">0usize</span>;
+    <span class="k">for</span> v <span class="k">in</span> qc {
+        <span class="k">let</span> j = v.validator <span class="k">as</span> usize;
+        <span class="k">if</span> j &gt;= vks.len() || seen[j] {
+            <span class="k">continue</span>;
+        }
+        <span class="k">if</span> sig::verify(&amp;vks[j], &amp;msg, &amp;v.sig) {
+            seen[j] = <span class="k">true</span>;
+            good += <span class="n">1</span>;
+        }
+    }
+    good &gt;= quorum
+}
+
+<span class="k">pub</span> <span class="k">fn</span> verify_read(p: &amp;ReadProof, vks: &amp;[VerifyingKey&lt;MlDsa65&gt;], quorum: usize) -&gt; bool {
+    <span class="k">if</span> !verify_qc(&amp;p.header, &amp;p.qc, vks, quorum) {
+        <span class="k">return</span> <span class="k">false</span>;
+    }
+    <span class="k">let</span> leaf = leaf_of(&amp;p.key, &amp;p.value);
+    verify_path(&amp;leaf, p.proof.index, p.proof.size, &amp;p.proof.path, &amp;p.header.state_root)
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-ledger-fabric-w45/pqzcc/main.go#L24-L39" target="_blank" rel="noopener">pqz-ledger-fabric-w45/pqzcc/main.go:24-39</a><span class="lines">16 lines</span></div><div class="snip-note">Hyperledger Fabric chaincode (a real Fabric run exists; it is NOT part of this demo).</div><pre class="code"><span class="k">func</span> (CC) Invoke(stub shim.ChaincodeStubInterface) *pb.Response {
+	<span class="k">fn</span>, args := stub.GetFunctionAndParameters()
+	_ = args
+	raw := stub.GetArgs()
+	err := <span class="k">func</span>() error {
+		<span class="k">if</span> len(raw) != <span class="n">3</span> || len(raw[<span class="n">1</span>]) != <span class="n">8</span> {
+			<span class="k">return</span> fmt.Errorf(<span class="s">&quot;bad args&quot;</span>)
+		}
+		e := binary.BigEndian.Uint64(raw[<span class="n">1</span>])
+		data := raw[<span class="n">2</span>]
+		<span class="k">switch</span> <span class="k">fn</span> {
+		<span class="k">case</span> <span class="s">&quot;AnchorPQZ&quot;</span>:
+			<span class="k">if</span> len(data) != <span class="n">13531</span> {
+				<span class="k">return</span> fmt.Errorf(<span class="s">&quot;payload must be 13531 bytes, got %d&quot;</span>, len(data))
+			}
+			<span class="k">return</span> stub.PutState(fmt.Sprintf(<span class="s">&quot;EP|%d&quot;</span>, e), data)</pre></div><div class="honest"><b>Honest note.</b> The chain in the demo is <b>simulated in-process</b>: 4 validators, quorum 3, ML-DSA-65 votes, no network. A real Hyperledger Fabric run exists in <code>pqz-ledger-fabric-w45</code> (chaincode <code>pqzcc</code>) and is not run by the demo. laptop demo run, not a paper number.</div><div class="pn"><button type="button" class="prev">&larr; previous</button><button type="button" class="next">next &rarr;</button></div></section><section id="s7" data-n="7"><div class="sh"><h2>7. Authorization proof R_Auth</h2><span class="badge">laptop time: 0.0038 s proving, 64 rows</span></div><div class="try"><div class="try-h">Try it</div><div class="cmd"><span class="prompt">$</span> bash demo/explain.sh</div><pre class="out">  proof 126213 bytes, 64 trace rows, proving 0.0031 s (total stage 0.0033 s)
+  public: omega = [18134867769183651959, 14986835138490933674, 17416031268488165498, 8184996212560459703]
+          d_Q   = [5174721180460814168, 1802547671309111583, 17205963863366542530, 17796667322064207624]  (hash of the query)
+  verifier says: Ok(&quot;accepted&quot;)</pre><div class="try-n">Real output of explain.sh on the laptop (N = 2000 for the later steps). Only lines of this step are shown; the full run prints all 10 steps.</div></div><div class="diag-wrap"><svg class="diagram" viewBox="0 0 1000 318" role="img" aria-label="R_Auth statement"><defs><marker id="ah7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahead"/></marker></defs><rect x="15" y="30" width="300" height="110" rx="10" class="box"/><text x="165.0" y="58" class="tb" text-anchor="middle">policy leaf (private)</text><text x="165.0" y="82" class="t s15" text-anchor="middle">uid, v_a, scope s/e/t/p/level,</text><text x="165.0" y="106" class="t s15" text-anchor="middle">blind  (synthetic in the demo)</text><line x1="317" y1="85" x2="368" y2="85" class="ar" marker-end="url(#ah7)"/><rect x="370" y="30" width="300" height="110" rx="10" class="box"/><text x="520.0" y="58" class="tb" text-anchor="middle">Merkle path to r_pol</text><text x="520.0" y="82" class="t s15" text-anchor="middle">depth 10 (AUTH_DEPTH)</text><text x="520.0" y="106" class="t s15" text-anchor="middle">Poseidon2 leaf + merges</text><line x1="672" y1="85" x2="723" y2="85" class="ar" marker-end="url(#ah7)"/><rect x="725" y="30" width="260" height="110" rx="10" class="box"/><text x="855.0" y="58" class="tb" text-anchor="middle">binding hash b_q</text><text x="855.0" y="82" class="t s15" text-anchor="middle">H(d_q, uid, v_a, v_auth,</text><text x="855.0" y="106" class="t s15" text-anchor="middle">r_pol, Omega)</text><path d="M 875 142 L 875 178" class="ar" fill="none" marker-end="url(#ah7)"/><rect x="15" y="180" width="470" height="92" rx="10" class="box"/><text x="250.0" y="208" class="tb" text-anchor="middle">9 range checks (32-bit)</text><text x="250.0" y="232" class="t s15" text-anchor="middle">requested scope lies inside the policy scope</text><rect x="525" y="180" width="460" height="92" rx="10" class="box hit"/><text x="755.0" y="208" class="tb" text-anchor="middle">STARK proof (plain mode)</text><text x="755.0" y="232" class="t s15" text-anchor="middle">126,213 bytes, 64 rows; public: Omega, d_q</text><line x1="487" y1="226" x2="523" y2="226" class="ar" marker-end="url(#ah7)"/><text x="500" y="300" class="ts" text-anchor="middle">Omega comes from the anchored state (section 6); d_q = hash of the query</text></svg></div><h3>What it does</h3><p>R_Auth lets the requester prove it is allowed to run this query without showing its policy. The proof opens a policy leaf in the policy Merkle tree, checks that the requested scope is inside the allowed scope, and binds the result to the query hash and to the canonical state Omega.</p><h3>What it contains</h3><ul><li>One Poseidon2 row per hash: the leaf (2 rows), Merkle merges (depth 10), the binding hash b_q, and 9 range checks. 28 public values.</li><li>Real values: proof 126,213 bytes, 64 trace rows; public omega and d_Q (hash of the query) as printed above; verifier says accepted.</li></ul><h3>Code</h3><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-plonky3-w46/src/auth.rs#L1-L16" target="_blank" rel="noopener">pqz-plonky3-w46/src/auth.rs:1-16</a><span class="lines">16 lines</span></div><div class="snip-note">What the proof states.</div><pre class="code"><span class="c">//! Stage C: Plonky3 AIR for R_Auth (mirror of `bench/pqz-proof-w30/src/auth.rs`), see README.md for the constraint table.</span>
+<span class="c">//!</span>
+<span class="c">//! ONE row = ONE Poseidon2 permutation (w30: groups of 8 Rescue rows). Row roles (d = Merkle depth, d &gt;= 1):</span>
+<span class="c">//!   row 0          leaf hash, part 1: rate = P0..P7, capacity [DOM_LEAF,0,0,0]</span>
+<span class="c">//!   row 1          leaf hash, part 2: input = previous output, rate[0..4] += P8..P11</span>
+<span class="c">//!   rows 2..d+1    Merkle merges: rate = (left, right) with left = D ? sib : dg, right = D ? dg : sib, cap [DOM_MERGE,0,0,0]</span>
+<span class="c">//!   row d+2        B_Q hash, part 1: rate = (d_q, uid, v_a, v_auth, 0), capacity [DOM_BIND,0,0,0]</span>
+<span class="c">//!   row d+3        B_Q hash, part 2: input = previous output, rate[0..4] += r_pol, rate[4..8] += omega</span>
+<span class="c">//!   rows d+4..d+12 nine 32-bit range checks, one inequality per row</span>
+<span class="c">//!   rest           padding (all flags 0, Poseidon2 input zero)</span>
+<span class="c">//! Sponge convention (same as R_Exec/R_RC): rate = state[0..8], capacity = state[8..12], digest = output[0..4].</span>
+<span class="c">//!</span>
+<span class="c">//! Columns: [0..P) Poseidon2 | P[12] (policy leaf, held constant) | dg[4] (previous row&#x27;s output[0..4]) | D | sib[4] |</span>
+<span class="c">//!   bd[32] (bits of the range-check difference) | idx | invb1 | f_l1 f_l2 f_m f_b1 f_b2 f_r[9] (row-role flags) | seen.</span>
+<span class="c">//! Public values (28): depth, r_pol[4], b_q[4], d_q[4], omega[4], uid, v_a, v_auth, s.0 s.1 e.0 e.1 t.0 t.1, p, level.</span>
+<span class="c">//! Every constraint has degree &lt;= 3.</span></pre></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-plonky3-w46/src/auth.rs#L142-L153" target="_blank" rel="noopener">pqz-plonky3-w46/src/auth.rs:142-153</a><span class="lines">12 lines</span></div><div class="snip-note">Public values.</div><pre class="code">#[derive(Clone, Debug)]
+<span class="k">pub</span> <span class="k">struct</span> AuthPublic {
+    <span class="k">pub</span> depth: usize,
+    <span class="k">pub</span> r_pol: [u64; <span class="n">4</span>],
+    <span class="k">pub</span> b_q: [u64; <span class="n">4</span>],
+    <span class="k">pub</span> d_q: [u64; <span class="n">4</span>],
+    <span class="k">pub</span> omega: [u64; <span class="n">4</span>],
+    <span class="k">pub</span> uid: u64,
+    <span class="k">pub</span> v_a: u64,
+    <span class="k">pub</span> v_auth: u64,
+    <span class="k">pub</span> scope: ScopeQ,
+}</pre></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-plonky3-w46/src/auth.rs#L430-L454" target="_blank" rel="noopener">pqz-plonky3-w46/src/auth.rs:430-454</a><span class="lines">25 lines</span></div><div class="snip-note">The binding hash.</div><pre class="code collapsed"><span class="k">pub</span> <span class="k">fn</span> bind_hash&lt;F: PrimeField64, P: Permutation&lt;[F; <span class="n">12</span>]&gt;&gt;(
+    perm: &amp;P,
+    d_q: [u64; <span class="n">4</span>],
+    uid: u64,
+    v_a: u64,
+    v_auth: u64,
+    r_pol: [u64; <span class="n">4</span>],
+    omega: [u64; <span class="n">4</span>],
+) -&gt; [u64; <span class="n">4</span>] {
+    <span class="k">let</span> <span class="k">mut</span> s = [F::ZERO; <span class="n">12</span>];
+    <span class="k">for</span> j <span class="k">in</span> <span class="n">0</span>..<span class="n">4</span> {
+        s[j] = f(d_q[j]);
+    }
+    s[<span class="n">4</span>] = f(uid);
+    s[<span class="n">5</span>] = f(v_a);
+    s[<span class="n">6</span>] = f(v_auth);
+    s[<span class="n">8</span>] = f(DOM_BIND);
+    perm.permute_mut(&amp;<span class="k">mut</span> s);
+    <span class="k">for</span> j <span class="k">in</span> <span class="n">0</span>..<span class="n">4</span> {
+        s[j] += f::&lt;F&gt;(r_pol[j]);
+        s[<span class="n">4</span> + j] += f::&lt;F&gt;(omega[j]);
+    }
+    perm.permute_mut(&amp;<span class="k">mut</span> s);
+    digest_of(&amp;s)
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/lib.rs#L714-L740" target="_blank" rel="noopener">pqz-integrated-w46/src/lib.rs:714-740</a><span class="lines">27 lines</span></div><div class="snip-note">The auth stage in the demo.</div><pre class="code collapsed"><span class="k">pub</span> <span class="k">fn</span> auth_stage(omega: &amp;Hash, qid: u64, predicate: &amp;str, seed: u64) -&gt; Res&lt;(AuthProof, AuthStage)&gt; {
+    <span class="k">let</span> <span class="k">mut</span> st = AuthStage::default();
+    <span class="k">let</span> o = opts();
+    <span class="k">let</span> perm = c1::perm();
+    <span class="k">let</span> t = Instant::now();
+    <span class="k">let</span> (<span class="k">mut</span> p, w) = honest_auth_instance::&lt;c1::Val, _&gt;(&amp;perm, AUTH_DEPTH, seed);
+    p.d_q = d_q_of(qid, predicate);
+    p.omega = f4(omega);
+    p.b_q = bind_hash::&lt;c1::Val, _&gt;(&amp;perm, p.d_q, p.uid, p.v_a, p.v_auth, p.r_pol, p.omega);
+    st.prep_s = t.elapsed().as_secs_f64();
+    <span class="k">let</span> t = Instant::now();
+    <span class="k">let</span> a = plain::auth_air_for(&amp;o, p.depth);
+    <span class="k">let</span> trace = a.build_trace(&amp;perm, &amp;p, &amp;w).map_err(|e| RunError::new(<span class="n">4</span>, format!(<span class="s">&quot;R_Auth trace failed: {e}&quot;</span>)))?;
+    <span class="k">let</span> pv = p.to_values::&lt;c1::Val&gt;();
+    st.trace_s = t.elapsed().as_secs_f64();
+    st.rows = trace.height();
+    <span class="k">let</span> t = Instant::now();
+    <span class="k">let</span> proof = p3_uni_stark::prove(&amp;c1::config(&amp;o), &amp;a, trace, &amp;pv).map_err(|e| RunError::new(<span class="n">4</span>, format!(<span class="s">&quot;R_Auth prove failed: {e:?}&quot;</span>)))?;
+    <span class="k">let</span> s = estimate(&amp;c1::sec_input(&amp;o, st.rows));
+    st.conj = s.conjectured;
+    st.udr = s.proven_unique_decoding;
+    st.ldr = s.proven_list_decoding;
+    <span class="k">let</span> bytes = c1::to_bytes(&amp;proof);
+    st.prove_s = t.elapsed().as_secs_f64();
+    st.bytes = bytes.len();
+    <span class="k">Ok</span>((AuthProof { bytes, stmt: p }, st))
+}</pre><button class="more" type="button">Show more</button></div><div class="honest"><b>Honest note.</b> The policy leaf and scope are synthetic (<code>honest_auth_instance</code>). Plain-mode STARK. laptop demo run, not a paper number.</div><div class="pn"><button type="button" class="prev">&larr; previous</button><button type="button" class="next">next &rarr;</button></div></section><section id="s8" data-n="8"><div class="sh"><h2>8. Query execution: block pruning, exact predicate, selective HE aggregation</h2><span class="badge">laptop time: 0.0056 s planning (N = 10,000)</span></div><div class="try"><div class="try-h">Try it</div><div class="cmd"><span class="prompt">$</span> bash demo/explain.sh</div><pre class="out">  block summaries (Bloom) say: [false, false, true, false]   (true = block may hold a match)
+  exact predicate on the retained blocks selects 20 records
+  runs to prove (chunk ranges): [(1, 1)]   blocks covered: [false, false, true, true]
+  pruned blocks must show Bloom zero bits: 2 openings</pre><div class="try-n">Real output of explain.sh on the laptop (N = 2000 for the later steps). Only lines of this step are shown; the full run prints all 10 steps.</div></div><div class="diag-wrap"><svg class="diagram" viewBox="0 0 1000 330" role="img" aria-label="Block grid with pruned and matching blocks"><defs><marker id="ah8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahead"/></marker></defs><text x="20" y="24" class="tb s15" text-anchor="start">Query P1: a = 7, on 4 blocks (explain.sh step 8, N = 2000)</text><rect x="20" y="44" width="230" height="128" rx="10" class="box grey"/><text x="135" y="72" class="tb" text-anchor="middle">B1: pruned</text><text x="135" y="98" class="t s15" text-anchor="middle">Bloom says no</text><text x="135" y="124" class="t s15" text-anchor="middle">zero bits opened</text><rect x="265" y="44" width="230" height="128" rx="10" class="box grey"/><text x="380" y="72" class="tb" text-anchor="middle">B2: pruned</text><text x="380" y="98" class="t s15" text-anchor="middle">Bloom says no</text><text x="380" y="124" class="t s15" text-anchor="middle">zero bits opened</text><rect x="510" y="44" width="230" height="128" rx="10" class="box hit"/><text x="625" y="72" class="tb" text-anchor="middle">B3: retained</text><text x="625" y="98" class="t s15" text-anchor="middle">Bloom says maybe</text><text x="625" y="124" class="t s15" text-anchor="middle">20 records match</text><rect x="755" y="44" width="230" height="128" rx="10" class="box hatch"/><text x="870" y="72" class="tb" text-anchor="middle">B4: in the run</text><text x="870" y="98" class="t s15" text-anchor="middle">Bloom says no</text><text x="870" y="124" class="t s15" text-anchor="middle">proved with its chunk</text><rect x="520.0" y="150" width="3" height="14" class="tick"/><rect x="525.5" y="150" width="3" height="14" class="tick"/><rect x="531.0" y="150" width="3" height="14" class="tick"/><rect x="536.5" y="150" width="3" height="14" class="tick"/><rect x="542.0" y="150" width="3" height="14" class="tick"/><rect x="547.5" y="150" width="3" height="14" class="tick"/><rect x="553.0" y="150" width="3" height="14" class="tick"/><rect x="558.5" y="150" width="3" height="14" class="tick"/><rect x="564.0" y="150" width="3" height="14" class="tick"/><rect x="569.5" y="150" width="3" height="14" class="tick"/><rect x="575.0" y="150" width="3" height="14" class="tickhit"/><rect x="580.5" y="150" width="3" height="14" class="tickhit"/><rect x="586.0" y="150" width="3" height="14" class="tickhit"/><rect x="591.5" y="150" width="3" height="14" class="tickhit"/><rect x="597.0" y="150" width="3" height="14" class="tickhit"/><rect x="602.5" y="150" width="3" height="14" class="tickhit"/><rect x="608.0" y="150" width="3" height="14" class="tickhit"/><rect x="613.5" y="150" width="3" height="14" class="tickhit"/><rect x="619.0" y="150" width="3" height="14" class="tickhit"/><rect x="624.5" y="150" width="3" height="14" class="tickhit"/><rect x="630.0" y="150" width="3" height="14" class="tickhit"/><rect x="635.5" y="150" width="3" height="14" class="tickhit"/><rect x="641.0" y="150" width="3" height="14" class="tickhit"/><rect x="646.5" y="150" width="3" height="14" class="tickhit"/><rect x="652.0" y="150" width="3" height="14" class="tickhit"/><rect x="657.5" y="150" width="3" height="14" class="tickhit"/><rect x="663.0" y="150" width="3" height="14" class="tickhit"/><rect x="668.5" y="150" width="3" height="14" class="tickhit"/><rect x="674.0" y="150" width="3" height="14" class="tickhit"/><rect x="679.5" y="150" width="3" height="14" class="tickhit"/><rect x="685.0" y="150" width="3" height="14" class="tick"/><rect x="690.5" y="150" width="3" height="14" class="tick"/><rect x="696.0" y="150" width="3" height="14" class="tick"/><rect x="701.5" y="150" width="3" height="14" class="tick"/><rect x="707.0" y="150" width="3" height="14" class="tick"/><rect x="712.5" y="150" width="3" height="14" class="tick"/><rect x="718.0" y="150" width="3" height="14" class="tick"/><rect x="723.5" y="150" width="3" height="14" class="tick"/><rect x="729.0" y="150" width="3" height="14" class="tick"/><rect x="734.5" y="150" width="3" height="14" class="tick"/><text x="625" y="190" class="ts" text-anchor="middle">20 of 500 records hit (illustration)</text><path d="M 20 212 L 485 212 L 485 224" class="ar" fill="none"/><text x="250" y="238" class="ts" text-anchor="middle">pruned: requester checks the opened zero bits</text><rect x="510" y="206" width="475" height="6" rx="10" class="bar"/><text x="745" y="238" class="ts" text-anchor="middle">run = chunk 1 = B3 + B4: one R_Exec proof</text><rect x="20" y="262" width="18" height="18" rx="10" class="box grey"/><text x="46" y="277" class="ts" text-anchor="start">pruned (Bloom zero bits opened)</text><rect x="330" y="262" width="18" height="18" rx="10" class="box hit"/><text x="356" y="277" class="ts" text-anchor="start">retained, has matches</text><rect x="640" y="262" width="18" height="18" rx="10" class="box hatch"/><text x="666" y="277" class="ts" text-anchor="start">in a run, Bloom false</text><text x="20" y="312" class="ts" text-anchor="start">Full run.sh case: N = 10,000 = 20 blocks; 1 block retained; 4 blocks proven; 16 pruned blocks, 16 openings.</text></svg></div><h3>What it does</h3><p>The cloud first asks every block's Bloom filter whether a = 7 may occur. Blocks that say no are pruned and the cloud must show the zero bits it relied on. On the remaining blocks it applies the exact predicate on the records and groups the work into runs for the proof.</p><h3>What it contains</h3><ul><li>Real N = 2000: Bloom flags [false, false, true, false]; exact predicate selects 20 records; run (chunk 1); 2 openings for the pruned blocks.</li><li>Real N = 10,000: 1 of 20 blocks retained, 16 openings, 1 run, 4 blocks proven, 100 matches.</li><li><b>Selective HE aggregation</b> (structure from code, not in the demo path): in the paper the cloud adds BFV ciphertexts of b for the matching records only (<code>he.rs</code>, degree 8192, 41-bit plaintext modulus, a pool of 1,024 pre-encrypted ciphertexts used by the benchmark).</li></ul><h3>Code</h3><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/lib.rs#L750-L759" target="_blank" rel="noopener">pqz-integrated-w46/src/lib.rs:750-759</a><span class="lines">10 lines</span></div><div class="snip-note">Predicate formula.</div><pre class="code"><span class="c">/// The predicate of this driver: P1 = (A = x), one leaf with one tag (the same formula pqz-integrated used).</span>
+<span class="k">pub</span> <span class="k">fn</span> predicate_formula(keys: &amp;EpochKeys) -&gt; (Formula, Tag) {
+    <span class="k">let</span> f = formula_for(Predicate::P1, &amp;keys.tag_key);
+    <span class="k">let</span> tag = eq_tag(&amp;keys.tag_key, ATTR_A, X);
+    <span class="k">match</span> &amp;f {
+        Formula::Leaf(t) <span class="k">if</span> t.len() == <span class="n">1</span> &amp;&amp; t[<span class="n">0</span>] == tag =&gt; {}
+        _ =&gt; panic!(<span class="s">&quot;P1 is expected to be a single leaf with one tag&quot;</span>),
+    }
+    (f, tag)
+}</pre></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/lib.rs#L770-L789" target="_blank" rel="noopener">pqz-integrated-w46/src/lib.rs:770-789</a><span class="lines">20 lines</span></div><div class="snip-note">search in the demo.</div><pre class="code collapsed"><span class="c">/// P6a. BPS: real `bps_eval` on every block summary. RPS (exact predicate): real `rps_eval` on the tags of every record of every retained block.</span>
+<span class="k">pub</span> <span class="k">fn</span> search(log: &amp;Log, f: &amp;Formula) -&gt; SearchOut {
+    <span class="k">let</span> t = Instant::now();
+    <span class="k">let</span> flags: Vec&lt;bool&gt; = std::hint::black_box(log.blooms.iter().map(|b| bps_eval(b, f)).collect());
+    <span class="k">let</span> bps_s = t.elapsed().as_secs_f64();
+    <span class="k">let</span> t = Instant::now();
+    <span class="k">let</span> <span class="k">mut</span> sel = Vec::new();
+    <span class="k">for</span> (g, &amp;fl) <span class="k">in</span> flags.iter().enumerate() {
+        <span class="k">if</span> fl {
+            <span class="k">for</span> i <span class="k">in</span> <span class="n">0</span>..BLOCK {
+                <span class="k">if</span> rps_eval(log.record_tags(g, i), f) {
+                    sel.push(log.wl.words[g * (BLOCK + <span class="n">1</span>) + <span class="n">1</span> + i][<span class="n">3</span>]);
+                }
+            }
+        }
+    }
+    <span class="k">let</span> sel = std::hint::black_box(sel);
+    <span class="k">let</span> rps_s = t.elapsed().as_secs_f64();
+    SearchOut { flags, sel, bps_s, rps_s }
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-eval/src/search.rs#L184-L194" target="_blank" rel="noopener">pqz-eval/src/search.rs:184-194</a><span class="lines">11 lines</span></div><div class="snip-note">Exact record predicate.</div><pre class="code"><span class="c">/// Record-level evaluation. Exact (no false positives); `record_tags` must be</span>
+<span class="c">/// sorted (as returned by [`tags_for_record`]).</span>
+<span class="k">pub</span> <span class="k">fn</span> rps_eval(record_tags: &amp;[Tag], f: &amp;Formula) -&gt; bool {
+    <span class="k">match</span> f {
+        Formula::Leaf(tags) =&gt; tags
+            .iter()
+            .any(|t| record_tags.binary_search(t).is_ok()),
+        Formula::And(a, b) =&gt; rps_eval(record_tags, a) &amp;&amp; rps_eval(record_tags, b),
+        Formula::Or(a, b) =&gt; rps_eval(record_tags, a) || rps_eval(record_tags, b),
+    }
+}</pre></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-eval/src/search.rs#L291-L299" target="_blank" rel="noopener">pqz-eval/src/search.rs:291-299</a><span class="lines">9 lines</span></div><div class="snip-note">Block Bloom summary test.</div><pre class="code"><span class="c">/// Block-level evaluation. Conservative: a record that matches is always in a</span>
+<span class="c">/// block whose summary evaluates true (no false negatives).</span>
+<span class="k">pub</span> <span class="k">fn</span> bps_eval(bloom: &amp;Bloom, f: &amp;Formula) -&gt; bool {
+    <span class="k">match</span> f {
+        Formula::Leaf(tags) =&gt; tags.iter().any(|t| bloom.contains(t)),
+        Formula::And(a, b) =&gt; bps_eval(bloom, a) &amp;&amp; bps_eval(bloom, b),
+        Formula::Or(a, b) =&gt; bps_eval(bloom, a) || bps_eval(bloom, b),
+    }
+}</pre></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L640-L650" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:640-650</a><span class="lines">11 lines</span></div><div class="snip-note">Plan the runs.</div><pre class="code"><span class="k">pub</span> <span class="k">fn</span> plan_runs(flags: &amp;[bool], plan: &amp;[ChunkPlan], gap_merge: usize) -&gt; Vec&lt;(usize, usize)&gt; {
+    <span class="k">let</span> used: Vec&lt;usize&gt; = plan.iter().filter(|p| flags[p.first_block..p.first_block + p.n_blocks].iter().any(|&amp;f| f)).map(|p| p.chunk_index).collect();
+    <span class="k">let</span> <span class="k">mut</span> runs: Vec&lt;(usize, usize)&gt; = Vec::new();
+    <span class="k">for</span> u <span class="k">in</span> used {
+        <span class="k">match</span> runs.last_mut() {
+            <span class="k">Some</span>(r) <span class="k">if</span> u - r.<span class="n">1</span> - <span class="n">1</span> &lt;= gap_merge =&gt; r.<span class="n">1</span> = u,
+            _ =&gt; runs.push((u, u)),
+        }
+    }
+    runs
+}</pre></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L160-L196" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:160-196</a><span class="lines">37 lines</span></div><div class="snip-note">Openings for pruned blocks.</div><pre class="code collapsed">    <span class="k">pub</span> <span class="k">fn</span> plan_absent(&amp;<span class="k">self</span>, f: &amp;Formula) -&gt; Option&lt;Vec&lt;usize&gt;&gt; {
+        <span class="k">match</span> f {
+            Formula::Leaf(tags) =&gt; {
+                <span class="k">let</span> <span class="k">mut</span> v = Vec::new();
+                <span class="k">for</span> t <span class="k">in</span> tags {
+                    <span class="k">let</span> p = bloom_positions(t, <span class="k">self</span>.nbits, <span class="k">self</span>.k).into_iter().find(|&amp;p| !<span class="k">self</span>.bit(p))?;
+                    v.push(p);
+                }
+                <span class="k">Some</span>(v)
+            }
+            Formula::And(a, b) =&gt; <span class="k">self</span>.plan_absent(a).or_else(|| <span class="k">self</span>.plan_absent(b)),
+            Formula::Or(a, b) =&gt; {
+                <span class="k">let</span> <span class="k">mut</span> x = <span class="k">self</span>.plan_absent(a)?;
+                x.extend(<span class="k">self</span>.plan_absent(b)?);
+                <span class="k">Some</span>(x)
+            }
+        }
+    }
+    <span class="c">/// The openings (distinct leaves, sorted) that show the formula false.</span>
+    <span class="k">pub</span> <span class="k">fn</span> openings_for(&amp;<span class="k">self</span>, f: &amp;Formula) -&gt; Option&lt;Vec&lt;BloomOpening&gt;&gt; {
+        <span class="k">let</span> pos = <span class="k">self</span>.plan_absent(f)?;
+        <span class="k">let</span> <span class="k">mut</span> idx: Vec&lt;usize&gt; = pos.iter().map(|p| p / <span class="n">64</span>).collect();
+        idx.sort_unstable();
+        idx.dedup();
+        <span class="k">Some</span>(<span class="k">self</span>.open_many(&amp;idx))
+    }
+}
+
+<span class="c">/// Requester side: is the formula shown false by the zero bits among the opened leaves? (`zero(p)` = bit p is opened and 0.)</span>
+<span class="c">/// Leaf false iff every tag has an opened zero position; And false iff one side is; Or false iff both are (`bps_eval` negated).</span>
+<span class="k">pub</span> <span class="k">fn</span> formula_absent(f: &amp;Formula, nbits: usize, k: usize, zero: &amp;<span class="k">dyn</span> Fn(usize) -&gt; bool) -&gt; bool {
+    <span class="k">match</span> f {
+        Formula::Leaf(tags) =&gt; tags.iter().all(|t| bloom_positions(t, nbits, k).iter().any(|&amp;p| zero(p))),
+        Formula::And(a, b) =&gt; formula_absent(a, nbits, k, zero) || formula_absent(b, nbits, k, zero),
+        Formula::Or(a, b) =&gt; formula_absent(a, nbits, k, zero) &amp;&amp; formula_absent(b, nbits, k, zero),
+    }
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-eval/src/he.rs#L35-L47" target="_blank" rel="noopener">pqz-eval/src/he.rs:35-47</a><span class="lines">13 lines</span></div><div class="snip-note">HE: the pool of pre-encrypted BFV ciphertexts (evaluation crate only, not in the w35 demo path).</div><pre class="code"><span class="k">pub</span> <span class="k">struct</span> HePool {
+    params: Arc&lt;BfvParameters&gt;,
+    sk: SecretKey,
+    cts: Vec&lt;Ciphertext&gt;,
+    one: Ciphertext,
+}
+
+<span class="k">impl</span> HePool {
+    <span class="c">/// Build the evaluation pool (K = [`POOL_SIZE`]).</span>
+    <span class="k">pub</span> <span class="k">fn</span> new(seed: u64) -&gt; Result&lt;<span class="k">Self</span>, String&gt; {
+        <span class="k">Self</span>::with_pool_size(seed, POOL_SIZE)
+    }
+</pre></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-eval/src/bench.rs#L564-L577" target="_blank" rel="noopener">pqz-eval/src/bench.rs:564-577</a><span class="lines">14 lines</span></div><div class="snip-note">HE: the benchmark adds one ciphertext per selected record (not in the demo path).</div><pre class="code">                    <span class="k">let</span> t0 = Instant::now();
+                    <span class="k">let</span> <span class="k">mut</span> acc = pool.zero();
+                    <span class="k">match</span> agg {
+                        Agg::Count =&gt; {
+                            <span class="k">for</span> _ <span class="k">in</span> source {
+                                acc += pool.one();
+                            }
+                        }
+                        Agg::Sum | Agg::Avg =&gt; {
+                            <span class="k">for</span> r <span class="k">in</span> source {
+                                acc += pool.ct_for_b(r.b);
+                            }
+                        }
+                    }</pre></div><div class="honest"><b>Honest note.</b> In the w35 demo path the sum is computed and proven in the STARK; the BFV homomorphic aggregation is in the evaluation crate only. Predicate P1 only. laptop demo run, not a paper number.</div><div class="pn"><button type="button" class="prev">&larr; previous</button><button type="button" class="next">next &rarr;</button></div></section><section id="s9" data-n="9"><div class="sh"><h2>9. Execution proof R_Exec (Plonky3 STARK)</h2><span class="badge">laptop time: 0.023 s proving, 1024 rows</span></div><div class="try"><div class="try-h">Try it</div><div class="cmd"><span class="prompt">$</span> bash demo/explain.sh</div><pre class="out">  1 run proof(s), 148581 bytes, 0.011 s, ~127 conjectured bits
+  claimed result from the proofs: count = 20, sum of b = 15904545</pre><div class="try-n">Real output of explain.sh on the laptop (N = 2000 for the later steps). Only lines of this step are shown; the full run prints all 10 steps.</div></div><div class="diag-wrap"><svg class="diagram" viewBox="0 0 1000 275" role="img" aria-label="Run proof from anchored start state to anchored end state"><defs><marker id="ah9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahead"/></marker></defs><rect x="15" y="40" width="250" height="110" rx="10" class="box"/><text x="140" y="70" class="tb" text-anchor="middle">start state</text><text x="140" y="96" class="t s15" text-anchor="middle">sigma after B2</text><text x="140" y="122" class="t s15" text-anchor="middle">(anchored, public s_in)</text><line x1="267" y1="95" x2="317" y2="95" class="ar" marker-end="url(#ah9)"/><rect x="320" y="40" width="360" height="110" rx="10" class="box hit"/><text x="500" y="70" class="tb" text-anchor="middle">R_Exec run proof (STARK)</text><text x="500" y="96" class="t s15" text-anchor="middle">blocks 3, 4 as packed words</text><text x="500" y="122" class="t s15" text-anchor="middle">predicate bits, count, sum</text><line x1="682" y1="95" x2="732" y2="95" class="ar" marker-end="url(#ah9)"/><rect x="735" y="40" width="250" height="110" rx="10" class="box"/><text x="860" y="70" class="tb" text-anchor="middle">end state</text><text x="860" y="96" class="t s15" text-anchor="middle">sigma after B4</text><text x="860" y="122" class="t s15" text-anchor="middle">(anchored, public s_out)</text><path d="M 500 152 L 500 190" class="ar" fill="none" marker-end="url(#ah9)"/><rect x="300" y="192" width="400" height="64" rx="10" class="box result"/><text x="500" y="218" class="tb" text-anchor="middle">public result: count = 20</text><text x="500" y="244" class="t s15" text-anchor="middle">sum of b = 15,904,545</text><text x="500" y="24" class="ts" text-anchor="middle">explain.sh step 9: 1 run proof, 148,581 bytes, 0.011 s, about 127 conjectured bits</text></svg></div><h3>What it does</h3><p>R_Exec proves that, running from an anchored start state to an anchored end state, the claimed count and sum are exactly those of the records that match the predicate. The state chain ties the run to the same blocks that R_RC and the ledger vouch for.</p><h3>What it contains</h3><ul><li>Public values: s_in, s_out, hdr_first, n_blocks, block_size, n_words, theta, count, sum, context.</li><li>Real N = 2000: 1 run proof, 148,581 bytes, count 20, sum 15,904,545. Real N = 10,000: 1,024 rows, 152,901 bytes, count 100, sum 78,435,187.</li><li>sum is the plain sum of b; this proof does not check the range itself (the chunk proofs do).</li></ul><h3>Code</h3><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-plonky3-w46/src/prun.rs#L1-L30" target="_blank" rel="noopener">pqz-plonky3-w46/src/prun.rs:1-30</a><span class="lines">30 lines</span></div><div class="snip-note">What the run proof states.</div><pre class="code collapsed"><span class="c">//! w46: R_Exec over a RUN of whole blocks of the PACKED stream format (two records per absorbed word), from a public start</span>
+<span class="c">//! state `s_in` to a public end state `s_out`.</span>
+<span class="c">//!</span>
+<span class="c">//! PRunAir = the P2r constraints of `pair.rs` (row kinds by countdown, predicate bits of d per half, no bits of v) with the</span>
+<span class="c">//! boundary of `run.rs` (sponge from the public state `s_in`, public `hdr_first`, all 12 output elements = `s_out`).</span>
+<span class="c">//! Public values (42, same order as `run.rs` `RunLayout`): s_in[12], s_out[12], hdr_first[8], n_blocks, block_size,</span>
+<span class="c">//! n_words (PACKED count), theta, count, sum, ctx[4]. ctx is a public value only (checked natively by the requester).</span>
+<span class="c">//!</span>
+<span class="c">//! SOUNDNESS DEPENDENCY (P2r): this AIR does NOT check v &lt; 2^32 or b &lt; 2^20. Those range checks are made by the packed chunk (R_RC)</span>
+<span class="c">//! proofs of the same stream (`pchunk.rs`). The run is bound to that stream through s_in / s_out, which must be sponge states</span>
+<span class="c">//! anchored by the chunk proofs (chunk-end states). Used alone, a run proof accepts a word with v = 2^32 + 5 as a match.</span>
+<span class="c">//! Likewise the record grammar inside a block (ids / seq) is checked by the chunk proofs, not by this AIR; and the public sum is a field</span>
+<span class="c">//! sum, equal to the integer sum only while n_records * 2^20 &lt; p (about 2^44 records).</span>
+<span class="c">//!</span>
+<span class="c">//! Constraint table (degree in brackets); one row = one absorbed word = one Poseidon2 permutation:</span>
+<span class="c">//!   R1  Poseidon2 permutation of the row [3]</span>
+<span class="c">//!   R2  row 0 inputs = s_in (+ word in the rate); transitions: inputs&#x27; = out + word&#x27; (rate), = out (capacity) [1]</span>
+<span class="c">//!   G0  row 0: word = hdr_first (8 slots), hdr = 1 [1]</span>
+<span class="c">//!   G1  hdr, va, vb, ma, mb boolean [2]; hdr + va + pad = 1 [1]; vb(1-va) = 0, ma(1-va) = 0, mb(1-vb) = 0 [2]</span>
+<span class="c">//!   G2  header row: w7 = 1, w2 = public block_size, rem = w2 [2]</span>
+<span class="c">//!   G3  short row (va, not vb): rem = 0 and half b = 0 (4 slots) [3]</span>
+<span class="c">//!   G4  zero test: rem*rinv = 1 - zr, zr*rem = 0 [2]</span>
+<span class="c">//!   G5  transition: (1 - pad&#x27;)(hdr&#x27; - zr) = 0 (next row is a header iff block complete) [2];</span>
+<span class="c">//!       va&#x27; (rem&#x27; - rem + 1 + vb&#x27;) = 0 [2]</span>
+<span class="c">//!   E3  per half: bits of d boolean [2]; va (resp. vb) * (sum 2^k bit_k - d) = 0, d = m (v - theta) + (1 - m)(theta - 1 - v) [3]</span>
+<span class="c">//!   E4  cnt = ma + mb, sum = ma w2 + mb w6 in row 0; transition cnt&#x27; = cnt + ma&#x27; + mb&#x27;, sum&#x27; = sum + ma&#x27; w2&#x27; + mb&#x27; w6&#x27; [3]</span>
+<span class="c">//!   E5  idx, last = [idx == n_words - 1] (n_words an AIR constant), seen [2]</span>
+<span class="c">//!   E6  at last: out[0..12] = s_out, cnt = count, sum = sum, zr = 1 [2]</span>
+<span class="c">//! Trace: `prove_run*` build the trace SEQUENTIALLY (as `run.rs` `plain::prove_run`); `build_trace_par` (checkpoints) and</span>
+<span class="c">//! `prove_run_bytes_par` are provided for multi-threaded trace building.</span></pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L652-L665" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:652-665</a><span class="lines">14 lines</span></div><div class="snip-note">The run claim.</div><pre class="code"><span class="c">/// One run as sent to the requester. `first`/`last` are 1-based block positions (first block of the first chunk, last block of the last chunk).</span>
+#[derive(Clone)]
+<span class="k">pub</span> <span class="k">struct</span> RunClaim {
+    <span class="k">pub</span> first: usize,
+    <span class="k">pub</span> last: usize,
+    <span class="k">pub</span> stmt: RunPublic,
+    <span class="k">pub</span> proof: Vec&lt;u8&gt;,
+}
+
+<span class="k">impl</span> RunClaim {
+    <span class="k">pub</span> <span class="k">fn</span> bytes(&amp;<span class="k">self</span>) -&gt; usize {
+        <span class="k">self</span>.proof.len() + <span class="n">8</span> * (<span class="n">2</span> + <span class="n">12</span> + <span class="n">12</span> + <span class="n">8</span> + <span class="n">7</span> + <span class="n">4</span>)
+    }
+}</pre></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L668-L711" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:668-711</a><span class="lines">44 lines</span></div><div class="snip-note">Prove the runs.</div><pre class="code collapsed"><span class="k">pub</span> <span class="k">fn</span> prove_run_over(words: &amp;[Vec&lt;u64&gt;], s_in: &amp;State, first1: usize, last1: usize, ctx: [u64; <span class="n">4</span>], theta: u64) -&gt; Result&lt;RunClaim, String&gt; {
+    prove_run_over_fmt(words, s_in, first1, last1, ctx, theta, WFmt::Old)
+}
+
+<span class="c">/// w46: as `prove_run_over`; P2r = `prun` over PACKED `words` (no range check of v in the run AIR: it comes from the packed chunk proofs</span>
+<span class="c">/// through the anchored sigma).</span>
+<span class="k">pub</span> <span class="k">fn</span> prove_run_over_fmt(words: &amp;[Vec&lt;u64&gt;], s_in: &amp;State, first1: usize, last1: usize, ctx: [u64; <span class="n">4</span>], theta: u64, fmt: WFmt) -&gt; Result&lt;RunClaim, String&gt; {
+    <span class="k">match</span> fmt {
+        WFmt::Old =&gt; {
+            <span class="k">let</span> stmt = run::plain::honest_public(words, s_in, BLOCK, theta, ctx);
+            <span class="k">let</span> proof = run::plain::prove_run(&amp;opts(), words, &amp;stmt)?;
+            <span class="k">Ok</span>(RunClaim { first: first1, last: last1, stmt, proof: c1::to_bytes(&amp;proof) })
+        }
+        WFmt::P2r =&gt; {
+            <span class="k">let</span> stmt = prun::plain::honest_public(words, s_in, BLOCK, theta, ctx);
+            <span class="k">let</span> (bytes, _, _, _) = prun::plain::prove_run_bytes_par(&amp;opts(), words, &amp;stmt)?;
+            <span class="k">Ok</span>(RunClaim { first: first1, last: last1, stmt, proof: bytes })
+        }
+    }
+}
+
+<span class="c">/// CSP: one proof per run (blocks of whole chunks), s_in from the chunk statements.</span>
+<span class="k">pub</span> <span class="k">fn</span> prove_runs(w: &amp;World35, ranges: &amp;[(usize, usize)], ctx: [u64; <span class="n">4</span>]) -&gt; Res&lt;(Vec&lt;RunClaim&gt;, ProofStage)&gt; {
+    <span class="k">let</span> <span class="k">mut</span> st = ProofStage::default();
+    <span class="k">let</span> <span class="k">mut</span> v = Vec::new();
+    <span class="k">for</span> &amp;(ca, cb) <span class="k">in</span> ranges {
+        <span class="k">let</span> first0 = w.plan[ca].first_block;
+        <span class="k">let</span> end0 = w.plan[cb].first_block + w.plan[cb].n_blocks;
+        <span class="k">let</span> t = Instant::now();
+        <span class="k">let</span> cl = prove_run_over_fmt(w.block_words(first0, end0 - first0), &amp;w.pubs[ca].s_in, first0 + <span class="n">1</span>, end0, ctx, THETA, w.fmt)
+            .map_err(|e| RunError::new(<span class="n">4</span>, format!(<span class="s">&quot;run {ca}..{cb} prove failed: {e}&quot;</span>)))?;
+        <span class="k">let</span> rows = <span class="k">match</span> w.fmt {
+            WFmt::Old =&gt; run::plain::run_rows(cl.stmt.n_words()),
+            WFmt::P2r =&gt; prun::plain::run_rows(prun::prun_n_words(&amp;cl.stmt)),
+        };
+        st.rows += rows;
+        sec_note(&amp;<span class="k">mut</span> st, rows);
+        st.prove_s += t.elapsed().as_secs_f64();
+        st.bytes += cl.proof.len();
+        st.chunks += <span class="n">1</span>;
+        v.push(cl);
+    }
+    <span class="k">Ok</span>((v, st))
+}</pre><button class="more" type="button">Show more</button></div><div class="honest"><b>Honest note.</b> Plain-mode STARK (not zero-knowledge). laptop demo run, not a paper number.</div><div class="pn"><button type="button" class="prev">&larr; previous</button><button type="button" class="next">next &rarr;</button></div></section><section id="s10" data-n="10"><div class="sh"><h2>10. Auditor check</h2><span class="badge">laptop time: 0.084 s (N = 10,000)</span></div><div class="try"><div class="try-h">Try it</div><div class="cmd"><span class="prompt">$</span> bash demo/explain.sh</div><pre class="out">  AA check passed in 0.018 s (verifies every chunk proof + rebuilds tag lists, headers, blocks)
+  R_e = a7c9089bc216...6bbb24   N_e = 2000   G_e = 4
+(in the program this runs right after R_RC, before the anchor)</pre><div class="try-n">Real output of explain.sh on the laptop (N = 2000 for the later steps). Only lines of this step are shown; the full run prints all 10 steps.</div></div><div class="diag-wrap"><svg class="diagram" viewBox="0 0 1000 322" role="img" aria-label="AA checks"><defs><marker id="ah10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahead"/></marker></defs><rect x="15" y="20" width="236" height="84" rx="10" class="box"/><text x="133" y="54" class="t s15" text-anchor="middle">1 statement fields</text><text x="133" y="78" class="t s15" text-anchor="middle">(chunk index, sizes)</text><rect x="262" y="20" width="236" height="84" rx="10" class="box"/><text x="380" y="54" class="t s15" text-anchor="middle">2 chunks link:</text><text x="380" y="78" class="t s15" text-anchor="middle">s_out_j = s_in_j+1</text><rect x="509" y="20" width="236" height="84" rx="10" class="box"/><text x="627" y="54" class="t s15" text-anchor="middle">3 chunk 0 starts</text><text x="627" y="78" class="t s15" text-anchor="middle">at the IV</text><rect x="756" y="20" width="236" height="84" rx="10" class="box"/><text x="874" y="54" class="t s15" text-anchor="middle">4 every chunk proof</text><text x="874" y="78" class="t s15" text-anchor="middle">verifies</text><rect x="15" y="120" width="236" height="84" rx="10" class="box"/><text x="133" y="154" class="t s15" text-anchor="middle">5 alpha, beta from the</text><text x="133" y="178" class="t s15" text-anchor="middle">AA&#x27;s own tags + headers</text><rect x="262" y="120" width="236" height="84" rx="10" class="box"/><text x="380" y="154" class="t s15" text-anchor="middle">6 acc recomputed</text><text x="380" y="178" class="t s15" text-anchor="middle">from the same lists</text><rect x="509" y="120" width="236" height="84" rx="10" class="box"/><text x="627" y="154" class="t s15" text-anchor="middle">7 sigma = proven</text><text x="627" y="178" class="t s15" text-anchor="middle">chunk-end state</text><rect x="756" y="120" width="236" height="84" rx="10" class="box"/><text x="874" y="154" class="t s15" text-anchor="middle">8 every block field</text><text x="874" y="178" class="t s15" text-anchor="middle">rebuilt, then R_e</text><path d="M 118 188 L 118 214 L 500 214" class="ar" fill="none"/><line x1="500" y1="214" x2="500" y2="232" class="ar" marker-end="url(#ah10)"/><rect x="250" y="234" width="500" height="50" rx="10" class="box hit"/><text x="500" y="266" class="tb s15" text-anchor="middle">all pass: R_e, N_e, G_e go to the ledger (next step: sign A_e)</text><text x="500" y="306" class="ts" text-anchor="middle">any mismatch: the AA refuses (it returns an error)</text></svg></div><h3>What it does</h3><p>Before anything is anchored, the AA checks the chunk proofs itself. It does not trust the LP's claims: it recomputes the check values from its own tag list and block headers, verifies every chunk proof, and rebuilds the epoch root.</p><h3>What it contains</h3><ul><li>Real N = 2000: AA check passed (verifies every chunk proof, rebuilds tag lists, headers and blocks). Real N = 10,000: 0.084 s.</li><li>Order note: the program does this right after R_RC (before the anchor, section 6). It is shown here as step 10 of the map.</li></ul><h3>Code</h3><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L432-L461" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:432-461</a><span class="lines">30 lines</span></div><div class="snip-note">The list of AA checks.</div><pre class="code collapsed"><span class="c">/// TEST-ONLY switches of the AA checks (production = `ON`).</span>
+#[derive(Clone, Copy, Debug)]
+<span class="k">pub</span> <span class="k">struct</span> AaChecks {
+    <span class="c">/// verify every chunk proof (with `iv` off, chunk 0 is verified with the AIR that has no IV rule R2b)</span>
+    <span class="k">pub</span> proofs: bool,
+    <span class="c">/// statement bookkeeping: block_size, total_words, consecutive chunk_index, hdr_before adds up, hdr_first = header of the chunk&#x27;s first block</span>
+    <span class="k">pub</span> meta: bool,
+    <span class="c">/// chunk 0 starts at IV (explicit check; also the AIR rule R2b)</span>
+    <span class="k">pub</span> iv: bool,
+    <span class="c">/// s_out_j = s_in_{j+1}</span>
+    <span class="k">pub</span> links: bool,
+    <span class="c">/// alpha_1..3 and beta_1..3 = H(...) recomputed from the AA&#x27;s tag list and header words</span>
+    <span class="k">pub</span> d1b_alpha: bool,
+    <span class="c">/// acc_1..3 recomputed from the AA&#x27;s tag list, header words and the proof&#x27;s alphas, betas</span>
+    <span class="k">pub</span> d1b_acc: bool,
+    <span class="c">/// w35 v3 (D1c): the AA rebuilds every header word of the chunk from its own block list and descriptors (e, g, m_b, pid, seq_start, hd_g)</span>
+    <span class="c">/// and uses them in the hash and the accumulators. OFF: it uses the header words the LP&#x27;s stream claims (`ChunkProof::claimed`).</span>
+    <span class="k">pub</span> d1c_hdr: bool,
+    <span class="c">/// the tag slots of the chunk come from the AA&#x27;s own D_i (64-bit prefix each). OFF: it uses the tag slots the stream claims, which stands</span>
+    <span class="c">/// for an attacker who found a second preimage of the 64-bit slot (A14 only).</span>
+    <span class="k">pub</span> tag_slots: bool,
+    <span class="c">/// sigma in B equals the proven s_out at chunk ends, None elsewhere</span>
+    <span class="k">pub</span> sigma: bool,
+    <span class="c">/// B fields (r_rec, s_root, counts) equal what the AA rebuilds from its material</span>
+    <span class="k">pub</span> summaries: bool,
+}
+
+<span class="k">impl</span> AaChecks {
+    <span class="k">pub</span> <span class="k">const</span> ON: AaChecks = AaChecks { proofs: <span class="k">true</span>, meta: <span class="k">true</span>, iv: <span class="k">true</span>, links: <span class="k">true</span>, d1b_alpha: <span class="k">true</span>, d1b_acc: <span class="k">true</span>, d1c_hdr: <span class="k">true</span>, tag_slots: <span class="k">true</span>, sigma: <span class="k">true</span>, summaries: <span class="k">true</span> };
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L475-L540" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:475-540</a><span class="lines">66 lines</span></div><div class="snip-note">aa_finalize, first half.</div><pre class="code collapsed"><span class="k">pub</span> <span class="k">fn</span> aa_finalize(proofs: &amp;[ChunkProof], blocks: &amp;[Block35], mat: &amp;AaMaterial, sw: AaChecks) -&gt; Result&lt;AaOut, String&gt; {
+    aa_finalize_fmt(proofs, blocks, mat, sw, WFmt::Old)
+}
+
+<span class="c">/// w46: the AA with the stream format. Every check of the old arm is kept with its packed counterpart (see CHANGES-w46.md).</span>
+<span class="k">pub</span> <span class="k">fn</span> aa_finalize_fmt(proofs: &amp;[ChunkProof], blocks: &amp;[Block35], mat: &amp;AaMaterial, sw: AaChecks, fmt: WFmt) -&gt; Result&lt;AaOut, String&gt; {
+    <span class="k">let</span> t_all = Instant::now();
+    <span class="k">let</span> n = mat.n();
+    <span class="k">if</span> n == <span class="n">0</span> || n % BLOCK != <span class="n">0</span> {
+        <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: N = {n} is not a positive multiple of {BLOCK}&quot;</span>));
+    }
+    <span class="k">let</span> g = n / BLOCK;
+    <span class="k">if</span> blocks.len() != g {
+        <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: {} blocks presented, the material has {g}&quot;</span>, blocks.len()));
+    }
+    <span class="k">if</span> proofs.is_empty() {
+        <span class="k">return</span> <span class="k">Err</span>(<span class="s">&quot;AA: no chunk proof&quot;</span>.into());
+    }
+    <span class="k">let</span> total_words = g * fmt.rows_per_block(BLOCK);
+    <span class="c">// chunk start blocks (cumulative); a list that does not cover the epoch exactly is refused whatever the switches say</span>
+    <span class="k">let</span> <span class="k">mut</span> starts = Vec::with_capacity(proofs.len());
+    <span class="k">let</span> <span class="k">mut</span> acc_blocks = <span class="n">0usize</span>;
+    <span class="k">for</span> p <span class="k">in</span> proofs {
+        starts.push(acc_blocks);
+        acc_blocks += p.stmt.n_blocks_chunk;
+    }
+    <span class="k">if</span> acc_blocks != g {
+        <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: chunks cover {acc_blocks} blocks, the epoch has {g}&quot;</span>));
+    }
+    <span class="c">// the AA&#x27;s own lists: D_i, tag slot per record, header word per block (v3)</span>
+    <span class="k">let</span> (ds, slots) = derive_slots(mat);
+    <span class="k">let</span> own_hdrs = derive_headers(&amp;ds);
+    <span class="c">// 1. statement bookkeeping, links, IV</span>
+    <span class="k">if</span> sw.meta {
+        <span class="k">for</span> (j, p) <span class="k">in</span> proofs.iter().enumerate() {
+            <span class="k">let</span> s = &amp;p.stmt;
+            <span class="k">if</span> s.chunk_index != j {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: chunk {j} has chunk_index {}&quot;</span>, s.chunk_index));
+            }
+            <span class="k">if</span> s.block_size != BLOCK || s.total_words != total_words {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: chunk {j}: block_size/total_words ({}, {}) differ from ({BLOCK}, {total_words})&quot;</span>, s.block_size, s.total_words));
+            }
+            <span class="k">if</span> s.hdr_before != starts[j] {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: chunk {j}: hdr_before {} != {}&quot;</span>, s.hdr_before, starts[j]));
+            }
+            <span class="k">let</span> want = header_word(EPOCH, starts[j] <span class="k">as</span> u64, BLOCK <span class="k">as</span> u64, PID, <span class="n">1</span> + (starts[j] * BLOCK) <span class="k">as</span> u64);
+            <span class="c">// slots 0..4 and the flag are compared here; slots 5-6 hold hd_g since v3 and are covered by the D1c check (the first header of</span>
+            <span class="c">// the chunk is the first entry of the header list that goes into alpha, beta and acc)</span>
+            <span class="k">if</span> s.hdr_first[..<span class="n">5</span>] != want[..<span class="n">5</span>] || s.hdr_first[<span class="n">7</span>] != <span class="n">1</span> {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: chunk {j}: hdr_first is not the header of block {}&quot;</span>, starts[j] + <span class="n">1</span>));
+            }
+        }
+    }
+    <span class="k">if</span> sw.links {
+        <span class="k">for</span> j <span class="k">in</span> <span class="n">1</span>..proofs.len() {
+            <span class="k">if</span> proofs[j].stmt.s_in != proofs[j - <span class="n">1</span>].stmt.s_out {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: chunk link broken: s_in of chunk {j} != s_out of chunk {}&quot;</span>, j - <span class="n">1</span>));
+            }
+        }
+    }
+    <span class="k">if</span> sw.iv &amp;&amp; proofs[<span class="n">0</span>].stmt.s_in != iv_state(total_words <span class="k">as</span> u64) {
+        <span class="k">return</span> <span class="k">Err</span>(<span class="s">&quot;AA: chunk 0 does not start at the IV&quot;</span>.into());
+    }
+    <span class="k">let</span> native1 = t_all.elapsed().as_secs_f64();
+    <span class="c">// 2. chunk proofs</span>
+    <span class="k">let</span> t = Instant::now();</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L567-L632" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:567-632</a><span class="lines">66 lines</span></div><div class="snip-note">aa_finalize, second half.</div><pre class="code collapsed">    <span class="c">// 3. D1b + D1c: the AA&#x27;s own tag lists and header words</span>
+    <span class="k">let</span> t = Instant::now();
+    <span class="k">for</span> (j, p) <span class="k">in</span> proofs.iter().enumerate() {
+        <span class="k">let</span> nb = p.stmt.n_blocks_chunk;
+        <span class="k">let</span> lists = ChunkLists {
+            tags: <span class="k">if</span> sw.tag_slots { slots[starts[j] * BLOCK..(starts[j] + nb) * BLOCK].to_vec() } <span class="k">else</span> { p.claimed.tags.clone() },
+            hdrs: <span class="k">if</span> sw.d1c_hdr { own_hdrs[starts[j]..starts[j] + nb].iter().map(|w| *w).collect() } <span class="k">else</span> { p.claimed.hdrs.clone() },
+        };
+        <span class="k">if</span> lists.tags.len() != nb * BLOCK || lists.hdrs.len() != nb {
+            <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: chunk {j}: list lengths ({}, {}) differ from ({}, {nb})&quot;</span>, lists.tags.len(), lists.hdrs.len(), nb * BLOCK));
+        }
+        <span class="k">if</span> sw.d1b_alpha {
+            <span class="k">let</span> (al, be) = <span class="k">match</span> fmt {
+                WFmt::Old =&gt; (alphas_of(&amp;p.stmt, &amp;lists), betas_of(&amp;p.stmt, &amp;lists)),
+                WFmt::P2r =&gt; (std::array::from_fn(|k| pchunk::alpha_of(k, &amp;p.stmt, &amp;lists)), std::array::from_fn(|k| pchunk::beta_of(k, &amp;p.stmt, &amp;lists))),
+            };
+            <span class="k">if</span> al != p.stmt.alpha {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: chunk {j}: alpha differs from H(s_in, s_out, meta, my tag slots and header words)&quot;</span>));
+            }
+            <span class="k">if</span> be != p.stmt.beta {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: chunk {j}: beta differs from H(s_in, s_out, meta, my tag slots and header words)&quot;</span>));
+            }
+        }
+        <span class="k">if</span> sw.d1b_acc {
+            <span class="k">for</span> k <span class="k">in</span> <span class="n">0</span>..NACC {
+                <span class="k">let</span> acc = <span class="k">match</span> fmt {
+                    WFmt::Old =&gt; acc_native::&lt;c1::Val&gt;(p.stmt.alpha[k], p.stmt.beta[k], nb, BLOCK, &amp;lists),
+                    WFmt::P2r =&gt; pchunk::acc_native_p::&lt;c1::Val&gt;(p.stmt.alpha[k], p.stmt.beta[k], nb, BLOCK, &amp;lists),
+                };
+                <span class="k">if</span> acc != p.stmt.acc[k] {
+                    <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: chunk {j}: acc_{k} differs from the fingerprint of my tag slots and header words (the stream&#x27;s tags or header words are not the ones I hold)&quot;</span>));
+                }
+            }
+        }
+    }
+    <span class="c">// 4. sigma at chunk ends, None elsewhere</span>
+    <span class="k">if</span> sw.sigma {
+        <span class="k">let</span> want = sigmas_from(&amp;proofs.iter().map(|p| p.stmt.clone()).collect::&lt;Vec&lt;_&gt;&gt;(), g);
+        <span class="k">for</span> (i, b) <span class="k">in</span> blocks.iter().enumerate() {
+            <span class="k">if</span> b.sigma != want[i] {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: block {}: sigma is not the proven chunk-end state (or not &#x27;none&#x27;)&quot;</span>, i + <span class="n">1</span>));
+            }
+        }
+    }
+    <span class="c">// 5. rebuild every B field from the material</span>
+    <span class="k">if</span> sw.summaries {
+        <span class="k">for</span> (g0, b) <span class="k">in</span> blocks.iter().enumerate() {
+            <span class="k">let</span> (w, _) = build_block(mat, &amp;ds, g0, b.sigma);
+            <span class="k">if</span> &amp;w != b {
+                <span class="k">let</span> f = <span class="k">if</span> w.r_rec != b.r_rec {
+                    <span class="s">&quot;r_rec&quot;</span>
+                } <span class="k">else</span> <span class="k">if</span> w.s_root != b.s_root {
+                    <span class="s">&quot;MRoot(S)&quot;</span>
+                } <span class="k">else</span> {
+                    <span class="s">&quot;e/g/q/count&quot;</span>
+                };
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;AA: block {}: {f} differs from what I rebuild from the tags and descriptors&quot;</span>, g0 + <span class="n">1</span>));
+            }
+        }
+    }
+    <span class="c">// 6. R_e</span>
+    <span class="k">let</span> r_e = epoch_root35(blocks);
+    <span class="k">let</span> native_s = native1 + t.elapsed().as_secs_f64();
+    <span class="k">let</span> last = &amp;proofs[proofs.len() - <span class="n">1</span>].stmt;
+    <span class="k">Ok</span>(AaOut { r_e, n_e: n <span class="k">as</span> u64, g_e: g <span class="k">as</span> u64, digest: chunk::plain::digest_of(&amp;last.s_out), verify_s, native_s })
+}</pre><button class="more" type="button">Show more</button></div><div class="honest"><b>Honest note.</b> laptop demo run, not a paper number.</div><div class="pn"><button type="button" class="prev">&larr; previous</button><button type="button" class="next">next &rarr;</button></div></section><section id="s11" data-n="11"><div class="sh"><h2>11. Requester verification and result</h2><span class="badge">laptop time: 0.0020 s (N = 10,000)</span></div><div class="try"><div class="try-h">Try it</div><div class="cmd"><span class="prompt">$</span> bash demo/explain.sh</div><pre class="out">  requester ACCEPTED in 0.0018 s (native 0.0001, auth 0.0008, run proofs 0.0009)
+  result: count = 20, sum = 15904545
+  plain reference over the records: count = 20, sum = 15904545   -&gt; MATCH
+  bytes the requester receives: 276534
+Done. (STARK proofs here are plain mode, not zero-knowledge; the chain is an in-process simulation.)</pre><div class="try-n">Real output of explain.sh on the laptop (N = 2000 for the later steps). Only lines of this step are shown; the full run prints all 10 steps.</div></div><div class="diag-wrap"><svg class="diagram" viewBox="0 0 1000 335" role="img" aria-label="Requester checks and result card"><defs><marker id="ah11" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahead"/></marker></defs><rect x="15" y="20" width="570" height="36" rx="10" class="box small"/><text x="30" y="45" class="t s15" text-anchor="start">✓ BlockCover: G_e blocks, R_e rebuilt = anchored R_e</text><rect x="15" y="64" width="570" height="36" rx="10" class="box small"/><text x="30" y="89" class="t s15" text-anchor="start">✓ run shape: ordered, on chunk boundaries</text><rect x="15" y="108" width="570" height="36" rx="10" class="box small"/><text x="30" y="133" class="t s15" text-anchor="start">✓ s_in, s_out = anchored sigma states</text><rect x="15" y="152" width="570" height="36" rx="10" class="box small"/><text x="30" y="177" class="t s15" text-anchor="start">✓ hdr_first = header word of the run&#x27;s first block</text><rect x="15" y="196" width="570" height="36" rx="10" class="box small"/><text x="30" y="221" class="t s15" text-anchor="start">✓ PruneValid: Bloom zero bits + Merkle paths</text><rect x="15" y="240" width="570" height="36" rx="10" class="box small"/><text x="30" y="265" class="t s15" text-anchor="start">✓ claim = sum over the runs</text><rect x="15" y="284" width="570" height="36" rx="10" class="box small"/><text x="30" y="309" class="t s15" text-anchor="start">✓ R_Auth proof, then every run proof verify</text><rect x="630" y="20" width="355" height="170" rx="10" class="box result"/><text x="807" y="58" class="tb" text-anchor="middle">requester ACCEPTED</text><text x="807" y="102" class="tv" text-anchor="middle">count = 20</text><text x="807" y="142" class="tv" text-anchor="middle">sum = 15,904,545</text><text x="807" y="176" class="ts" text-anchor="middle">= plain reference: MATCH</text><text x="807" y="226" class="ts" text-anchor="middle">explain.sh step 10 (N = 2000)</text><text x="807" y="252" class="ts" text-anchor="middle">accepted in 0.0018 s</text></svg></div><h3>What it does</h3><p>The requester (the TPA) gets blocks, openings, run proofs and the auth proof. It rebuilds the epoch root from the block list, compares it with the anchored one, checks the Bloom openings of pruned blocks, adds up the claims, and verifies the proofs. Only then does it accept the count and the sum.</p><h3>What it contains</h3><ul><li>Real N = 2000: accepted in 0.0018 s; count 20, sum 15,904,545 equal the plain reference (MATCH); the requester received 276,534 bytes.</li><li>Real N = 10,000: accepted in 0.0020 s (native 0.0001, auth 0.0009, runs 0.0010); 288,118 bytes received.</li></ul><h3>Code</h3><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L791-L818" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:791-818</a><span class="lines">28 lines</span></div><div class="snip-note">Anchor and requester checks.</div><pre class="code collapsed"><span class="k">pub</span> <span class="k">struct</span> Anchor {
+    <span class="k">pub</span> r_e: Hash,
+    <span class="k">pub</span> n_e: u64,
+    <span class="k">pub</span> g_e: u64,
+}
+
+<span class="c">/// TEST-ONLY switches of the requester&#x27;s native checks (production = `ON`).</span>
+#[derive(Clone, Copy, Debug)]
+<span class="k">pub</span> <span class="k">struct</span> ReqChecks {
+    <span class="c">/// block list: length = G_e, e/g/q continuity, sum of counts = N_e, R_e rebuilt from all B equals the anchored R_e</span>
+    <span class="k">pub</span> block_list: bool,
+    <span class="c">/// runs ordered, disjoint, inside 1..G_e, on chunk boundaries (sigma set at the end of the run and at the block before it), n_blocks and block_size consistent</span>
+    <span class="k">pub</span> run_shape: bool,
+    <span class="c">/// s_in / s_out of every run equal the anchored sigma (IV for the first chunk)</span>
+    <span class="k">pub</span> states: bool,
+    <span class="c">/// hdr_first is the header word of the run&#x27;s first block</span>
+    <span class="k">pub</span> hdr_first: bool,
+    <span class="c">/// every block outside the runs has openings that show the query false</span>
+    <span class="k">pub</span> prune: bool,
+    <span class="c">/// the Merkle path of every opening is checked against the anchored MRoot(S)</span>
+    <span class="k">pub</span> open_path: bool,
+    <span class="c">/// the claimed result equals the sum over the runs</span>
+    <span class="k">pub</span> claim: bool,
+}
+
+<span class="k">impl</span> ReqChecks {
+    <span class="k">pub</span> <span class="k">const</span> ON: ReqChecks = ReqChecks { block_list: <span class="k">true</span>, run_shape: <span class="k">true</span>, states: <span class="k">true</span>, hdr_first: <span class="k">true</span>, prune: <span class="k">true</span>, open_path: <span class="k">true</span>, claim: <span class="k">true</span> };
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L827-L857" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:827-857</a><span class="lines">31 lines</span></div><div class="snip-note">BlockCover.</div><pre class="code collapsed"><span class="k">pub</span> <span class="k">fn</span> requester_native35_fmt(an: &amp;Anchor, f: &amp;Formula, resp: &amp;CspResponse, sw: ReqChecks, fmt: WFmt) -&gt; Result&lt;(u64, u64), String&gt; {
+    <span class="k">let</span> blocks = &amp;resp.blocks;
+    <span class="k">let</span> g_e = an.g_e <span class="k">as</span> usize;
+    <span class="c">// 1. BlockCover</span>
+    <span class="k">if</span> sw.block_list {
+        <span class="k">if</span> blocks.len() != g_e {
+            <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;block list has {} blocks, the anchored G_e is {g_e}&quot;</span>, blocks.len()));
+        }
+        <span class="k">let</span> <span class="k">mut</span> total = <span class="n">0u64</span>;
+        <span class="k">for</span> (i, b) <span class="k">in</span> blocks.iter().enumerate() {
+            <span class="k">if</span> b.e != EPOCH || b.g != i <span class="k">as</span> u64 + <span class="n">1</span> {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;block list: position {} holds (e, g) = ({}, {})&quot;</span>, i + <span class="n">1</span>, b.e, b.g));
+            }
+            <span class="k">if</span> b.count == <span class="n">0</span> || b.q_next != b.q_start + b.count {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;block list: block {} has an inconsistent sequence range&quot;</span>, i + <span class="n">1</span>));
+            }
+            <span class="k">if</span> i &gt; <span class="n">0</span> &amp;&amp; b.q_start != blocks[i - <span class="n">1</span>].q_next {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;block list: block {} does not continue block {}&quot;</span>, i + <span class="n">1</span>, i));
+            }
+            total += b.count;
+        }
+        <span class="k">if</span> total != an.n_e {
+            <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;block list: counts sum to {total}, the anchored N_e is {}&quot;</span>, an.n_e));
+        }
+        <span class="k">if</span> blocks.last().map_or(<span class="k">true</span>, |b| b.sigma.is_none()) {
+            <span class="k">return</span> <span class="k">Err</span>(<span class="s">&quot;block list: the last block does not end a chunk&quot;</span>.into());
+        }
+        <span class="k">if</span> epoch_root35(blocks) != an.r_e {
+            <span class="k">return</span> <span class="k">Err</span>(<span class="s">&quot;block list: R_e rebuilt from the blocks differs from the anchored R_e&quot;</span>.into());
+        }
+    }</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L904-L951" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:904-951</a><span class="lines">48 lines</span></div><div class="snip-note">PruneValid and the claim.</div><pre class="code collapsed">    <span class="c">// 3. PruneValid</span>
+    <span class="k">if</span> sw.prune {
+        <span class="k">let</span> <span class="k">mut</span> covered = vec![<span class="k">false</span>; gl];
+        <span class="k">for</span> r <span class="k">in</span> &amp;resp.runs {
+            <span class="k">for</span> b <span class="k">in</span> r.first.saturating_sub(<span class="n">1</span>)..r.last.min(gl) {
+                covered[b] = <span class="k">true</span>;
+            }
+        }
+        <span class="k">let</span> by_g: HashMap&lt;u64, &amp;Vec&lt;BloomOpening&gt;&gt; = resp.openings.iter().map(|(g, o)| (*g, o)).collect();
+        <span class="k">for</span> (i, b) <span class="k">in</span> blocks.iter().enumerate() {
+            <span class="k">if</span> covered[i] {
+                <span class="k">continue</span>;
+            }
+            <span class="k">let</span> <span class="k">Some</span>(ops) = by_g.get(&amp;b.g) <span class="k">else</span> {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;block {} is outside the runs and has no Bloom opening&quot;</span>, b.g));
+            };
+            <span class="k">if</span> b.count == <span class="n">0</span> {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;block {}: count 0&quot;</span>, b.g));
+            }
+            <span class="k">let</span> (nbits, k) = bloom_params(b.count <span class="k">as</span> usize);
+            <span class="k">let</span> n_leaves = nbits.div_ceil(<span class="n">64</span>);
+            <span class="k">let</span> <span class="k">mut</span> words: HashMap&lt;usize, u64&gt; = HashMap::new();
+            <span class="k">for</span> o <span class="k">in</span> ops.iter() {
+                <span class="k">if</span> o.leaf_idx &gt;= n_leaves {
+                    <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;block {}: opened leaf {} outside the bit array&quot;</span>, b.g, o.leaf_idx));
+                }
+                <span class="k">if</span> sw.open_path &amp;&amp; !verify_path(&amp;leaf_hash(&amp;o.word.to_le_bytes()), o.leaf_idx, n_leaves, &amp;o.path, &amp;b.s_root) {
+                    <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;block {}: Merkle path of leaf {} does not verify against MRoot(S)&quot;</span>, b.g, o.leaf_idx));
+                }
+                words.insert(o.leaf_idx, o.word);
+            }
+            <span class="k">let</span> zero = |p: usize| words.get(&amp;(p / <span class="n">64</span>)).map_or(<span class="k">false</span>, |w| (w &gt;&gt; (p % <span class="n">64</span>)) &amp; <span class="n">1</span> == <span class="n">0</span>);
+            <span class="k">if</span> !formula_absent(f, nbits, k, &amp;zero) {
+                <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;block {}: the opened zero bits do not show the query false&quot;</span>, b.g));
+            }
+        }
+    }
+    <span class="c">// 4. result</span>
+    <span class="k">let</span> sum: (u64, u64) = (resp.runs.iter().map(|r| r.stmt.count).sum(), resp.runs.iter().map(|r| r.stmt.sum).sum());
+    <span class="k">if</span> sw.claim {
+        <span class="k">if</span> resp.claim != sum {
+            <span class="k">return</span> <span class="k">Err</span>(format!(<span class="s">&quot;claimed result {:?} differs from the sum over the runs {:?}&quot;</span>, resp.claim, sum));
+        }
+        <span class="k">Ok</span>(sum)
+    } <span class="k">else</span> {
+        <span class="k">Ok</span>(resp.claim)
+    }
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-integrated-w46/src/w35.rs#L966-L992" target="_blank" rel="noopener">pqz-integrated-w46/src/w35.rs:966-992</a><span class="lines">27 lines</span></div><div class="snip-note">verify_requester35_fmt.</div><pre class="code collapsed"><span class="k">pub</span> <span class="k">fn</span> verify_requester35_fmt(an: &amp;Anchor, f: &amp;Formula, auth: &amp;AuthProof, resp: &amp;CspResponse, sw: ReqChecks, fmt: WFmt) -&gt; Res&lt;(ReqTimes35, (u64, u64))&gt; {
+    <span class="k">let</span> <span class="k">mut</span> tm = ReqTimes35::default();
+    <span class="k">let</span> t = Instant::now();
+    <span class="k">let</span> result = requester_native35_fmt(an, f, resp, sw, fmt).map_err(|e| RunError::new(<span class="n">5</span>, format!(<span class="s">&quot;requester native check rejected: {e}&quot;</span>)))?;
+    <span class="k">for</span> (k, r) <span class="k">in</span> resp.runs.iter().enumerate() {
+        check_ctx(&amp;auth.stmt, &amp;r.stmt.ctx, RID).map_err(|e| RunError::new(<span class="n">5</span>, format!(<span class="s">&quot;requester native check rejected: run {k}: {e}&quot;</span>)))?;
+        <span class="k">if</span> r.stmt.theta != THETA {
+            <span class="k">return</span> <span class="k">Err</span>(RunError::new(<span class="n">5</span>, format!(<span class="s">&quot;requester native check rejected: run {k}: theta {} != requested {THETA}&quot;</span>, r.stmt.theta)));
+        }
+    }
+    check_scope(&amp;auth.stmt).map_err(|e| RunError::new(<span class="n">5</span>, format!(<span class="s">&quot;requester native check rejected: {e}&quot;</span>)))?;
+    tm.native_s = t.elapsed().as_secs_f64();
+    <span class="k">let</span> t = Instant::now();
+    verify_auth_stage(auth)?;
+    tm.auth_s = t.elapsed().as_secs_f64();
+    <span class="k">let</span> t = Instant::now();
+    <span class="k">for</span> (k, r) <span class="k">in</span> resp.runs.iter().enumerate() {
+        <span class="k">let</span> proof = parse(&amp;r.proof, <span class="s">&quot;R_Exec run&quot;</span>)?;
+        <span class="k">match</span> fmt {
+            WFmt::Old =&gt; run::plain::verify_run(&amp;opts(), &amp;proof, &amp;r.stmt),
+            WFmt::P2r =&gt; prun::plain::verify_run(&amp;opts(), &amp;proof, &amp;r.stmt),
+        }
+        .map_err(|e| RunError::new(<span class="n">5</span>, format!(<span class="s">&quot;run {k}: R_Exec verifier rejected: {e}&quot;</span>)))?;
+    }
+    tm.runs_s = t.elapsed().as_secs_f64();
+    <span class="k">Ok</span>((tm, result))
+}</pre><button class="more" type="button">Show more</button></div><div class="honest"><b>Honest note.</b> laptop demo run, not a paper number. The requester here is the TPA, played by the same process.</div><div class="pn"><button type="button" class="prev">&larr; previous</button><button type="button" class="next">next &rarr;</button></div></section><section id="s12" data-n="12"><div class="sh"><h2>12. Attack tests (Exp 8)</h2><span class="badge">laptop time: ledger 0.3 s; proofs 18 s smoke</span></div><div class="try"><div class="try-h">Try it</div><div class="cmd"><span class="prompt">$</span> cd pqz-ledger &amp;&amp; ./target/release/reject --trials 20 --seed 1</div><pre class="out">reject: PROVISIONAL in-process ledger simulation (one process, no network); trials per attack = 20, validators = 4
+== production defences (all on), 0.3 s
+variant                      attack class                             trials  rejected  accepted   control_ok
+replay_consume               replay of a consumed RID_Q                   20        20         0     40/40   
+reauthorize_after_consume    replay of a consumed RID_Q                   20        20         0     40/40   
+consume_unauthorized         replay of a consumed RID_Q                   20        20         0     40/40   
+wrong_omega_flipbit          wrong canonical state                        20        20         0     20/20   
+wrong_omega_other_epoch      wrong canonical state                        20        20         0     20/20   
+wrong_omega_forked_policy    wrong canonical state                        20        20         0     20/20   
+stale_epoch_current          wrong canonical state                        20        20         0     20/20   
+predicate_changed            predicate changed after authorization        20        20         0     60/60   
+predicate_changed_new_rid    predicate changed after authorization        20        20         0     20/20   
+omit_block                   authenticated block omitted                  20        20         0     20/20   
+forged_shorter_epoch         authenticated block omitted                  20        20         0     20/20   
+...
+done</pre><div class="try-n">Real output (first lines and the last line). Proof attacks: <code>cd pqz-attack-w38 && ./target/release/attack run fmt=p2r ...</code> (smoke run, 18 s): honest 11/11 accepted; attack rows 116: 114 rejected, 0 accepted, 2 untested. The README of pqz-attack-w38 lists the full earlier run: 1,340 attack rows, 1,300 rejected, 0 accepted, 40 untested; honest 350/350 accepted. laptop demo run, not a paper number.</div></div><div class="diag-wrap"><svg class="diagram" viewBox="0 0 1000 222" role="img" aria-label="Attack results"><defs><marker id="ah12" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ahead"/></marker></defs><rect x="15" y="20" width="470" height="150" rx="10" class="box"/><text x="250" y="52" class="tb" text-anchor="middle">ledger attacks (reject)</text><text x="250" y="82" class="t s15" text-anchor="middle">11 variants x 20 trials</text><text x="250" y="112" class="t s15" text-anchor="middle">220 attacks, 0 accepted</text><text x="250" y="142" class="t s15" text-anchor="middle">controls: honest runs pass</text><rect x="515" y="20" width="470" height="150" rx="10" class="box"/><text x="750" y="52" class="tb" text-anchor="middle">proof attacks (attack, P2r)</text><text x="750" y="82" class="t s15" text-anchor="middle">smoke run: 116 attack rows</text><text x="750" y="112" class="t s15" text-anchor="middle">114 rejected, 0 accepted, 2 untested</text><text x="750" y="142" class="t s15" text-anchor="middle">honest rows: 11 of 11 accepted</text><text x="500" y="204" class="ts" text-anchor="middle">smoke runs on this laptop; the paper&#x27;s trial counts (1,300 rejected, 0 accepted) come from the full plan, not re-run here</text></svg></div><h3>What it does</h3><p>Two harnesses try to cheat. The ledger harness replays tickets, uses a wrong Omega, changes the predicate, or omits a block. The proof harness changes proof inputs, records, or the packed words. Each attack must be rejected, and honest runs must still pass.</p><h3>What it contains</h3><ul><li>Ledger: 11 variants x 20 trials: 20 rejected, 0 accepted each, with the reason per variant (for example <code>omega_not_canonical_state</code>, <code>block_domain_not_covered</code>, <code>gamma_not_matching_ledger</code>).</li><li>Proofs: a full run is 238 s on the laptop (8 threads); the smoke run above takes 18 s.</li></ul><h3>Code</h3><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-ledger/src/attacks.rs#L1-L19" target="_blank" rel="noopener">pqz-ledger/src/attacks.rs:1-19</a><span class="lines">19 lines</span></div><div class="snip-note">The attack classes.</div><pre class="code collapsed"><span class="c">//! Rejection harness: the four attack classes of the plan, run through the full</span>
+<span class="c">//! simulated ledger (signed transactions, block execution on every validator, QC).</span>
+<span class="c">//!</span>
+<span class="c">//! Attack classes (variants in brackets):</span>
+<span class="c">//!   1. replay of a consumed RID_Q   [replay_consume, reauthorize_after_consume, consume_unauthorized]</span>
+<span class="c">//!   2. wrong canonical state Omega_e [wrong_omega_flipbit, wrong_omega_other_epoch,</span>
+<span class="c">//!                                     wrong_omega_forked_policy, stale_epoch_current]</span>
+<span class="c">//!   3. predicate changed after authorization [predicate_changed]</span>
+<span class="c">//!   4. authenticated block omitted  [omit_block, forged_shorter_epoch]</span>
+<span class="c">//!</span>
+<span class="c">//! One &quot;trial&quot; = one attack transaction (or one forged response) with its own RID,</span>
+<span class="c">//! committed in batches of up to 100 per block; trials do not share RIDs, so they are</span>
+<span class="c">//! independent. Each variant also runs the matching honest operation as a CONTROL, so a</span>
+<span class="c">//! harness that rejects everything would be caught (control_ok must equal trials).</span>
+<span class="c">//! The attacker is a registered submitter (it holds a valid transaction key); transaction</span>
+<span class="c">//! signatures therefore do not stop it, only the contract rules and the verifier do.</span>
+<span class="c">//!</span>
+<span class="c">//! Mutation testing: with the `mutation` feature (or in unit tests) one defence at a time</span>
+<span class="c">//! is switched off; exactly the variants listed in `EXPECTED_FLIPS` must become accepted.</span></pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-attack-w38/src/main.rs#L153-L192" target="_blank" rel="noopener">pqz-attack-w38/src/main.rs:153-192</a><span class="lines">40 lines</span></div><div class="snip-note">Mutations of the proof inputs.</div><pre class="code collapsed"><span class="k">fn</span> mutate(w: &amp;Workload, kind: &amp;str, r: &amp;<span class="k">mut</span> Rng) -&gt; Workload {
+    <span class="k">let</span> <span class="k">mut</span> m = w.clone();
+    <span class="k">match</span> kind {
+        <span class="s">&quot;changed_record_word&quot;</span> =&gt; {
+            <span class="k">let</span> i = rec_index(w, r);
+            <span class="k">let</span> j = below(r, <span class="n">7</span>); <span class="c">// pid, epoch, seq, id, v, b, tag (never the flag)</span>
+            <span class="k">let</span> x = m.words[i][j];
+            m.words[i][j] = <span class="k">match</span> j {
+                <span class="n">4</span> =&gt; x ^ (<span class="n">1u64</span> &lt;&lt; below(r, <span class="n">32</span>)),
+                <span class="n">5</span> =&gt; x ^ (<span class="n">1u64</span> &lt;&lt; below(r, <span class="n">20</span>)),
+                _ =&gt; fadd(x, delta(r)),
+            };
+        }
+        <span class="s">&quot;dropped_record&quot;</span> =&gt; {
+            <span class="k">let</span> i = rec_index(w, r);
+            m.words.remove(i);
+        }
+        <span class="s">&quot;duplicated_record&quot;</span> =&gt; {
+            <span class="k">let</span> i = rec_index(w, r);
+            <span class="k">let</span> x = m.words[i];
+            m.words.insert(i, x);
+        }
+        <span class="s">&quot;reordered_records&quot;</span> =&gt; {
+            <span class="k">let</span> i = rec_index(w, r);
+            <span class="k">let</span> <span class="k">mut</span> j = rec_index(w, r);
+            <span class="k">while</span> j == i || m.words[i] == m.words[j] {
+                j = rec_index(w, r);
+            }
+            m.words.swap(i, j);
+        }
+        <span class="s">&quot;changed_block_header&quot;</span> =&gt; {
+            <span class="k">let</span> g = below(r, w.n_blocks);
+            <span class="k">let</span> j = below(r, <span class="n">5</span>); <span class="c">// e, g, m_b, pid, seq_start</span>
+            <span class="k">let</span> i = g * (w.block_size + <span class="n">1</span>);
+            m.words[i][j] = fadd(m.words[i][j], delta(r));
+        }
+        _ =&gt; panic!(<span class="s">&quot;unknown mutation {kind}&quot;</span>),
+    }
+    m
+}</pre><button class="more" type="button">Show more</button></div><div class="snip"><div class="snip-h"><a href="https://github.com/singhaju/pqz-audit/blob/main/pqz-ledger/src/bin/reject.rs#L37-L75" target="_blank" rel="noopener">pqz-ledger/src/bin/reject.rs:37-75</a><span class="lines">39 lines</span></div><div class="snip-note">The ledger harness CLI.</div><pre class="code collapsed"><span class="k">fn</span> main() {
+    <span class="k">let</span> args: Vec&lt;String&gt; = std::env::args().skip(<span class="n">1</span>).collect();
+    <span class="k">let</span> <span class="k">mut</span> p = Params::default();
+    <span class="k">let</span> <span class="k">mut</span> csv_path: Option&lt;String&gt; = <span class="k">None</span>;
+    <span class="k">let</span> <span class="k">mut</span> mutate = <span class="k">false</span>;
+    <span class="k">let</span> <span class="k">mut</span> broken: Option&lt;String&gt; = <span class="k">None</span>;
+    <span class="k">let</span> <span class="k">mut</span> i = <span class="n">0</span>;
+    <span class="k">while</span> i &lt; args.len() {
+        <span class="k">let</span> val = |i: usize| args.get(i + <span class="n">1</span>).cloned().unwrap_or_else(|| {
+            eprintln!(<span class="s">&quot;missing value for {}&quot;</span>, args[i]);
+            std::process::exit(<span class="n">2</span>)
+        });
+        <span class="k">match</span> args[i].as_str() {
+            <span class="s">&quot;--trials&quot;</span> =&gt; {
+                p.trials = val(i).parse().expect(<span class="s">&quot;--trials N&quot;</span>);
+                i += <span class="n">1</span>;
+            }
+            <span class="s">&quot;--seed&quot;</span> =&gt; {
+                p.seed = val(i).parse().expect(<span class="s">&quot;--seed N&quot;</span>);
+                i += <span class="n">1</span>;
+            }
+            <span class="s">&quot;--validators&quot;</span> =&gt; {
+                p.n_validators = val(i).parse().expect(<span class="s">&quot;--validators N (&gt;= 4)&quot;</span>);
+                i += <span class="n">1</span>;
+            }
+            <span class="s">&quot;--csv&quot;</span> =&gt; {
+                csv_path = <span class="k">Some</span>(val(i));
+                i += <span class="n">1</span>;
+            }
+            <span class="s">&quot;--mutate&quot;</span> =&gt; mutate = <span class="k">true</span>,
+            <span class="s">&quot;--break&quot;</span> =&gt; {
+                broken = <span class="k">Some</span>(val(i));
+                i += <span class="n">1</span>;
+            }
+            o =&gt; {
+                eprintln!(<span class="s">&quot;unknown argument {}\nusage: reject [--trials N] [--seed N] [--validators N] [--csv FILE] [--mutate]&quot;</span>, o);
+                std::process::exit(<span class="n">2</span>);
+            }
+        }</pre><button class="more" type="button">Show more</button></div><div class="honest"><b>Honest note.</b> The ledger harness is the in-process simulation, not Fabric. The proof counts come from a tiny smoke run here, plus the README's earlier full run (not re-run). laptop demo run, not a paper number.</div><div class="pn"><button type="button" class="prev">&larr; previous</button><button type="button" class="next">next &rarr;</button></div></section><section id="s13" data-n="13"><div class="sh"><h2>13. Map of all experiments to code</h2></div><div class="try"><div class="try-h">Where to look</div><div class="cmd"><span class="prompt">$</span> sed -n '/^| Exp/,/^$/p' README.md</div><div class="try-n">The table below is copied from the README (same rows). Each crate links to its folder on GitHub.</div></div><div class="diag-wrap"></div><h3>What it does</h3><p>The demo covers one small end-to-end run (Exp 7 path) plus the attack tests (Exp 8). The paper's other experiments use the same crates with other programs and bigger sizes.</p><h3>What it contains</h3><div class="tablewrap"><table><tr><th>Exp</th><th>Topic</th><th>Crate and program</th><th>Related guide sections</th></tr><tr><td>1</td><td>Query scalability</td><td><a href="https://github.com/singhaju/pqz-audit/tree/main/pqz-eval" target="_blank" rel="noopener"><code>pqz-eval</code></a>, <code>exp</code></td><td>2, 3, 8</td></tr><tr><td>2</td><td>Private predicate execution</td><td><a href="https://github.com/singhaju/pqz-audit/tree/main/pqz-eval" target="_blank" rel="noopener"><code>pqz-eval</code></a>, <code>exp</code></td><td>8</td></tr><tr><td>3</td><td>Private aggregation</td><td><a href="https://github.com/singhaju/pqz-audit/tree/main/pqz-eval" target="_blank" rel="noopener"><code>pqz-eval</code></a>, <code>exp</code></td><td>3, 8</td></tr><tr><td>4</td><td>Proof generation and verification</td><td><a href="https://github.com/singhaju/pqz-audit/tree/main/pqz-plonky3-w38" target="_blank" rel="noopener"><code>pqz-plonky3-w38</code></a> (<code>pchild3</code>, <code>pverify3</code>; ZK mode <code>pzk3</code> in <code>-w39zk</code>), baselines in <code>pqz-bl*</code>, <code>pqz-bl-w39/dart-zk</code></td><td>4, 7, 9</td></tr><tr><td>5</td><td>Blockchain overhead</td><td><a href="https://github.com/singhaju/pqz-audit/tree/main/pqz-ledger" target="_blank" rel="noopener"><code>pqz-ledger</code></a> (<code>ledgerbench</code>), <a href="https://github.com/singhaju/pqz-audit/tree/main/pqz-ledger-bl-w37" target="_blank" rel="noopener"><code>pqz-ledger-bl-w37</code></a>, <a href="https://github.com/singhaju/pqz-audit/tree/main/pqz-ledger-fabric-w45" target="_blank" rel="noopener"><code>pqz-ledger-fabric-w45</code></a></td><td>6</td></tr><tr><td>6</td><td>Ablation</td><td><a href="https://github.com/singhaju/pqz-audit/tree/main/pqz-eval" target="_blank" rel="noopener"><code>pqz-eval</code></a> <code>exp</code> (block filter, selective HE), <a href="https://github.com/singhaju/pqz-audit/tree/main/pqz-proof" target="_blank" rel="noopener"><code>pqz-proof</code></a> <code>proofbench ablation</code> (RC batching)</td><td>8</td></tr><tr><td>7</td><td>End-to-end audit cost</td><td><a href="https://github.com/singhaju/pqz-audit/tree/main/pqz-integrated-w46" target="_blank" rel="noopener"><code>pqz-integrated-w46</code></a> <code>w35</code>, <code>w34</code></td><td>1 to 11</td></tr><tr><td>8</td><td>Security testing</td><td><a href="https://github.com/singhaju/pqz-audit/tree/main/pqz-attack-w36" target="_blank" rel="noopener"><code>pqz-attack-w36</code></a> (old format, 34 attacks), <a href="https://github.com/singhaju/pqz-audit/tree/main/pqz-attack-w38" target="_blank" rel="noopener"><code>pqz-attack-w38</code></a> (packed format)</td><td>12</td></tr><tr><td>9</td><td>Comparison with ZKSQL</td><td><a href="https://github.com/singhaju/pqz-audit/tree/main/pqz-exp9-w46" target="_blank" rel="noopener"><code>pqz-exp9-w46</code></a> (our side), <code>scripts-exp9-zksql</code> (ZKSQL side)</td><td>-</td></tr></table></div><p>Demo scripts: <code>demo/run.sh</code> (one run), <code>demo/explain.sh</code> (step by step with real values), <code>demo/guide.html</code> (this page).</p><h3>Code</h3><div class="honest"><b>Honest note.</b> Exps 1 to 6 and 9 are not run by the demo. Numbers in this guide are from a laptop run and are not the paper numbers.</div><div class="pn"><button type="button" class="prev">&larr; previous</button><button type="button" class="next">next &rarr;</button></div></section></main><script>(function(){
+var secs=[].slice.call(document.querySelectorAll("section")),navs=[].slice.call(document.querySelectorAll(".nav"));
+var cur=1;
+function show(n,push){n=Math.max(1,Math.min(secs.length,n));cur=n;
+ secs.forEach(function(s){s.classList.toggle("on",+s.dataset.n===n)});
+ navs.forEach(function(a){a.classList.toggle("on",+a.dataset.n===n)});
+ if(push!==false){try{history.replaceState(null,"","#s"+n)}catch(e){}}
+ window.scrollTo(0,0);}
+navs.forEach(function(a){a.addEventListener("click",function(e){e.preventDefault();show(+a.dataset.n)})});
+document.addEventListener("click",function(e){
+ var g=e.target.closest&&e.target.closest("[data-go]");if(g){show(+g.getAttribute("data-go"));return}
+ var b=e.target.closest&&e.target.closest("button");if(!b)return;
+ if(b.classList.contains("more")){var pre=b.previousElementSibling;var c=pre.classList.toggle("collapsed");b.textContent=c?"Show more":"Show less"}
+ else if(b.classList.contains("prev"))show(cur-1);else if(b.classList.contains("next"))show(cur+1);});
+document.addEventListener("keydown",function(e){
+ if(e.target.closest&&e.target.closest("[data-go]")&&(e.key==="Enter"||e.key===" ")){show(+e.target.closest("[data-go]").getAttribute("data-go"));e.preventDefault();return}
+ if(e.key==="ArrowRight")show(cur+1);else if(e.key==="ArrowLeft")show(cur-1);});
+var m=/^#s(\d+)$/.exec(location.hash);show(m?+m[1]:1,false);
+})();
+</script></body></html>
