@@ -1,0 +1,54 @@
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                            │
+│ Use case: hospital EHR access log, insider data theft                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+built demo_scenarios in 0.1 s (cargo, --locked)
+╭──────────────────────────────── A3  Bad or missing Bloom opening for a skipped block ────────────────────────────────╮
+│ Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                     │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭──────── Phase 0  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted ─────────╮
+│                                                                                                                      │
+│  log                                 N = 10000 hospital access records, insider burst ids 6900..6919                 │
+│  blocks / runs                       20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,   │
+│                                      12, 15, 16, 17, 18, 19, 20]                                                     │
+│  honest claimed result               COUNT = 20, SUM(b) = 6324                                                       │
+│  control: requester verdict on the   ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                  │
+│  honest response                                                                                                     │
+│                                                                                                                      │
+│  Note: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.                   │
+│                                                                                                                      │
+╰─────────────────────────────────────────────────── time 563.1 ms ────────────────────────────────────────────────────╯
+╭───────────────────────── A3a: openings of another (empty) block presented for the hit block ─────────────────────────╮
+│  what the attacker changed  hit block 14 skipped; Bloom openings copied from block 1 and relabelled                  │
+│  verifier says              REJECTED: requester native check rejected: block 14: Merkle path of leaf 3117 does not   │
+│                             verify against MRoot(S)                                                                  │
+╰──────────────────────────────────────────────────── time 0.1 ms ─────────────────────────────────────────────────────╯
+╭─────────────────── A3b: genuine openings of the hit block (paths verify) but its query bits are 1 ───────────────────╮
+│  what the attacker changed  hit block 14 skipped; 7 Bloom leaves opened with open_many (real paths against           │
+│                             MRoot(S))                                                                                │
+│  verifier says              REJECTED: requester native check rejected: block 14: the opened zero bits do not show    │
+│                             the query false                                                                          │
+╰──────────────────────────────────────────────────── time 0.1 ms ─────────────────────────────────────────────────────╯
+╭─────────────────────────────────── A3c: one bit of an honest opening word flipped ───────────────────────────────────╮
+│  what the attacker changed  block 1: opening word of leaf 3117 changed by one bit                                    │
+│  verifier says              REJECTED: requester native check rejected: block 1: Merkle path of leaf 3117 does not    │
+│                             verify against MRoot(S)                                                                  │
+╰──────────────────────────────────────────────────── time 0.0 ms ─────────────────────────────────────────────────────╯
+╭───────────────────────────────────── A3d: openings of a skipped block left out ──────────────────────────────────────╮
+│  what the attacker changed  openings of skipped block 1 removed                                                      │
+│  verifier says              REJECTED: requester native check rejected: block 1 is outside the runs and has no Bloom  │
+│                             opening                                                                                  │
+╰──────────────────────────────────────────────────── time 0.0 ms ─────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────────────────── Result ───────────────────────────────────────────────────────╮
+│ expected: REJECT                                                                                                     │
+│ observed: REJECTED by the verifier (every counted check returned Err)                                                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+                                                        Summary                                                         
+╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
+│ scenario │ expected │ observed                                 │ first rejecting check                    │     time │
+├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
+│ a3       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: block   │ 572.4 ms │
+│          │          │ check returned Err)                      │ 14: Merkle path of leaf 3117 does not    │          │
+│          │          │                                          │ verify against MRoot(S)                  │          │
+╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+Timings: this laptop, one run, not a paper number.

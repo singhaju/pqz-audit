@@ -86,6 +86,8 @@ paper (1180 + 1300 attack trials) were not re-run for this package.
 `bash demo/run.sh` builds `pqz-integrated-w46` (about 1 minute the first time) and runs one small audit (N = 10,000, packed format P2r) in about 1 second, then prints the main timings. It is the existing program `w35`; the numbers are laptop smoke values, not paper numbers.
 
 - `bash demo/run.sh`: build and run one small audit (N = 10,000) and print the main timings.
+- `bash demo/demo.sh`: the talk demo (needs Python `rich`). A hospital access log of 10,000 records: phases 1-7 one panel each, then a menu: attack A2 (the cloud hides a block with matches, REJECTED), the other attacks A1-A7, and predicate examples. `--no-pause`, `--all-attacks`, `--scenario a1..a7`, `--full`. Details: `demo/DEMO-README.md`; saved output: `demo/fallback/`.
+- `bash demo/show.sh <key>`: open the code for a phase or topic at the right line (`show.sh list` for keys, `--term` to print it). Map: `demo/CODE-MAP.md`.
 - `bash demo/explain.sh`: the same pipeline step by step (10 steps) with real values: records, ciphertext and tags, a block, R_e, chunk proofs, the anchor and Omega, the auth proof, pruning, the run proof, requester check.
 - `demo/guide.html`: open in a browser (offline). Clickable guide with 13 sections, diagrams, real outputs and links to the code on GitHub. Arrow keys move between sections.
 

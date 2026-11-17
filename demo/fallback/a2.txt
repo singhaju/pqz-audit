@@ -1,0 +1,42 @@
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                            │
+│ Use case: hospital EHR access log, insider data theft                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+built demo_scenarios in 0.1 s (cargo, --locked)
+╭───────────────────── A2  Cloud hides a block that contains matches   (recommended for the talk) ─────────────────────╮
+│ Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                     │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭──────── Phase 0  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted ─────────╮
+│                                                                                                                      │
+│  log                                 N = 10000 hospital access records, insider burst ids 6900..6919                 │
+│  blocks / runs                       20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,   │
+│                                      12, 15, 16, 17, 18, 19, 20]                                                     │
+│  honest claimed result               COUNT = 20, SUM(b) = 6324                                                       │
+│  control: requester verdict on the   ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                  │
+│  honest response                                                                                                     │
+│                                                                                                                      │
+│  Note: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.                   │
+│                                                                                                                      │
+╰─────────────────────────────────────────────────── time 546.2 ms ────────────────────────────────────────────────────╯
+╭────────────────────────── A2a: honest opening function asked to prove the hit block empty ───────────────────────────╮
+│  what the attacker changed  asked openings_for_blocks for block 14 (it holds 20 matching records)                    │
+│  verifier says              REJECTED: block 14 cannot be shown absent (its filter may contain the query)             │
+╰──────────────────────────────────────────────────── time 0.0 ms ─────────────────────────────────────────────────────╯
+╭─────────────── A2b: cloud drops the run that contains the matches and pretends the blocks were pruned ───────────────╮
+│  what the attacker changed  run over blocks 13..14 removed, claim recomputed (20, 6324) -> (0, 0), no openings for   │
+│                             those blocks                                                                             │
+│  verifier says              REJECTED: requester native check rejected: block 13 is outside the runs and has no       │
+│                             Bloom opening                                                                            │
+╰──────────────────────────────────────────────────── time 0.1 ms ─────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────────────────── Result ───────────────────────────────────────────────────────╮
+│ expected: REJECT                                                                                                     │
+│ observed: REJECTED by the verifier (every counted check returned Err)                                                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+                                                        Summary                                                         
+╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
+│ scenario │ expected │ observed                                 │ first rejecting check                    │     time │
+├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
+│ a2       │ REJECT   │ REJECTED by the verifier (every counted  │ block 14 cannot be shown absent (its     │ 546.4 ms │
+│          │          │ check returned Err)                      │ filter may contain the query)            │          │
+╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+Timings: this laptop, one run, not a paper number.

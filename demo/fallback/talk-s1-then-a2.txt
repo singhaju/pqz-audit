@@ -1,0 +1,388 @@
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                            │
+│ Use case: hospital EHR access log, insider data theft                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+built demo_scenarios in 0.1 s (cargo, --locked)
+╭────────────────────── S1  Honest audit: all phases, ACCEPT, result compared with the plaintext ──────────────────────╮
+│ Hospital EHR access log. An insider (staff 417, night shift) exports patient records in a burst. The cloud stores    │
+│ the encrypted log. An auditor asks: how many EXPORT_RECORDS actions, and how many patient records in total? The      │
+│ answer must come with proofs the auditor can check.                                                                  │
+│                                                                                                                      │
+│ Honest labels: the blockchain is an in-process simulation (4 validators, no network); STARK proofs are plain mode,   │
+│ not zero-knowledge; all timings are from this laptop, one run.                                                       │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭────────────────── Phase 1  Initialization: epoch keys, authority key, 4-validator ledger, genesis ───────────────────╮
+│                                                                                                                      │
+│  epoch keys (AES-256-GCM key, tag    derived from a benchmark seed (never printed)                                   │
+│  key, ML-DSA-65 block key)                                                                                           │
+│  audit authority (AA)                ML-DSA-65 key pair, genesis chain built (Chain::genesis)                        │
+│  ledger                              4 validators, quorum 3 (in-process simulation, no network)                      │
+│  policy root R_pol (genesis)         a7ffc6f8bf1e...f8434a                                                           │
+│  Gamma_0 (genesis)                   6d417b62a0fa...7f40e5                                                           │
+│  Omega_0 (genesis canonical state)   e84210ea3952...536d48                                                           │
+│  epoch e / log size N                e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format   │
+│                                      p2r                                                                             │
+│  audit question                      How many EXPORT_RECORDS actions happened in this epoch, and how many patient    │
+│                                      records were exported in total?  ->  COUNT and SUM(b) where a = 7               │
+│                                                                                                                      │
+│  How the library record Record {id, ts, a, b, c, d} is used for the hospital access log                              │
+│                                                                                                                      │
+│    field   meaning in this demo                                values                                                │
+│   ────────────────────────────────────────────────────────────────────────────────────────────────────────────────   │
+│    id      position in the log                                 0..9999                                               │
+│    ts      event time, seconds since Unix epoch (UTC), shown   2026-11-17 18:00:00 to 2026-11-20 04:20:00            │
+│            as date and time                                                                                          │
+│    a       action code (a = 7 = EXPORT_RECORDS must equal X,   1 VIEW_CHART, 2 EDIT_CHART, 3 PRINT, 4 LOGIN, 5       │
+│            because the pipeline's predicate P1 is a = X)       LOGOUT, 6 ORDER_MEDICATION, 7 EXPORT_RECORDS          │
+│    b       number of patient records touched by the action     0 for LOGIN/LOGOUT, mostly 1 for chart actions,       │
+│            (must be < 2^20)                                    large for exports                                     │
+│    c       department / ward code                              101 ER, 118 ICU, 140 Admissions/Records, 205          │
+│                                                                Oncology, 220 Radiology, 310 Pharmacy, 330            │
+│                                                                Laboratory, 500 Psychiatry (restricted)               │
+│    d       staff id (< 1000)                                   100..999; the insider is staff 417                    │
+│                                                                                                                      │
+│                                                                                                                      │
+│  Note: The prototype has no separate registration service: the AA key and the policy root are created here           │
+│  (Chain::genesis); the log producer registers its records in phase 2.                                                │
+│                                                                                                                      │
+╰──────────────────────────────────────────────────── time 3.9 ms ─────────────────────────────────────────────────────╯
+╭────── Phase 2  Registration: the plaintext access log (what the log producer sees; the cloud never sees this) ───────╮
+│                                                                                                                      │
+│  log generation  own seeded generator (xorshift), 10000 records; a = 7 appears only in the insider's burst (ids      │
+│                  6900..6919)                                                                                         │
+│                                                                                                                      │
+│  First 12 rows of the log (plaintext)                                                                                │
+│                                                                                                                      │
+│    id   time (UTC)            a action             b patients   c dept                   d staff   P1 (a=7)          │
+│   ──────────────────────────────────────────────────────────────────────────────────────────────────────────         │
+│    0    2026-11-17 18:00:02   1 VIEW_CHART         1            310 Pharmacy             984       -                 │
+│    1    2026-11-17 18:00:22   2 EDIT_CHART         1            205 Oncology             170       -                 │
+│    2    2026-11-17 18:00:55   2 EDIT_CHART         1            118 ICU                  799       -                 │
+│    3    2026-11-17 18:01:12   4 LOGIN              0            101 ER                   161       -                 │
+│    4    2026-11-17 18:01:41   1 VIEW_CHART         1            101 ER                   623       -                 │
+│    5    2026-11-17 18:01:55   2 EDIT_CHART         1            118 ICU                  407       -                 │
+│    6    2026-11-17 18:02:09   1 VIEW_CHART         1            118 ICU                  484       -                 │
+│    7    2026-11-17 18:02:36   1 VIEW_CHART         2            330 Laboratory           817       -                 │
+│    8    2026-11-17 18:03:07   1 VIEW_CHART         1            205 Oncology             702       -                 │
+│    9    2026-11-17 18:03:10   2 EDIT_CHART         1            101 ER                   574       -                 │
+│    10   2026-11-17 18:03:39   6 ORDER_MEDICATION   1            140 Admissions/Records   888       -                 │
+│    11   2026-11-17 18:04:09   5 LOGOUT             0            220 Radiology            983       -                 │
+│                                                                                                                      │
+│                                                                                                                      │
+│  Rows 6898..6903 (inside the insider's burst, same plaintext view)                                                   │
+│                                                                                                                      │
+│    id     time (UTC)            a action           b patients   c dept                   d staff   P1 (a=7)          │
+│   ──────────────────────────────────────────────────────────────────────────────────────────────────────────         │
+│    6898   2026-11-19 10:14:18   2 EDIT_CHART       1            140 Admissions/Records   417       -                 │
+│    6899   2026-11-19 10:14:43   1 VIEW_CHART       1            140 Admissions/Records   417       -                 │
+│    6900   2026-11-19 10:15:07   7 EXPORT_RECORDS   16           140 Admissions/Records   417       HIT               │
+│    6901   2026-11-19 10:15:40   7 EXPORT_RECORDS   791          140 Admissions/Records   417       HIT               │
+│    6902   2026-11-19 10:16:01   7 EXPORT_RECORDS   401          140 Admissions/Records   417       HIT               │
+│    6903   2026-11-19 10:16:11   7 EXPORT_RECORDS   507          140 Admissions/Records   417       HIT               │
+│                                                                                                                      │
+│                                                                                                                      │
+│  Action histogram of the whole log                                                                                   │
+│                                                                                                                      │
+│    code   action             records                                                                                 │
+│   ───────────────────────────────────                                                                                │
+│    1      VIEW_CHART         5230                                                                                    │
+│    2      EDIT_CHART         1984                                                                                    │
+│    3      PRINT              401                                                                                     │
+│    4      LOGIN              1152                                                                                    │
+│    5      LOGOUT             624                                                                                     │
+│    6      ORDER_MEDICATION   589                                                                                     │
+│    7      EXPORT_RECORDS     20                                                                                      │
+│                                                                                                                      │
+│                                                                                                                      │
+╰──────────────────────────────────────────────────── time 0.5 ms ─────────────────────────────────────────────────────╯
+╭──────── Phase 3a  Protect each record: AES-256-GCM ciphertext + 45 keyed search tags (what the cloud stores) ────────╮
+│                                                                                                                      │
+│  decrypt check (key holder only)  row 0 decrypts back to the plaintext row: round trip OK                            │
+│  descriptor D_0                   3d1bc38cae6c...87a3a3  (SHA3 over pid, id, epoch, seq, H(CT), H(tags))             │
+│  whole epoch                      10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom       │
+│                                   filter per block (20 blocks)                                                       │
+│                                                                                                                      │
+│  The same 12 rows as the cloud sees them                                                                             │
+│                                                                                                                      │
+│    id   ciphertext (first 8 bytes)   ct bytes   tags   first tag                                                     │
+│   ───────────────────────────────────────────────────────────────────────────                                        │
+│    0    9ca278904be6f5d2...          32         45     08cceb250ddf...795fdd                                         │
+│    1    bf4e8ac9674faeb9...          32         45     08cceb250ddf...795fdd                                         │
+│    2    3e8954dba7e9a060...          32         45     08cceb250ddf...795fdd                                         │
+│    3    de593fe1981c5e91...          32         45     08cceb250ddf...795fdd                                         │
+│    4    df28b3ef4178f365...          32         45     08cceb250ddf...795fdd                                         │
+│    5    e43e7195c1dc8ec8...          32         45     08cceb250ddf...795fdd                                         │
+│    6    f223d3dd042af485...          32         45     08cceb250ddf...795fdd                                         │
+│    7    9960fe867a84f504...          32         45     08cceb250ddf...795fdd                                         │
+│    8    7aa2a11bc048f6e5...          32         45     08cceb250ddf...795fdd                                         │
+│    9    44b66111ba6f8ded...          32         45     08cceb250ddf...795fdd                                         │
+│    10   65cf8ca8876fd801...          32         45     08cceb250ddf...795fdd                                         │
+│    11   3079b4e376827dde...          32         45     08cceb250ddf...795fdd                                         │
+│                                                                                                                      │
+│                                                                                                                      │
+│  Note: Time is for build_log over the whole epoch (encryption, tags, descriptors, Bloom filters, record Merkle       │
+│  roots, proof word stream).                                                                                          │
+│                                                                                                                      │
+╰─────────────────────────────────────────────────── time 233.3 ms ────────────────────────────────────────────────────╯
+╭──────────── Phase 3b  Skippable blocks: block commitments, Bloom summaries, R_RC STARK proofs, AA check ─────────────╮
+│                                                                                                                      │
+│  Bloom filter per block      215664 bits, k = 7 hash positions per tag                                               │
+│  R_e = MerkleRoot(B_1..B_G)  477448240652...d83c88                                                                   │
+│  R_RC proofs                 10 chunk proofs (each chunk = 2 blocks), 1625106 bytes in total, ~127 conjectured       │
+│                              bits, 0.109 s                                                                           │
+│  AA check (aa_finalize_fmt)  passed in 0.097 s: verified every chunk proof, rebuilt tag lists, headers and blocks;   │
+│                              R_e = 477448240652...d83c88, N_e = 10000, G_e = 20                                      │
+│                                                                                                                      │
+│  Blocks B_(e,g) (what the epoch root is built from)                                                                  │
+│                                                                                                                      │
+│                               r_rec (Merkle of       s_root (Merkle of                                               │
+│    g    seq range     count   descriptors)           Bloom filter)         commitment             sigma              │
+│   ────────────────────────────────────────────────────────────────────────────────────────────────────────────────   │
+│    1    1..500        500     d4c6be3686c6...7ed21   33737d5ac8b5...a008   358cbb74929a...208c1   -                  │
+│                               4                      2f                    8                                         │
+│    2    501..1000     500     4ca361d03890...5ab80   a4462324fb32...7f7a   00f54d04aeb9...f263d   chunk-end state    │
+│                               1                      f8                    f                                         │
+│    3    1001..1500    500     61c17288c25e...98479   31c94f71e61f...dfbe   51977d8532f7...60da2   -                  │
+│                               1                      c8                    b                                         │
+│    4    1501..2000    500     bc1971806621...61351   eabde8dc3180...f671   660b2a629f1d...158ba   chunk-end state    │
+│                               f                      ea                    e                                         │
+│    5    2001..2500    500     c594be47a89c...0bd5a   b7cbcff4edbd...8d2e   c90349b513e7...5c8c5   -                  │
+│                               2                      8b                    3                                         │
+│    6    2501..3000    500     883329008497...49f00   b15abdc665f9...e566   a4ef2af1cc50...a9aff   chunk-end state    │
+│                               9                      e1                    e                                         │
+│    7    3001..3500    500     1849485706fb...043d7   9bad543d3155...0d9f   b41173f84dc4...45af5   -                  │
+│                               6                      3c                    9                                         │
+│    8    3501..4000    500     97ef04eda8ee...e7138   218a5c1b837b...b488   adb98e503709...85161   chunk-end state    │
+│                               e                      b1                    f                                         │
+│    9    4001..4500    500     6793c58f7913...d31df   8134bee15888...a050   4eaa4e4dcece...d09bb   -                  │
+│                               f                      14                    e                                         │
+│    10   4501..5000    500     77ca2211d8be...d711a   b69575a79896...1a20   6d040aeaa490...50b15   chunk-end state    │
+│                               b                      07                    6                                         │
+│    11   5001..5500    500     fcbf55ee9923...4d93a   f1c1d4cf697d...44d0   9bf302ec764d...b175e   -                  │
+│                               1                      d2                    5                                         │
+│    12   5501..6000    500     6e1d6082d855...07fc7   70a6bceade4c...659d   af820a7704fc...49a63   chunk-end state    │
+│                               7                      2e                    5                                         │
+│    13   6001..6500    500     ec90f7940600...02d21   4579d7a2aec3...6eb2   f73ca9f90c94...34779   -                  │
+│                               0                      70                    0                                         │
+│    14   6501..7000    500     de6a62ba81f7...6e385   c374ec323f5c...6cf7   f9d2f2f6c874...d1668   chunk-end state    │
+│                               e                      8d                    4                                         │
+│    15   7001..7500    500     da4d08aa2e2a...01ca5   5555d01d1a15...ed2f   c2da82064570...3eb21   -                  │
+│                               b                      77                    8                                         │
+│    16   7501..8000    500     8f4b0b326fe6...c6214   23a348b343cd...3aec   280c336c4637...4fc18   chunk-end state    │
+│                               6                      ee                    8                                         │
+│    17   8001..8500    500     7a6e12cb0f20...74f04   3064b44b969f...d743   8c44c696be49...742a4   -                  │
+│                               1                      c1                    4                                         │
+│    18   8501..9000    500     4c3a0f06fa37...15e25   e5f0979a6b14...ac65   b396800f8ce4...5c7a9   chunk-end state    │
+│                               e                      bd                    1                                         │
+│    19   9001..9500    500     074849776785...123fb   136a55927510...2d2b   a610055e91d6...9cc6b   -                  │
+│                               4                      c0                    b                                         │
+│    20   9501..10000   500     8024776c8ae4...56cce   a8af82441637...5400   30fc66d0aaa2...6ad47   chunk-end state    │
+│                               b                      78                    7                                         │
+│                                                                                                                      │
+│                                                                                                                      │
+│  Note: STARK proofs in this prototype are PLAIN mode, not zero-knowledge.                                            │
+│                                                                                                                      │
+╰─────────────────────────────────────────────────── time 290.3 ms ────────────────────────────────────────────────────╯
+╭──────────────────────────── Phase 4  Canonical state: anchor the epoch on the blockchain ────────────────────────────╮
+│                                                                                                                      │
+│  A_e                                 e=1, R_e=477448240652...d83c88, N_e=10000, G_e=20, t_e=1,                       │
+│                                      p_e=6d417b62a0fa...7f40e5                                                       │
+│  sigma_e                             ML-DSA-65 signature by the AA, 3309 bytes                                       │
+│  Gamma_e = H(A_e || sigma_e)         554b1c2787fce505c7b90594f3444d43da02b02c576ad82e7bd8be76e20e6e10                │
+│  Omega_e = H(label, e, Gamma_e,      c7deeb48c1c7e1fd7c913d27fe28e02451af83ad4533eb6025aaa3fef9b2abaa                │
+│  R_pol, v_auth)                                                                                                      │
+│  ledger block                        height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes   │
+│                                      (need 3 of 4 validators)                                                        │
+│  timing                              anchor 0.0028 s (seal 0.0002, tx sign 0.0003, submit + consensus simulation     │
+│                                      0.0023)                                                                         │
+│  light-client read of State (Merkle  verified in 0.0002 s                                                            │
+│  path + QC) and Omega check                                                                                          │
+│                                                                                                                      │
+│  Note: The blockchain is an in-process SIMULATION: 4 validators in one process, no network, no real consensus        │
+│  latency.                                                                                                            │
+│                                                                                                                      │
+╰──────────────────────────────────────────────────── time 3.0 ms ─────────────────────────────────────────────────────╯
+╭─────────────────────── Phase 5  Audit request: authorization proof R_Auth (bound to Omega_e) ────────────────────────╮
+│                                                                                                                      │
+│  request                             auditor asks for COUNT and SUM(b) where a = 7 (qid 1, predicate text "P1: A =   │
+│                                      x")                                                                             │
+│  R_Auth proof                        126789 bytes, 64 trace rows, proving 0.0038 s                                   │
+│  public: Omega                       [18294122794321698503, 2657168852193743228, 6983732021524934481,                │
+│                                      12298119994254010917]                                                           │
+│  public: d_Q (hash of the query)     [5174721180460814168, 1802547671309111583, 17205963863366542530,                │
+│                                      17796667322064207624]                                                           │
+│  public: B_Q (binding of query,      [3233295437152771975, 16826802247181355768, 2179090176344473829,                │
+│  policy, Omega)                      7764378742566186858]                                                            │
+│  verify_auth_stage says              accepted                                                                        │
+│                                                                                                                      │
+│  Note: The policy leaf, scope and other policy-tree leaves are fixed synthetic values in this prototype              │
+│  (honest_auth_instance), not a real hospital policy.                                                                 │
+│                                                                                                                      │
+╰──────────────────────────────────────────────────── time 5.0 ms ─────────────────────────────────────────────────────╯
+╭───────────────────── Phase 6  Execution: block pruning, exact predicate, execution proof R_Exec ─────────────────────╮
+│                                                                                                                      │
+│  runs to prove (chunk ranges)    [(6, 6)]  (2 of 20 blocks inside runs)                                              │
+│  exact predicate                 20 records selected by rps_eval on the retained blocks (search 0.0000 s + 0.0000    │
+│                                  s)                                                                                  │
+│  R_Exec                          1 run proof(s), 147749 bytes, 0.010 s, ~127 conjectured bits                        │
+│  claimed result from the proofs  COUNT = 20, SUM(b) = 6324                                                           │
+│                                                                                                                      │
+│  Block pruning (Bloom summary = BPS, then exact record tags = RPS)                                                   │
+│                                                                                                                      │
+│    block   Bloom (bps_eval)    decision                why (PruneValid openings)      records selected (rps_eval)    │
+│   ────────────────────────────────────────────────────────────────────────────────────────────────────────────────   │
+│    1       no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    2       no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    3       no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    4       no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    5       no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    6       no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    7       no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    8       no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    9       no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    10      no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    11      no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    12      no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    13      no a = 7            proved (inside a run)   -                              0                              │
+│    14      may contain a = 7   proved (inside a run)   -                              20                             │
+│    15      no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    16      no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    17      no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    18      no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    19      no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│    20      no a = 7            SKIPPED                 1 Bloom leaves opened; all     0                              │
+│                                                        query positions are 0 bits                                    │
+│                                                        -> a = 7 cannot be here                                       │
+│                                                                                                                      │
+│                                                                                                                      │
+│  Note: R_Exec proves the equality predicate a = X only (the value v = THETA is set by v_of in the log builder); it   │
+│  is plain-mode STARK, not zero-knowledge.                                                                            │
+│                                                                                                                      │
+╰──────────────────────────────────────────────────── time 15.5 ms ────────────────────────────────────────────────────╯
+╭─────── Phase 6  Execution (continued): selective homomorphic aggregation (BFV) over the selected records only ───────╮
+│                                                                                                                      │
+│  scheme         BFV degree=8192 plaintext_modulus=2199023190017 (41 bits) moduli=[8796092858369, 8796092792833,      │
+│                 17592186028033, 17592185438209, 17592184717313] pool_K=1024                                          │
+│  what is added  20 ciphertexts (only the records selected by the exact predicate), COUNT via encrypted 1s, SUM via   │
+│                 encrypted b                                                                                          │
+│  timing         pool setup 3.596 s (setup, not counted in the phase), 40 homomorphic additions 0.0019 s              │
+│                                                                                                                      │
+│  Note: PROTOTYPE LIMIT (pqz_eval::he): HE ciphertexts come from a pool of 1024 pre-encrypted values, a record with   │
+│  value b uses the ciphertext of (b mod 1024). So the encrypted COUNT is exact, but the encrypted SUM is the sum of   │
+│  (b mod 1024), not of b. The exact SUM(b) comes from the proved result.                                              │
+│                                                                                                                      │
+╰──────────────────────────────────────────────────── time 1.9 ms ─────────────────────────────────────────────────────╯
+╭──────────────── Phase 7  Verify and recover: requester checks, result, comparison with the plaintext ────────────────╮
+│                                                                                                                      │
+│  requester verdict                   ACCEPT                                                                          │
+│  (verify_requester35_fmt)                                                                                            │
+│  checks run                          native 0.0001 s (block list vs anchored R_e, run shape, anchored states,        │
+│                                      PruneValid openings, claim), auth proof 0.0009 s, run proofs 0.0010 s           │
+│  verified result                     COUNT = 20, SUM(b) = 6324                                                       │
+│  plain reference over the plaintext  COUNT = 20, SUM(b) = 6324                                                       │
+│  records                                                                                                             │
+│  comparison                          MATCH                                                                           │
+│  bytes the requester receives        284742                                                                          │
+│  HE aggregate decrypted (key held    COUNT = Ok(20) (expected 20), SUM of (b mod 1024) = Ok(6324) (plain 6324)       │
+│  in the pool object)                                                                                                 │
+│  recovery committee (3-of-5 Shamir,  2 shares: Err(TooFewShares); 3 shares: key reconstructed (matches the dealt     │
+│  T_rec)                              secret); 3 shares with one corrupted: Err(CheckFailed)                          │
+│                                                                                                                      │
+│  Note: HONEST LIMIT (pqz_ledger::threshold): only Shamir sharing and reconstruction exist. A reconstruction hands    │
+│  the key to the combiner; it is NOT a threshold decryption. Here the shared secret is a stand-in value and is not    │
+│  the BFV key held by the HE pool.                                                                                    │
+│                                                                                                                      │
+╰──────────────────────────────────────────────────── time 2.0 ms ─────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────────────────── Result ───────────────────────────────────────────────────────╮
+│ expected: ACCEPT with result MATCH                                                                                   │
+│ observed: ACCEPT, MATCH                                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭───────────────────── A2  Cloud hides a block that contains matches   (recommended for the talk) ─────────────────────╮
+│ Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                     │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭──────── Phase 0  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted ─────────╮
+│                                                                                                                      │
+│  log                                 N = 10000 hospital access records, insider burst ids 6900..6919                 │
+│  blocks / runs                       20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,   │
+│                                      12, 15, 16, 17, 18, 19, 20]                                                     │
+│  honest claimed result               COUNT = 20, SUM(b) = 6324                                                       │
+│  control: requester verdict on the   ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                  │
+│  honest response                                                                                                     │
+│                                                                                                                      │
+│  Note: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.                   │
+│                                                                                                                      │
+╰─────────────────────────────────────────────────── time 564.6 ms ────────────────────────────────────────────────────╯
+╭────────────────────────── A2a: honest opening function asked to prove the hit block empty ───────────────────────────╮
+│  what the attacker changed  asked openings_for_blocks for block 14 (it holds 20 matching records)                    │
+│  verifier says              REJECTED: block 14 cannot be shown absent (its filter may contain the query)             │
+╰──────────────────────────────────────────────────── time 0.0 ms ─────────────────────────────────────────────────────╯
+╭─────────────── A2b: cloud drops the run that contains the matches and pretends the blocks were pruned ───────────────╮
+│  what the attacker changed  run over blocks 13..14 removed, claim recomputed (20, 6324) -> (0, 0), no openings for   │
+│                             those blocks                                                                             │
+│  verifier says              REJECTED: requester native check rejected: block 13 is outside the runs and has no       │
+│                             Bloom opening                                                                            │
+╰──────────────────────────────────────────────────── time 0.1 ms ─────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────────────────── Result ───────────────────────────────────────────────────────╮
+│ expected: REJECT                                                                                                     │
+│ observed: REJECTED by the verifier (every counted check returned Err)                                                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+                                                        Summary                                                         
+╭──────────┬──────────────────────────┬──────────────────────────────────┬──────────────────────────────────┬──────────╮
+│ scenario │ expected                 │ observed                         │ first rejecting check            │     time │
+├──────────┼──────────────────────────┼──────────────────────────────────┼──────────────────────────────────┼──────────┤
+│ s1       │ ACCEPT with result MATCH │ ACCEPT, MATCH                    │ -                                │   4.19 s │
+│ a2       │ REJECT                   │ REJECTED by the verifier (every  │ block 14 cannot be shown absent  │ 564.7 ms │
+│          │                          │ counted check returned Err)      │ (its filter may contain the      │          │
+│          │                          │                                  │ query)                           │          │
+╰──────────┴──────────────────────────┴──────────────────────────────────┴──────────────────────────────────┴──────────╯
+             S1 per-phase time              
+                                            
+  phase   what                        time  
+ ────────────────────────────────────────── 
+  1       Initialization            3.9 ms  
+  2       Registration              0.5 ms  
+  3a      Protect each record     233.3 ms  
+  3b      Skippable blocks        290.3 ms  
+  4       Canonical state           3.0 ms  
+  5       Audit request             5.0 ms  
+  6       Execution                15.5 ms  
+  6       Execution (continued)     1.9 ms  
+  7       Verify and recover        2.0 ms  
+          sum of phases           555.3 ms  
+                                            
+S1 total in the summary is wall time; it includes the one-time BFV pool setup, which is not in any phase.
+Timings: this laptop, one run, not a paper number.

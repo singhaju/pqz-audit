@@ -1,0 +1,54 @@
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                            │
+│ Use case: hospital EHR access log, insider data theft                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+built demo_scenarios in 0.1 s (cargo, --locked)
+╭──────────────────────────────────────── A7  Forged or tampered ledger anchor ────────────────────────────────────────╮
+│ Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                     │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭──────── Phase 0  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted ─────────╮
+│                                                                                                                      │
+│  log                                 N = 10000 hospital access records, insider burst ids 6900..6919                 │
+│  blocks / runs                       20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,   │
+│                                      12, 15, 16, 17, 18, 19, 20]                                                     │
+│  honest claimed result               COUNT = 20, SUM(b) = 6324                                                       │
+│  control: requester verdict on the   ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                  │
+│  honest response                                                                                                     │
+│                                                                                                                      │
+│  Note: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.                   │
+│                                                                                                                      │
+╰─────────────────────────────────────────────────── time 552.5 ms ────────────────────────────────────────────────────╯
+╭──────────────────────────────────── A7-control: honest ledger, light-client read ────────────────────────────────────╮
+│  what the attacker changed  nothing                                                                                  │
+│  verifier says              ACCEPTED: gate passed in 0.0002 s                                                        │
+│                             (information step, not counted in the attack verdict)                                    │
+╰──────────────────────────────────────────────────── time 0.2 ms ─────────────────────────────────────────────────────╯
+╭──────────────────────────── A7a: forged ledger block header (state_root edited, QC kept) ────────────────────────────╮
+│  what the attacker changed  one bit of the latest block's state_root                                                 │
+│  verifier says              REJECTED: ledger read proof (QC + Merkle path) did not verify                            │
+╰──────────────────────────────────────────────────── time 0.2 ms ─────────────────────────────────────────────────────╯
+╭──────────────────────────────── A7b: quorum certificate with too few validator votes ────────────────────────────────╮
+│  what the attacker changed  QC cut to 2 votes, quorum is 3 of 4                                                      │
+│  verifier says              REJECTED: ledger read proof (QC + Merkle path) did not verify                            │
+╰──────────────────────────────────────────────────── time 0.1 ms ─────────────────────────────────────────────────────╯
+╭───────────────────────── A7c: tampered anchor entry (State value edited in the read proof) ──────────────────────────╮
+│  what the attacker changed  one bit of the stored State entry (Gamma/Omega) in the light-client read proof           │
+│  verifier says              REJECTED: verify_read returned false (Merkle path from the edited entry does not reach   │
+│                             the QC-signed state_root); the library returns a bool, no text                           │
+╰──────────────────────────────────────────────────── time 0.2 ms ─────────────────────────────────────────────────────╯
+╭───────── A7d: forged anchor transaction for epoch 2 (Omega not equal to H(label, e, Gamma, R_pol, v_auth)) ──────────╮
+│  what the attacker changed  attacker-chosen Gamma and Omega in an Anchor tx                                          │
+│  verifier says              REJECTED: contract rejected: omega_recompute_mismatch (OmegaRecompute)                   │
+╰──────────────────────────────────────────────────── time 0.2 ms ─────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────────────────── Result ───────────────────────────────────────────────────────╮
+│ expected: REJECT                                                                                                     │
+│ observed: REJECTED by the verifier (every counted check returned Err)                                                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+                                                        Summary                                                         
+╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
+│ scenario │ expected │ observed                                 │ first rejecting check                    │     time │
+├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
+│ a7       │ REJECT   │ REJECTED by the verifier (every counted  │ ledger read proof (QC + Merkle path) did │ 553.4 ms │
+│          │          │ check returned Err)                      │ not verify                               │          │
+╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+Timings: this laptop, one run, not a paper number.

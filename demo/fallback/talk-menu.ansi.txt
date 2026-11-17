@@ -1,0 +1,201 @@
+[34m╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮[0m
+[34m│[0m [1mPQZ-Audit[0m: privacy-preserving, post-quantum, verifiable audit-log queries                                            [34m│[0m
+[34m│[0m Use case: hospital EHR access log, insider data theft                                                                [34m│[0m
+[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[?25l[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m
+[?25h[1A[2K[32mbuilt[0m demo_scenarios in 0.1 s (cargo, --locked)
+[34m╭─[0m[34m──────────────────────────────────────────────────[0m[34m [0m[1;34mPQZ-Audit demo[0m[34m [0m[34m──────────────────────────────────────────────────[0m[34m─╮[0m
+[34m│[0m                                                                                                                      [34m│[0m
+[34m│[0m  [1mStory:[0m a hospital keeps its EHR access log in the cloud, encrypted. An insider (staff 417, night shift) exports     [34m│[0m
+[34m│[0m  patient records in a burst. The auditor must find out, without the cloud being trusted.                             [34m│[0m
+[34m│[0m                                                                                                                      [34m│[0m
+[34m│[0m  [1mQuestion:[0m COUNT and SUM(b) of the EXPORT_RECORDS actions (a = 7) in this epoch.                                     [34m│[0m
+[34m│[0m                                                                                                                      [34m│[0m
+[34m│[0m  [1mLog:[0m N = 10,000 records, 20 blocks of 500.                                                                          [34m│[0m
+[34m│[0m                                                                                                                      [34m│[0m
+[34m│[0m  [33mHonest labels:[0m blockchain = in-process simulation (4 validators, no network); STARK proofs = plain mode, not        [34m│[0m
+[34m│[0m  zero-knowledge; timings = this laptop, one run.                                                                     [34m│[0m
+[34m│[0m                                                                                                                      [34m│[0m
+[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[2m  (ENTER to start) [0m[?25l[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m
+[?25h[1A[2K[32m╭─[0m[32m─────────────────────────────────────────────[0m[32m [0m[1;32mPhase 1  Initialization[0m[32m [0m[32m──────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mledger     [0m[36m  [0m4 validators, quorum 3 (in-process simulation, no network)                                             [32m│[0m
+[32m│[0m  [36mOmega_0    [0m[36m  [0me84210ea3952...536d48                                                                                  [32m│[0m
+[32m│[0m  [36mepoch / log[0m[36m  [0me = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                      [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────[0m[32m time 3.2 ms [0m[32m────────────────────────────────────────────────────[0m[32m─╯[0m
+[2m  (ENTER to continue) [0m[32m╭─[0m[32m────────────────────────────────────────[0m[32m [0m[1;32mPhase 2  Registration (plain log)[0m[32m [0m[32m─────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36minsider burst[0m[36m  [0mown seeded generator (xorshift), 10000 records; a = 7 appears only in the insider's burst (ids       [32m│[0m
+[32m│[0m  [36m               [0m6900..6919)                                                                                          [32m│[0m
+[32m│[0m                                                                                                                      [32m│[0m
+[32m│[0m  [3mPlaintext log rows: a = action, b = patients, [0m                                                                      [32m│[0m
+[32m│[0m  [3mc = dept, d = staff                           [0m                                                                      [32m│[0m
+[32m│[0m                                                                                                                      [32m│[0m
+[32m│[0m   [36m [0m[36mid  [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36ma     [0m[36m [0m [36m [0m[36mb  [0m[36m [0m [36m [0m[36mc  [0m[36m [0m [36m [0m[36md  [0m[36m [0m                                                                       [32m│[0m
+[32m│[0m   ────────────────────────────────────────────                                                                       [32m│[0m
+[32m│[0m    0      18:00:02   VIEW     1     310   984                                                                        [32m│[0m
+[32m│[0m    1      18:00:22   EDIT     1     205   170                                                                        [32m│[0m
+[32m│[0m    2      18:00:55   EDIT     1     118   799                                                                        [32m│[0m
+[32m│[0m    [1;31m6900[0m   [1;31m10:15:07[0m   [1;31mEXPORT[0m   [1;31m16[0m    [1;31m140[0m   [1;31m417[0m                                                                        [32m│[0m
+[32m│[0m    [1;31m6901[0m   [1;31m10:15:40[0m   [1;31mEXPORT[0m   [1;31m791[0m   [1;31m140[0m   [1;31m417[0m                                                                        [32m│[0m
+[32m│[0m    [1;31m6902[0m   [1;31m10:16:01[0m   [1;31mEXPORT[0m   [1;31m401[0m   [1;31m140[0m   [1;31m417[0m                                                                        [32m│[0m
+[32m│[0m                                                                                                                      [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────[0m[32m time 0.3 ms [0m[32m────────────────────────────────────────────────────[0m[32m─╯[0m
+[2m  (ENTER to continue) [0m[32m╭─[0m[32m────────────────────────────────[0m[32m [0m[1;32mPhase 3a  Encrypt and tag (what the cloud stores)[0m[32m [0m[32m─────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mrow 0 as the cloud sees it[0m[36m  [0mciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                              [32m│[0m
+[32m│[0m  [36mwhole epoch               [0m[36m  [0m10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter     [32m│[0m
+[32m│[0m  [36m                            [0mper block (20 blocks)                                                                   [32m│[0m
+[32m│[0m  [36mkey holder check          [0m[36m  [0mrow 0 decrypts back to the plaintext row: round trip OK                                 [32m│[0m
+[32m╰─[0m[32m──────────────────────────────────────────────────[0m[32m time 239.3 ms [0m[32m───────────────────────────────────────────────────[0m[32m─╯[0m
+[2m  (ENTER to continue) [0m[32m╭─[0m[32m─────────────────────────────────────[0m[32m [0m[1;32mPhase 3b  Blocks, R_RC proofs, AA check[0m[32m [0m[32m──────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mblocks     [0m[36m  [0m20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                      [32m│[0m
+[32m│[0m  [36mR_RC proofs[0m[36m  [0m10 chunk proofs (each chunk = 2 blocks), 1625202 bytes in total, ~127 conjectured bits, 0.106 s        [32m│[0m
+[32m│[0m  [36mAA check   [0m[36m  [0mpassed in 0.087 s                                                                                      [32m│[0m
+[32m╰─[0m[32m──────────────────────────────────────────────────[0m[32m time 279.8 ms [0m[32m───────────────────────────────────────────────────[0m[32m─╯[0m
+[2m  (ENTER to continue) [0m[32m╭─[0m[32m──────────────────────────────────[0m[32m [0m[1;32mPhase 4  Anchor on the (simulated) blockchain[0m[32m [0m[32m───────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mOmega_e          [0m[36m  [0mc7deeb48c1c7e1fd7c913d27...                                                                      [32m│[0m
+[32m│[0m  [36mledger block     [0m[36m  [0mheight 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4       [32m│[0m
+[32m│[0m  [36m                   [0mvalidators)                                                                                      [32m│[0m
+[32m│[0m  [36mlight-client read[0m[36m  [0mverified in 0.0002 s                                                                             [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────[0m[32m time 2.6 ms [0m[32m────────────────────────────────────────────────────[0m[32m─╯[0m
+[2m  (ENTER to continue) [0m[32m╭─[0m[32m───────────────────────────────────────[0m[32m [0m[1;32mPhase 5  Authorization proof R_Auth[0m[32m [0m[32m────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mrequest     [0m[36m  [0mauditor asks for COUNT and SUM(b) where a = 7 (qid 1, predicate text "P1: A = x")                     [32m│[0m
+[32m│[0m  [36mR_Auth proof[0m[36m  [0m126501 bytes, 64 trace rows, proving 0.0045 s                                                         [32m│[0m
+[32m│[0m  [36mverifier    [0m[36m  [0maccepted                                                                                              [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────[0m[32m time 5.6 ms [0m[32m────────────────────────────────────────────────────[0m[32m─╯[0m
+[2m  (ENTER to continue) [0m[32m╭─[0m[32m───────────────────────────────────────[0m[32m [0m[1;32mPhase 6  Pruning and execution proof[0m[32m [0m[32m───────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mpredicate      [0m[36m  [0mP1: a = 7 (EXPORT_RECORDS)                                                                         [32m│[0m
+[32m│[0m  [36mpruning        [0m[36m  [0m20 blocks: 2 opened, 18 skipped by their Bloom summaries (zero-bit openings)                       [32m│[0m
+[32m│[0m  [36mclaimed result [0m[36m  [0mCOUNT = 20, SUM(b) = 6324                                                                          [32m│[0m
+[32m│[0m  [36mR_Exec proof   [0m[36m  [0m1 run proof(s), 148197 bytes, 0.011 s, ~127 conjectured bits                                       [32m│[0m
+[32m│[0m  [36mhomomorphic add[0m[36m  [0m20 ciphertexts (only the records selected by the exact predicate) added under encryption           [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────[0m[32m time 16.2 ms [0m[32m───────────────────────────────────────────────────[0m[32m─╯[0m
+[2m  (ENTER to continue) [0m[32m╭─[0m[32m───────────────────────────────────────────[0m[32m [0m[1;32mPhase 7  Requester verifies[0m[32m [0m[32m────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mverdict            [0m[36m  [0m[1;32mACCEPT[0m                                                                                         [32m│[0m
+[32m│[0m  [36mverified result    [0m[36m  [0mCOUNT = 20, SUM(b) = 6324                                                                      [32m│[0m
+[32m│[0m  [36mplaintext reference[0m[36m  [0mCOUNT = 20, SUM(b) = 6324                                                                      [32m│[0m
+[32m│[0m  [36mcomparison         [0m[36m  [0m[1;32mMATCH[0m                                                                                          [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────[0m[32m time 1.8 ms [0m[32m────────────────────────────────────────────────────[0m[32m─╯[0m
+[2mSum of phase times 548.8 ms (BFV pool setup excluded). Timings: this laptop, one run, not a paper number.[0m
+[2m  (ENTER to continue) [0m[92m────────────────────────────────────────────────────── [0mWhat next?[92m ──────────────────────────────────────────────────────[0m
+  [1m1[0m attack A2: the cloud hides a block with matches   [2m(Enter)[0m
+  [1m2[0m other attacks (a1..a7)
+  [1m3[0m predicate examples (search layer only, no proof)
+  [1m4[0m all attacks, one table
+  [1mq[0m quit
+[36mchoice [1]: [0m[?25l[32m⠋[0m [36mrunning a2 on the real library ...[0m[2K[32m⠙[0m [36mrunning a2 on the real library ...[0m[2K[32m⠹[0m [36mrunning a2 on the real library ...[0m[2K[32m⠸[0m [36mrunning a2 on the real library ...[0m[2K[32m⠼[0m [36mrunning a2 on the real library ...[0m[2K[32m⠴[0m [36mrunning a2 on the real library ...[0m[2K[32m⠦[0m [36mrunning a2 on the real library ...[0m[2K[32m⠦[0m [36mrunning a2 on the real library ...[0m
+[?25h[1A[2K[34m╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮[0m
+[34m│[0m [1mA2  Cloud hides a block that contains matches   (recommended for the talk)[0m                                           [34m│[0m
+[34m│[0m Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                   [34m│[0m
+[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[31m┏━[0m[31m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[31m [0m[1;31mWhat the attacker changed, and the verifier's answer[0m[31m [0m[31m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[31m━┓[0m
+[31m┃[0m                                                                                                                      [31m┃[0m
+[31m┃[0m  [36mchanged[0m[36m  [0mA2a: honest opening function asked to prove the hit block empty                                            [31m┃[0m
+[31m┃[0m  [36m         [0m[2masked openings_for_blocks for block 14 (it holds 20 matching records)[0m                                      [31m┃[0m
+[31m┃[0m  [36mchanged[0m[36m  [0mA2b: cloud drops the run that contains the matches and pretends the blocks were pruned                     [31m┃[0m
+[31m┃[0m  [36m         [0m[2mrun over blocks 13..14 removed, claim recomputed (20, 6324) -> (0, 0), no openings for those blocks[0m        [31m┃[0m
+[31m┃[0m                                                                                                                      [31m┃[0m
+[31m┃[0m  [1;37;41m REJECTED [0m                                                                                                          [31m┃[0m
+[31m┃[0m  [1;31mfirst rejecting check: block 14 cannot be shown absent (its filter may contain the query)[0m                           [31m┃[0m
+[31m┃[0m  [2m2 of 2 counted checks rejected. Time 579.6 ms including the honest setup.[0m                                           [31m┃[0m
+[31m┃[0m                                                                                                                      [31m┃[0m
+[31m┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛[0m
+[2m  (ENTER to continue) [0m[92m────────────────────────────────────────────────────── [0mWhat next?[92m ──────────────────────────────────────────────────────[0m
+  [1m1[0m attack A2: the cloud hides a block with matches   [2m(Enter)[0m
+  [1m2[0m other attacks (a1..a7)
+  [1m3[0m predicate examples (search layer only, no proof)
+  [1m4[0m all attacks, one table
+  [1mq[0m quit
+[36mchoice [1]: [0m  [1ma1[0m  Cloud changes the result (count / sum)
+  [1ma2[0m  Cloud hides a block that contains matches   (recommended for the talk)
+  [1ma3[0m  Bad or missing Bloom opening for a skipped block
+  [1ma4[0m  A stored record is changed after anchoring
+  [1ma5[0m  Authorization bound to a different epoch / Omega
+  [1ma6[0m  Authorization for a different query (d_Q)
+  [1ma7[0m  Forged or tampered ledger anchor
+[36mattack: [0m[?25l[32m⠋[0m [36mrunning a5 on the real library ...[0m[2K[32m⠙[0m [36mrunning a5 on the real library ...[0m[2K[32m⠹[0m [36mrunning a5 on the real library ...[0m[2K[32m⠸[0m [36mrunning a5 on the real library ...[0m[2K[32m⠼[0m [36mrunning a5 on the real library ...[0m[2K[32m⠴[0m [36mrunning a5 on the real library ...[0m[2K[32m⠦[0m [36mrunning a5 on the real library ...[0m[2K[32m⠦[0m [36mrunning a5 on the real library ...[0m
+[?25h[1A[2K[34m╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮[0m
+[34m│[0m [1mA5  Authorization bound to a different epoch / Omega[0m                                                                 [34m│[0m
+[34m│[0m Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                   [34m│[0m
+[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[31m┏━[0m[31m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[31m [0m[1;31mWhat the attacker changed, and the verifier's answer[0m[31m [0m[31m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m[31m━┓[0m
+[31m┃[0m                                                                                                                      [31m┃[0m
+[31m┃[0m  [36mchanged[0m[36m  [0mA5a: stale authorization (bound to Omega_0) presented with the honest run proofs                           [31m┃[0m
+[31m┃[0m  [36m         [0m[2mauth proof made for Omega e84210ea3952...536d48, run proofs bound to the current authorization[0m             [31m┃[0m
+[31m┃[0m  [36mchanged[0m[36m  [0mA5b: cloud re-proves the runs for the stale authorization (requester proof checks only) (information, not  [31m┃[0m
+[31m┃[0m  [36m         [0mcounted)                                                                                                   [31m┃[0m
+[31m┃[0m  [36m         [0m[2mrun proofs re-made under the stale authorization's context[0m                                                 [31m┃[0m
+[31m┃[0m  [36mchanged[0m[36m  [0mA5c: ledger gate (ledger_read_gate) with the Omega the stale authorization is bound to                     [31m┃[0m
+[31m┃[0m  [36m         [0m[2mOmega in the Auth statement = Omega_0 (previous canonical state), ledger holds Omega_1[0m                     [31m┃[0m
+[31m┃[0m  [36mchanged[0m[36m  [0mA5d-control: Authorize with the current Omega_1 (honest) (information, not counted)                        [31m┃[0m
+[31m┃[0m  [36m         [0m[2mnothing[0m                                                                                                    [31m┃[0m
+[31m┃[0m  [36mchanged[0m[36m  [0mA5d: Authorize transaction carrying the stale Omega_0 for epoch 1                                          [31m┃[0m
+[31m┃[0m  [36m         [0m[2mOmega field of the Authorize tx = Omega_0[0m                                                                  [31m┃[0m
+[31m┃[0m                                                                                                                      [31m┃[0m
+[31m┃[0m  [1;37;41m REJECTED [0m                                                                                                          [31m┃[0m
+[31m┃[0m  [1;31mfirst rejecting check: requester native check rejected: run 0: link: Exec ctx != exec_context(B_Q, Auth_Q, RID_Q) [0m  [31m┃[0m
+[31m┃[0m  [1;31mof the Auth statement[0m                                                                                               [31m┃[0m
+[31m┃[0m  [2m3 of 3 counted checks rejected. Time 585.2 ms including the honest setup.[0m                                           [31m┃[0m
+[31m┃[0m                                                                                                                      [31m┃[0m
+[31m┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛[0m
+[2m  (ENTER to continue) [0m[92m────────────────────────────────────────────────────── [0mWhat next?[92m ──────────────────────────────────────────────────────[0m
+  [1m1[0m attack A2: the cloud hides a block with matches   [2m(Enter)[0m
+  [1m2[0m other attacks (a1..a7)
+  [1m3[0m predicate examples (search layer only, no proof)
+  [1m4[0m all attacks, one table
+  [1mq[0m quit
+[36mchoice [1]: [0m[?25l[32m⠋[0m [36mrunning search on the real library ...[0m[2K[32m⠙[0m [36mrunning search on the real library ...[0m[2K[32m⠹[0m [36mrunning search on the real library ...[0m[2K[32m⠹[0m [36mrunning search on the real library ...[0m
+[?25h[1A[2K[3mPredicate examples: SEARCH LAYER ONLY, no proof (the R_Exec proof covers a = 7 only)       [0m
+                                                                                           
+ [36m [0m[36mpredicate                                     [0m[36m [0m [36m [0m[36mhits[0m[36m [0m [36m [0m[36mblocks opened[0m[36m [0m [36m [0m[36mplaintext check[0m[36m [0m 
+ ───────────────────────────────────────────────────────────────────────────────────────── 
+  EXPORT_RECORDS (a = 7): the predicate P1 of        20         1 of 20   [32mMATCH[0m            
+  the proved audit (formula_for(P1))                                                       
+  EXPORT_RECORDS AND more than 49 patient            14         1 of 20   [32mMATCH[0m            
+  records (a = 7 AND b >= 50)                                                              
+  (EXPORT_RECORDS AND b >= 200) OR dept = 500        16         2 of 20   [32mMATCH[0m            
+  Psychiatry (restricted)                                                                  
+  EXPORT_RECORDS AND b >= 50 AND (dept in            14         1 of 20   [32mMATCH[0m            
+  100..199 OR staff = 417)                                                                 
+  EXPORT by staff 417 AND more than 100 patients     14         1 of 20   [32mMATCH[0m            
+  (a = 7 AND d = 417 AND b >= 101)                                                         
+                                                                                           
+[33mWhy search only: the execution proof's predicate is fixed to a = 7 when the log is built (v_of). Opened = block kept by [0m
+[33mits Bloom summary; the others are skipped.[0m
+[2m  (ENTER to continue) [0m[92m────────────────────────────────────────────────────── [0mWhat next?[92m ──────────────────────────────────────────────────────[0m
+  [1m1[0m attack A2: the cloud hides a block with matches   [2m(Enter)[0m
+  [1m2[0m other attacks (a1..a7)
+  [1m3[0m predicate examples (search layer only, no proof)
+  [1m4[0m all attacks, one table
+  [1mq[0m quit
+[36mchoice [1]: [0m[3m                                                        Summary                                                         [0m
+╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
+│[36m [0m[36mscenario[0m[36m [0m│[36m [0m[36mexpected[0m[36m [0m│[36m [0m[36mobserved                                [0m[36m [0m│[36m [0m[36mfirst rejecting check                   [0m[36m [0m│[36m [0m[36m    time[0m[36m [0m│
+├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
+│ a1       │ REJECT   │ [32mREJECTED by the verifier (every counted [0m │ requester native check rejected: claimed │ 538.6 ms │
+│          │          │ [32mcheck returned Err)[0m                      │ result (21, 6324) differs from the sum   │          │
+│          │          │                                          │ over the runs (20, 6324)                 │          │
+│ a2       │ REJECT   │ [32mREJECTED by the verifier (every counted [0m │ block 14 cannot be shown absent (its     │ 536.2 ms │
+│          │          │ [32mcheck returned Err)[0m                      │ filter may contain the query)            │          │
+│ a3       │ REJECT   │ [32mREJECTED by the verifier (every counted [0m │ requester native check rejected: block   │ 564.8 ms │
+│          │          │ [32mcheck returned Err)[0m                      │ 14: Merkle path of leaf 3117 does not    │          │
+│          │          │                                          │ verify against MRoot(S)                  │          │
+│ a4       │ REJECT   │ [32mREJECTED by the verifier (every counted [0m │ requester native check rejected: block   │ 922.1 ms │
+│          │          │ [32mcheck returned Err)[0m                      │ list: R_e rebuilt from the blocks        │          │
+│          │          │                                          │ differs from the anchored R_e            │          │
+│ a5       │ REJECT   │ [32mREJECTED by the verifier (every counted [0m │ requester native check rejected: run 0:  │ 578.3 ms │
+│          │          │ [32mcheck returned Err)[0m                      │ link: Exec ctx != exec_context(B_Q,      │          │
+│          │          │                                          │ Auth_Q, RID_Q) of the Auth statement     │          │
+│ a6       │ REJECT   │ [32mREJECTED by the verifier (every counted [0m │ requester native check rejected: run 0:  │ 541.2 ms │
+│          │          │ [32mcheck returned Err)[0m                      │ link: Exec ctx != exec_context(B_Q,      │          │
+│          │          │                                          │ Auth_Q, RID_Q) of the Auth statement     │          │
+│ a7       │ REJECT   │ [32mREJECTED by the verifier (every counted [0m │ ledger read proof (QC + Merkle path) did │ 554.4 ms │
+│          │          │ [32mcheck returned Err)[0m                      │ not verify                               │          │
+╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+[2mTimings: this laptop, one run, not a paper number.[0m
+[2m  (ENTER to continue) [0m[92m────────────────────────────────────────────────────── [0mWhat next?[92m ──────────────────────────────────────────────────────[0m
+  [1m1[0m attack A2: the cloud hides a block with matches   [2m(Enter)[0m
+  [1m2[0m other attacks (a1..a7)
+  [1m3[0m predicate examples (search layer only, no proof)
+  [1m4[0m all attacks, one table
+  [1mq[0m quit
+[36mchoice [1]: [0m

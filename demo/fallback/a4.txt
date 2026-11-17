@@ -1,0 +1,54 @@
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                            │
+│ Use case: hospital EHR access log, insider data theft                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+built demo_scenarios in 0.1 s (cargo, --locked)
+╭─────────────────────────────────── A4  A stored record is changed after anchoring ───────────────────────────────────╮
+│ Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                     │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭──────── Phase 0  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted ─────────╮
+│                                                                                                                      │
+│  log                                 N = 10000 hospital access records, insider burst ids 6900..6919                 │
+│  blocks / runs                       20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,   │
+│                                      12, 15, 16, 17, 18, 19, 20]                                                     │
+│  honest claimed result               COUNT = 20, SUM(b) = 6324                                                       │
+│  control: requester verdict on the   ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                  │
+│  honest response                                                                                                     │
+│                                                                                                                      │
+│  Note: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.                   │
+│                                                                                                                      │
+╰─────────────────────────────────────────────────── time 570.2 ms ────────────────────────────────────────────────────╯
+╭────────────── Phase A4  The cloud edits one stored record and rebuilds everything from the edited data ──────────────╮
+│                                                                                                                      │
+│  edit                                record id 6900 (block 14): b 16 -> 1 (an export of 16 patient records made to   │
+│                                      look like 1)                                                                    │
+│  block commitment of block           anchored f9d2f2f6c874...d16684  vs  rebuilt 240eac052378...9ac9d7               │
+│  epoch root                          anchored R_e 477448240652...d83c88  vs  rebuilt e22a50be38a1...0a3774           │
+│  the cheating result the cloud       COUNT = 20, SUM(b) = 6309 (honest: (20, 6324))                                  │
+│  would like to deliver                                                                                               │
+│                                                                                                                      │
+╰─────────────────────────────────────────────────── time 354.1 ms ────────────────────────────────────────────────────╯
+╭─────────────────── A4a: edited data, fully consistent response, checked against the anchored R_e ────────────────────╮
+│  what the attacker changed  stored record changed after anchoring; blocks, run proofs, openings all rebuilt from     │
+│                             the edited data                                                                          │
+│  verifier says              REJECTED: requester native check rejected: block list: R_e rebuilt from the blocks       │
+│                             differs from the anchored R_e                                                            │
+╰──────────────────────────────────────────────────── time 0.1 ms ─────────────────────────────────────────────────────╯
+╭───────────────── A4b: cloud shows the ANCHORED block list but run proofs made over the edited data ──────────────────╮
+│  what the attacker changed  block list honest (matches R_e), run proofs + claim from the edited records              │
+│  verifier says              REJECTED: requester native check rejected: run 0: s_out is not the anchored state after  │
+│                             block 14                                                                                 │
+╰──────────────────────────────────────────────────── time 0.0 ms ─────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────────────────── Result ───────────────────────────────────────────────────────╮
+│ expected: REJECT                                                                                                     │
+│ observed: REJECTED by the verifier (every counted check returned Err)                                                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+                                                        Summary                                                         
+╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
+│ scenario │ expected │ observed                                 │ first rejecting check                    │     time │
+├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
+│ a4       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: block   │ 924.6 ms │
+│          │          │ check returned Err)                      │ list: R_e rebuilt from the blocks        │          │
+│          │          │                                          │ differs from the anchored R_e            │          │
+╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+Timings: this laptop, one run, not a paper number.

@@ -1,0 +1,37 @@
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                            │
+│ Use case: hospital EHR access log, insider data theft                                                                │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+built demo_scenarios in 0.1 s (cargo, --locked)
+running a1 ...
+running a2 ...
+running a3 ...
+running a4 ...
+running a5 ...
+running a6 ...
+running a7 ...
+                                                        Summary                                                         
+╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
+│ scenario │ expected │ observed                                 │ first rejecting check                    │     time │
+├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
+│ a1       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: claimed │ 564.2 ms │
+│          │          │ check returned Err)                      │ result (21, 6324) differs from the sum   │          │
+│          │          │                                          │ over the runs (20, 6324)                 │          │
+│ a2       │ REJECT   │ REJECTED by the verifier (every counted  │ block 14 cannot be shown absent (its     │ 572.4 ms │
+│          │          │ check returned Err)                      │ filter may contain the query)            │          │
+│ a3       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: block   │ 560.5 ms │
+│          │          │ check returned Err)                      │ 14: Merkle path of leaf 3117 does not    │          │
+│          │          │                                          │ verify against MRoot(S)                  │          │
+│ a4       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: block   │ 920.9 ms │
+│          │          │ check returned Err)                      │ list: R_e rebuilt from the blocks        │          │
+│          │          │                                          │ differs from the anchored R_e            │          │
+│ a5       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: run 0:  │ 590.6 ms │
+│          │          │ check returned Err)                      │ link: Exec ctx != exec_context(B_Q,      │          │
+│          │          │                                          │ Auth_Q, RID_Q) of the Auth statement     │          │
+│ a6       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: run 0:  │ 580.6 ms │
+│          │          │ check returned Err)                      │ link: Exec ctx != exec_context(B_Q,      │          │
+│          │          │                                          │ Auth_Q, RID_Q) of the Auth statement     │          │
+│ a7       │ REJECT   │ REJECTED by the verifier (every counted  │ ledger read proof (QC + Merkle path) did │ 547.3 ms │
+│          │          │ check returned Err)                      │ not verify                               │          │
+╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+Timings: this laptop, one run, not a paper number.

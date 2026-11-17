@@ -1,0 +1,59 @@
+[34m╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮[0m
+[34m│[0m [1mPQZ-Audit[0m: privacy-preserving, post-quantum, verifiable audit-log queries                                            [34m│[0m
+[34m│[0m Use case: hospital EHR access log, insider data theft                                                                [34m│[0m
+[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[?25l[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m
+[?25h[1A[2K[32mbuilt[0m demo_scenarios in 0.1 s (cargo, --locked)
+[34m╭─[0m[34m───────────────────────────────[0m[34m [0m[1;34mA5  Authorization bound to a different epoch / Omega[0m[34m [0m[34m───────────────────────────────[0m[34m─╮[0m
+[34m│[0m Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                     [34m│[0m
+[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[32m╭─[0m[32m───────[0m[32m [0m[1;32mPhase 0[0m[32m  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted [0m[32m────────[0m[32m─╮[0m
+[32m│[0m                                                                                                                      [32m│[0m
+[32m│[0m  [36mlog                               [0m[36m  [0mN = 10000 hospital access records, insider burst ids 6900..6919                 [32m│[0m
+[32m│[0m  [36mblocks / runs                     [0m[36m  [0m20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,   [32m│[0m
+[32m│[0m  [36m                                    [0m12, 15, 16, 17, 18, 19, 20]                                                     [32m│[0m
+[32m│[0m  [36mhonest claimed result             [0m[36m  [0mCOUNT = 20, SUM(b) = 6324                                                       [32m│[0m
+[32m│[0m  [36mcontrol: requester verdict on the [0m[36m  [0mACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                  [32m│[0m
+[32m│[0m  [36mhonest response                   [0m[36m  [0m                                                                                [32m│[0m
+[32m│[0m                                                                                                                      [32m│[0m
+[32m│[0m  [33mNote: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.[0m                   [32m│[0m
+[32m│[0m                                                                                                                      [32m│[0m
+[32m╰─[0m[32m──────────────────────────────────────────────────[0m[32m time 552.4 ms [0m[32m───────────────────────────────────────────────────[0m[32m─╯[0m
+[31m╭─[0m[31m─────────────────[0m[31m [0m[1;31mA5a: stale authorization (bound to Omega_0) presented with the honest run proofs[0m[31m [0m[31m─────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mauth proof made for Omega e84210ea3952...536d48, run proofs bound to the current         [31m│[0m
+[31m│[0m  [36m                           [0mauthorization                                                                            [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: run 0: link: Exec ctx != exec_context(B_Q,  [0m  [31m│[0m
+[31m│[0m  [36m                           [0m[1;31mAuth_Q, RID_Q) of the Auth statement                                                   [0m  [31m│[0m
+[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.1 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
+[33m╭─[0m[33m─────────────[0m[33m [0m[1;33mA5b: cloud re-proves the runs for the stale authorization (requester proof checks only)[0m[33m [0m[33m──────────────[0m[33m─╮[0m
+[33m│[0m  [36mwhat the attacker changed[0m[36m  [0mrun proofs re-made under the stale authorization's context                               [33m│[0m
+[33m│[0m  [36mverifier says            [0m[36m  [0m[1;32mACCEPTED: accepted (20, 6324)  (the proofs alone are internally consistent: this is why[0m  [33m│[0m
+[33m│[0m  [36m                           [0m[1;32mthe ledger gate exists)                                                                [0m  [33m│[0m
+[33m│[0m  [36m                         [0m[36m  [0m[2m(information step, not counted in the attack verdict)                                  [0m  [33m│[0m
+[33m╰─[0m[33m───────────────────────────────────────────────────[0m[33m time 16.3 ms [0m[33m───────────────────────────────────────────────────[0m[33m─╯[0m
+[31m╭─[0m[31m──────────────[0m[31m [0m[1;31mA5c: ledger gate (ledger_read_gate) with the Omega the stale authorization is bound to[0m[31m [0m[31m──────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mOmega in the Auth statement = Omega_0 (previous canonical state), ledger holds Omega_1   [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: Omega_e in the ledger differs from the Omega_e used in the Auth statement   [0m   [31m│[0m
+[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.3 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
+[33m╭─[0m[33m─────────────────────────────[0m[33m [0m[1;33mA5d-control: Authorize with the current Omega_1 (honest)[0m[33m [0m[33m─────────────────────────────[0m[33m─╮[0m
+[33m│[0m  [36mwhat the attacker changed[0m[36m  [0mnothing                                                                                  [33m│[0m
+[33m│[0m  [36mverifier says            [0m[36m  [0m[1;32mACCEPTED: committed                                  [0m                                    [33m│[0m
+[33m│[0m  [36m                         [0m[36m  [0m[2m(information step, not counted in the attack verdict)[0m                                    [33m│[0m
+[33m╰─[0m[33m───────────────────────────────────────────────────[0m[33m time 0.0 ms [0m[33m────────────────────────────────────────────────────[0m[33m─╯[0m
+[31m╭─[0m[31m────────────────────────[0m[31m [0m[1;31mA5d: Authorize transaction carrying the stale Omega_0 for epoch 1[0m[31m [0m[31m─────────────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mOmega field of the Authorize tx = Omega_0                                                [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: contract rejected: omega_not_canonical_state (OmegaNotCanonical)[0m               [31m│[0m
+[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.2 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
+[32m╭─[0m[32m──────────────────────────────────────────────────────[0m[32m Result [0m[32m──────────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m expected: REJECT                                                                                                     [32m│[0m
+[32m│[0m observed: [32mREJECTED by the verifier (every counted check returned Err)[0m                                                [32m│[0m
+[32m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[3m                                                        Summary                                                         [0m
+╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
+│[36m [0m[36mscenario[0m[36m [0m│[36m [0m[36mexpected[0m[36m [0m│[36m [0m[36mobserved                                [0m[36m [0m│[36m [0m[36mfirst rejecting check                   [0m[36m [0m│[36m [0m[36m    time[0m[36m [0m│
+├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
+│ a5       │ REJECT   │ [32mREJECTED by the verifier (every counted [0m │ requester native check rejected: run 0:  │ 577.1 ms │
+│          │          │ [32mcheck returned Err)[0m                      │ link: Exec ctx != exec_context(B_Q,      │          │
+│          │          │                                          │ Auth_Q, RID_Q) of the Auth statement     │          │
+╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+[2mTimings: this laptop, one run, not a paper number.[0m
