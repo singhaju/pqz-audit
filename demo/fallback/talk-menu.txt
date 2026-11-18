@@ -1,201 +1,288 @@
-╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                            │
-│ Use case: hospital EHR access log, insider data theft                                                                │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                                      │
+│ Use case: hospital EHR access log, insider data theft                                                                          │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+⠋ cargo build --release --locked --bin demo_scenarios ...⠋ cargo build --release --locked --bin demo_scenarios ...
 built demo_scenarios in 0.1 s (cargo, --locked)
-╭─────────────────────────────────────────────────── PQZ-Audit demo ───────────────────────────────────────────────────╮
-│                                                                                                                      │
-│  Story: a hospital keeps its EHR access log in the cloud, encrypted. An insider (staff 417, night shift) exports     │
-│  patient records in a burst. The auditor must find out, without the cloud being trusted.                             │
-│                                                                                                                      │
-│  Question: COUNT and SUM(b) of the EXPORT_RECORDS actions (a = 7) in this epoch.                                     │
-│                                                                                                                      │
-│  Log: N = 10,000 records, 20 blocks of 500.                                                                          │
-│                                                                                                                      │
-│  Honest labels: blockchain = in-process simulation (4 validators, no network); STARK proofs = plain mode, not        │
-│  zero-knowledge; timings = this laptop, one run.                                                                     │
-│                                                                                                                      │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-  (ENTER to start) 
-╭────────────────────────────────────────────── Phase 1  Initialization ───────────────────────────────────────────────╮
-│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                             │
-│  Omega_0      e84210ea3952...536d48                                                                                  │
-│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                      │
-╰──────────────────────────────────────────────────── time 3.2 ms ─────────────────────────────────────────────────────╯
-  (ENTER to continue) ╭───────────────────────────────────────── Phase 2  Registration (plain log) ──────────────────────────────────────────╮
-│  insider burst  own seeded generator (xorshift), 10000 records; a = 7 appears only in the insider's burst (ids       │
-│                 6900..6919)                                                                                          │
-│                                                                                                                      │
-│  Plaintext log rows: a = action, b = patients,                                                                       │
-│  c = dept, d = staff                                                                                                 │
-│                                                                                                                      │
-│    id     time       a        b     c     d                                                                          │
-│   ────────────────────────────────────────────                                                                       │
-│    0      18:00:02   VIEW     1     310   984                                                                        │
-│    1      18:00:22   EDIT     1     205   170                                                                        │
-│    2      18:00:55   EDIT     1     118   799                                                                        │
-│    6900   10:15:07   EXPORT   16    140   417                                                                        │
-│    6901   10:15:40   EXPORT   791   140   417                                                                        │
-│    6902   10:16:01   EXPORT   401   140   417                                                                        │
-│                                                                                                                      │
-╰──────────────────────────────────────────────────── time 0.3 ms ─────────────────────────────────────────────────────╯
-  (ENTER to continue) ╭───────────────────────────────── Phase 3a  Encrypt and tag (what the cloud stores) ──────────────────────────────────╮
-│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                              │
-│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter     │
-│                              per block (20 blocks)                                                                   │
-│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                 │
-╰─────────────────────────────────────────────────── time 239.3 ms ────────────────────────────────────────────────────╯
-  (ENTER to continue) ╭────────────────────────────────────── Phase 3b  Blocks, R_RC proofs, AA check ───────────────────────────────────────╮
-│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                      │
-│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1625202 bytes in total, ~127 conjectured bits, 0.106 s        │
-│  AA check     passed in 0.087 s                                                                                      │
-╰─────────────────────────────────────────────────── time 279.8 ms ────────────────────────────────────────────────────╯
-  (ENTER to continue) ╭─────────────────────────────────── Phase 4  Anchor on the (simulated) blockchain ────────────────────────────────────╮
-│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                      │
-│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4       │
-│                     validators)                                                                                      │
-│  light-client read  verified in 0.0002 s                                                                             │
-╰──────────────────────────────────────────────────── time 2.6 ms ─────────────────────────────────────────────────────╯
-  (ENTER to continue) ╭──────────────────────────────────────── Phase 5  Authorization proof R_Auth ─────────────────────────────────────────╮
-│  request       auditor asks for COUNT and SUM(b) where a = 7 (qid 1, predicate text "P1: A = x")                     │
-│  R_Auth proof  126501 bytes, 64 trace rows, proving 0.0045 s                                                         │
-│  verifier      accepted                                                                                              │
-╰──────────────────────────────────────────────────── time 5.6 ms ─────────────────────────────────────────────────────╯
-  (ENTER to continue) ╭──────────────────────────────────────── Phase 6  Pruning and execution proof ────────────────────────────────────────╮
-│  predicate        P1: a = 7 (EXPORT_RECORDS)                                                                         │
-│  pruning          20 blocks: 2 opened, 18 skipped by their Bloom summaries (zero-bit openings)                       │
-│  claimed result   COUNT = 20, SUM(b) = 6324                                                                          │
-│  R_Exec proof     1 run proof(s), 148197 bytes, 0.011 s, ~127 conjectured bits                                       │
-│  homomorphic add  20 ciphertexts (only the records selected by the exact predicate) added under encryption           │
-╰──────────────────────────────────────────────────── time 16.2 ms ────────────────────────────────────────────────────╯
-  (ENTER to continue) ╭──────────────────────────────────────────── Phase 7  Requester verifies ─────────────────────────────────────────────╮
-│  verdict              ACCEPT                                                                                         │
-│  verified result      COUNT = 20, SUM(b) = 6324                                                                      │
-│  plaintext reference  COUNT = 20, SUM(b) = 6324                                                                      │
-│  comparison           MATCH                                                                                          │
-╰──────────────────────────────────────────────────── time 1.8 ms ─────────────────────────────────────────────────────╯
-Sum of phase times 548.8 ms (BFV pool setup excluded). Timings: this laptop, one run, not a paper number.
-  (ENTER to continue) ────────────────────────────────────────────────────── What next? ──────────────────────────────────────────────────────
+╭──────────────────────────────────────────────────────── PQZ-Audit demo ────────────────────────────────────────────────────────╮
+│                                                                                                                                │
+│  Story: a hospital keeps its EHR access log in the cloud, encrypted. An insider (staff 417) exports patient records in a       │
+│  burst. The auditor must find out, without the cloud being trusted.                                                            │
+│                                                                                                                                │
+│  Question: how many EXPORT_RECORDS actions (action = 7) happened in this epoch, and how many patient records did they export   │
+│  in total? In query terms: COUNT and SUM(patients) where action = 7.                                                           │
+│  Each log record has four fields: action (what was done, a code 1-7), patients (how many patient records it touched),          │
+│  department and staff id.                                                                                                      │
+│  So action = 7 means "bulk export of patient records". The action codes:                                                       │
+│                                                                                                                                │
+│    code   action             meaning                                patients touched         an auditor may ask about          │
+│   ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────   │
+│    1      VIEW_CHART         open and read one patient's chart      1-3 (sometimes 20-79:    snooping on a famous patient      │
+│                                                                     a ward list)                                               │
+│    2      EDIT_CHART         change a chart (notes, vital signs)    1                        who changed a record              │
+│    3      PRINT              print a record on paper                1-2                      paper copies leaving the          │
+│                                                                                              hospital                          │
+│    4      LOGIN              start a session                        0 (no patient touched)   logins at odd hours               │
+│    5      LOGOUT             end a session                          0                        session length                    │
+│    6      ORDER_MEDICATION   order a drug for a patient             1                        drug misuse                       │
+│    7      EXPORT_RECORDS     download many patients' records to a   2-29 or 150-899          data theft (our story: only       │
+│                              file                                                            staff 417)                        │
+│                                                                                                                                │
+│  Log: N = 10,000 records, 20 blocks of 500.                                                                                    │
+│                                                                                                                                │
+│  Honest labels: blockchain = in-process simulation (4 validators, no network); STARK proofs = plain mode, not zero-knowledge;  │
+│  timings = this laptop, one run.                                                                                               │
+│                                                                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+  (ENTER to start) ⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...
+╭─────────────────────────────────────────────────── Phase 1  Initialization ────────────────────────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.1 ms ──────────────────────────────────────────────────────────╯
+  (ENTER to continue) ╭────────────────────────────────────────────── Phase 2  Registration (plain log) ───────────────────────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.7 ms ──────────────────────────────────────────────────────────╯
+  (ENTER to continue) ╭────────────────────────────────────── Phase 3a  Encrypt and tag (what the cloud stores) ───────────────────────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 454.5 ms ─────────────────────────────────────────────────────────╯
+  (ENTER to continue) ╭─────────────────────────────────────────── Phase 3b  Blocks, R_RC proofs, AA check ────────────────────────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1627954 bytes in total, ~127 conjectured bits, 0.230 s                  │
+│  AA check     passed in 0.169 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 556.2 ms ─────────────────────────────────────────────────────────╯
+  (ENTER to continue) ╭──────────────────────────────────────── Phase 4  Anchor on the (simulated) blockchain ─────────────────────────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0004 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 5.2 ms ──────────────────────────────────────────────────────────╯
+  (ENTER to continue) ╭───────────────────────────────────────────── Phase 5  Authorization proof R_Auth ──────────────────────────────────────────────╮
+│  request       auditor asks for COUNT and SUM(patients) where action = 7 (qid 1, predicate text "P1: A = x")                   │
+│  R_Auth proof  126789 bytes, 64 trace rows, proving 0.0066 s                                                                   │
+│  verifier      accepted                                                                                                        │
+╰───────────────────────────────────────────────────────── time 8.9 ms ──────────────────────────────────────────────────────────╯
+  (ENTER to continue) ╭───────────────────────────────────────────── Phase 6  Pruning and execution proof ─────────────────────────────────────────────╮
+│  predicate        P1: action = 7 (EXPORT_RECORDS)                                                                              │
+│  pruning          20 blocks: 2 opened, 18 skipped by their Bloom summaries (zero-bit openings)                                 │
+│  claimed result   COUNT = 20, SUM(patients) = 6324                                                                             │
+│  R_Exec proof     1 run proof(s), 147557 bytes, 0.021 s, ~127 conjectured bits                                                 │
+│  homomorphic add  20 ciphertexts (only the records selected by the exact predicate) added under encryption                     │
+╰───────────────────────────────────────────────────────── time 33.1 ms ─────────────────────────────────────────────────────────╯
+  (ENTER to continue) ╭───────────────────────────────────────────────── Phase 7  Requester verifies ──────────────────────────────────────────────────╮
+│  verdict              ACCEPT                                                                                                   │
+│  verified result      COUNT = 20, SUM(patients) = 6324                                                                         │
+│  plaintext reference  COUNT = 20, SUM(patients) = 6324                                                                         │
+│  comparison           MATCH                                                                                                    │
+╰───────────────────────────────────────────────────────── time 3.4 ms ──────────────────────────────────────────────────────────╯
+Sum of phase times 1.07 s (BFV pool setup excluded). Timings: this laptop, one run, not a paper number.
+  (ENTER to continue) ─────────────────────────────────────────────────────────── What next? ───────────────────────────────────────────────────────────
   1 attack A2: the cloud hides a block with matches   (Enter)
-  2 other attacks (a1..a7)
+  2 choose another attack (list with explanations)
   3 predicate examples (search layer only, no proof)
   4 all attacks, one table
+  5 your own query: pick action, staff, department, patients (search layer)
+  6 full PROVED audit for another action code (phases 1-7, about 5 s)
   q quit
-choice [1]: 
-╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ A2  Cloud hides a block that contains matches   (recommended for the talk)                                           │
-│ Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                   │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ What the attacker changed, and the verifier's answer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃                                                                                                                      ┃
-┃  changed  A2a: honest opening function asked to prove the hit block empty                                            ┃
-┃           asked openings_for_blocks for block 14 (it holds 20 matching records)                                      ┃
-┃  changed  A2b: cloud drops the run that contains the matches and pretends the blocks were pruned                     ┃
-┃           run over blocks 13..14 removed, claim recomputed (20, 6324) -> (0, 0), no openings for those blocks        ┃
-┃                                                                                                                      ┃
-┃   REJECTED                                                                                                           ┃
-┃  first rejecting check: block 14 cannot be shown absent (its filter may contain the query)                           ┃
-┃  2 of 2 counted checks rejected. Time 579.6 ms including the honest setup.                                           ┃
-┃                                                                                                                      ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-  (ENTER to continue) ────────────────────────────────────────────────────── What next? ──────────────────────────────────────────────────────
+choice [1]: ⠋ running a2 on the real library ...⠙ running a2 on the real library ...⠹ running a2 on the real library ...⠸ running a2 on the real library ...⠼ running a2 on the real library ...⠴ running a2 on the real library ...⠦ running a2 on the real library ...⠧ running a2 on the real library ...⠇ running a2 on the real library ...⠏ running a2 on the real library ...⠋ running a2 on the real library ...⠙ running a2 on the real library ...⠹ running a2 on the real library ...⠹ running a2 on the real library ...
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ A2  Cloud hides a block that contains matches   (recommended for the talk)                                                     │
+│                                                                                                                                │
+│ What the cheater does: The cloud hides the block with the EXPORT records (block 14 when N = 10,000) and says it was skipped    │
+│ because nothing matched.                                                                                                       │
+│ Why (real world): Hide the insider completely: the auditor would get COUNT 0.                                                  │
+│ What should catch it: A skipped block needs a Bloom opening that shows the query is NOT in it. That block's filter says the    │
+│ query may be there, so it cannot be shown absent.                                                                              │
+│                                                                                                                                │
+│ Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                             │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ What the attacker changed, and the verifier's answer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                                                                                ┃
+┃  changed  A2a: honest opening function asked to prove the hit block empty                                                      ┃
+┃           asked openings_for_blocks for block 14 (it holds 20 matching records)                                                ┃
+┃  changed  A2b: cloud drops the run that contains the matches and pretends the blocks were pruned                               ┃
+┃           run over blocks 13..14 removed, claim recomputed (20, 6324) -> (0, 0), no openings for those blocks                  ┃
+┃                                                                                                                                ┃
+┃   REJECTED                                                                                                                     ┃
+┃  first rejecting check: block 14 cannot be shown absent (its filter may contain the query)                                     ┃
+┃  2 of 2 counted checks rejected. Time 1.07 s including the honest setup.                                                       ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+  (ENTER to continue) ─────────────────────────────────────────────────────────── What next? ───────────────────────────────────────────────────────────
   1 attack A2: the cloud hides a block with matches   (Enter)
-  2 other attacks (a1..a7)
+  2 choose another attack (list with explanations)
   3 predicate examples (search layer only, no proof)
   4 all attacks, one table
+  5 your own query: pick action, staff, department, patients (search layer)
+  6 full PROVED audit for another action code (phases 1-7, about 5 s)
   q quit
-choice [1]:   a1  Cloud changes the result (count / sum)
-  a2  Cloud hides a block that contains matches   (recommended for the talk)
-  a3  Bad or missing Bloom opening for a skipped block
-  a4  A stored record is changed after anchoring
-  a5  Authorization bound to a different epoch / Omega
-  a6  Authorization for a different query (d_Q)
-  a7  Forged or tampered ledger anchor
-attack: 
-╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ A5  Authorization bound to a different epoch / Omega                                                                 │
-│ Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                   │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ What the attacker changed, and the verifier's answer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃                                                                                                                      ┃
-┃  changed  A5a: stale authorization (bound to Omega_0) presented with the honest run proofs                           ┃
-┃           auth proof made for Omega e84210ea3952...536d48, run proofs bound to the current authorization             ┃
-┃  changed  A5b: cloud re-proves the runs for the stale authorization (requester proof checks only) (information, not  ┃
-┃           counted)                                                                                                   ┃
-┃           run proofs re-made under the stale authorization's context                                                 ┃
-┃  changed  A5c: ledger gate (ledger_read_gate) with the Omega the stale authorization is bound to                     ┃
-┃           Omega in the Auth statement = Omega_0 (previous canonical state), ledger holds Omega_1                     ┃
-┃  changed  A5d-control: Authorize with the current Omega_1 (honest) (information, not counted)                        ┃
-┃           nothing                                                                                                    ┃
-┃  changed  A5d: Authorize transaction carrying the stale Omega_0 for epoch 1                                          ┃
-┃           Omega field of the Authorize tx = Omega_0                                                                  ┃
-┃                                                                                                                      ┃
-┃   REJECTED                                                                                                           ┃
-┃  first rejecting check: requester native check rejected: run 0: link: Exec ctx != exec_context(B_Q, Auth_Q, RID_Q)   ┃
-┃  of the Auth statement                                                                                               ┃
-┃  3 of 3 counted checks rejected. Time 585.2 ms including the honest setup.                                           ┃
-┃                                                                                                                      ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-  (ENTER to continue) ────────────────────────────────────────────────────── What next? ──────────────────────────────────────────────────────
+choice [1]: The seven attacks (each changes ONE thing, then the real verifier runs)                                        
+                                                                                                               
+  key   what the cheater does                                  what should catch it                            
+ ───────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  a1    The cloud changes the answer: it says COUNT or SUM     The claimed result must equal the sum over the  
+        is one more than the truth. In A1c it also edits the   proved runs; in A1c the R_Exec proof no longer  
+        proof's public numbers so that everything adds up.     verifies.                                       
+  a2    The cloud hides the block with the EXPORT records      A skipped block needs a Bloom opening that      
+        (block 14 when N = 10,000) and says it was skipped     shows the query is NOT in it. That block's      
+        because nothing matched.                               filter says the query may be there, so it       
+                                                               cannot be shown absent.                         
+  a3    The cloud fakes the 'nothing here' evidence for the    Each opening must have a Merkle path to the     
+        hit block: copies the openings of an empty block,      anchored Bloom root, and the opened bits must   
+        shows real openings whose bits are 1, flips one bit,   be 0.                                           
+        or leaves the openings out.                                                                            
+  a4    Someone edits a stored record after the epoch was      The block list must rebuild the root R_e that   
+        anchored (for example, makes an export smaller) and    is anchored on the blockchain; edited data      
+        rebuilds all blocks and proofs from the edited data.   gives another root.                             
+  a5    An old authorization (made for an earlier epoch        The proofs are tied to the authorization; the   
+        state Omega_0) is replayed for the new audit.          ledger gate and the contract reject an Omega    
+                                                               that is not the current one. (A5b shows the     
+                                                               proofs alone are consistent; the ledger check   
+                                                               is what stops it.)                              
+  a6    An authorization granted for one query (P1) is used    The query digest d_Q is bound into the proofs,  
+        for a different query.                                 and the contract checks the predicate hash on   
+                                                               Consume.                                        
+  a7    The blockchain anchor is forged: an edited block       The light-client read needs a quorum            
+        header, too few validator votes (2 of 4), an edited    certificate (3 of 4 votes) and a Merkle path;   
+        stored value, or a fake anchor transaction.            the contract recomputes Omega.                  
+                                                                                                               
+attack: ⠋ running a1 on the real library ...⠙ running a1 on the real library ...⠹ running a1 on the real library ...⠸ running a1 on the real library ...⠼ running a1 on the real library ...⠴ running a1 on the real library ...⠦ running a1 on the real library ...⠧ running a1 on the real library ...⠇ running a1 on the real library ...⠏ running a1 on the real library ...⠋ running a1 on the real library ...⠙ running a1 on the real library ...⠹ running a1 on the real library ...⠹ running a1 on the real library ...
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ A1  Cloud changes the result (count / sum)                                                                                     │
+│                                                                                                                                │
+│ What the cheater does: The cloud changes the answer: it says COUNT or SUM is one more than the truth. In A1c it also edits the │
+│ proof's public numbers so that everything adds up.                                                                             │
+│ Why (real world): Make the insider look smaller or bigger than they are (hide or frame someone).                               │
+│ What should catch it: The claimed result must equal the sum over the proved runs; in A1c the R_Exec proof no longer verifies.  │
+│                                                                                                                                │
+│ Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                             │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ What the attacker changed, and the verifier's answer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                                                                                ┃
+┃  changed  A1a: cloud claims COUNT + 1                                                                                          ┃
+┃           claimed COUNT in the response (+1); proofs untouched: (20, 6324) -> (21, 6324)                                       ┃
+┃  changed  A1b: cloud claims SUM + 1                                                                                            ┃
+┃           claimed SUM(patients) in the response (+1); proofs untouched: (20, 6324) -> (20, 6325)                               ┃
+┃  changed  A1c: cloud also edits the run statement so claim = sum over runs                                                     ┃
+┃           run 0 statement count +1 and claim (20, 6324) -> (21, 6324) (native claim check now passes)                          ┃
+┃                                                                                                                                ┃
+┃   REJECTED                                                                                                                     ┃
+┃  first rejecting check: requester native check rejected: claimed result (21, 6324) differs from the sum over the runs (20,     ┃
+┃  6324)                                                                                                                         ┃
+┃  3 of 3 counted checks rejected. Time 1.08 s including the honest setup.                                                       ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+  (ENTER to continue) ─────────────────────────────────────────────────────────── What next? ───────────────────────────────────────────────────────────
   1 attack A2: the cloud hides a block with matches   (Enter)
-  2 other attacks (a1..a7)
+  2 choose another attack (list with explanations)
   3 predicate examples (search layer only, no proof)
   4 all attacks, one table
+  5 your own query: pick action, staff, department, patients (search layer)
+  6 full PROVED audit for another action code (phases 1-7, about 5 s)
   q quit
-choice [1]: 
-Predicate examples: SEARCH LAYER ONLY, no proof (the R_Exec proof covers a = 7 only)       
+choice [1]: ⠋ running search on the real library ...⠙ running search on the real library ...⠹ running search on the real library ...⠸ running search on the real library ...⠼ running search on the real library ...⠼ running search on the real library ...
+Predicate examples: SEARCH LAYER ONLY, no proof (the R_Exec proof covers action = 7 only)  
                                                                                            
   predicate                                        hits   blocks opened   plaintext check  
  ───────────────────────────────────────────────────────────────────────────────────────── 
-  EXPORT_RECORDS (a = 7): the predicate P1 of        20         1 of 20   MATCH            
-  the proved audit (formula_for(P1))                                                       
+  EXPORT_RECORDS (action = 7): the predicate P1      20         1 of 20   MATCH            
+  of the proved audit (formula_for(P1))                                                    
   EXPORT_RECORDS AND more than 49 patient            14         1 of 20   MATCH            
-  records (a = 7 AND b >= 50)                                                              
-  (EXPORT_RECORDS AND b >= 200) OR dept = 500        16         2 of 20   MATCH            
-  Psychiatry (restricted)                                                                  
-  EXPORT_RECORDS AND b >= 50 AND (dept in            14         1 of 20   MATCH            
+  records (action = 7 AND patients >= 50)                                                  
+  (EXPORT_RECORDS AND patients >= 200) OR dept =     16         2 of 20   MATCH            
+  500 Psychiatry (restricted)                                                              
+  EXPORT_RECORDS AND patients >= 50 AND (dept in     14         1 of 20   MATCH            
   100..199 OR staff = 417)                                                                 
   EXPORT by staff 417 AND more than 100 patients     14         1 of 20   MATCH            
-  (a = 7 AND d = 417 AND b >= 101)                                                         
+  (action = 7 AND staff = 417 AND patients >=                                              
+  101)                                                                                     
                                                                                            
-Why search only: the execution proof's predicate is fixed to a = 7 when the log is built (v_of). Opened = block kept by 
-its Bloom summary; the others are skipped.
-  (ENTER to continue) ────────────────────────────────────────────────────── What next? ──────────────────────────────────────────────────────
+Why search only: the execution proof's predicate is fixed to action = 7 when the log is built (v_of). Opened = block kept by its 
+Bloom summary; the others are skipped.
+  (ENTER to continue) ─────────────────────────────────────────────────────────── What next? ───────────────────────────────────────────────────────────
   1 attack A2: the cloud hides a block with matches   (Enter)
-  2 other attacks (a1..a7)
+  2 choose another attack (list with explanations)
   3 predicate examples (search layer only, no proof)
   4 all attacks, one table
+  5 your own query: pick action, staff, department, patients (search layer)
+  6 full PROVED audit for another action code (phases 1-7, about 5 s)
   q quit
-choice [1]:                                                         Summary                                                         
-╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
-│ scenario │ expected │ observed                                 │ first rejecting check                    │     time │
-├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
-│ a1       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: claimed │ 538.6 ms │
-│          │          │ check returned Err)                      │ result (21, 6324) differs from the sum   │          │
-│          │          │                                          │ over the runs (20, 6324)                 │          │
-│ a2       │ REJECT   │ REJECTED by the verifier (every counted  │ block 14 cannot be shown absent (its     │ 536.2 ms │
-│          │          │ check returned Err)                      │ filter may contain the query)            │          │
-│ a3       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: block   │ 564.8 ms │
-│          │          │ check returned Err)                      │ 14: Merkle path of leaf 3117 does not    │          │
-│          │          │                                          │ verify against MRoot(S)                  │          │
-│ a4       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: block   │ 922.1 ms │
-│          │          │ check returned Err)                      │ list: R_e rebuilt from the blocks        │          │
-│          │          │                                          │ differs from the anchored R_e            │          │
-│ a5       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: run 0:  │ 578.3 ms │
-│          │          │ check returned Err)                      │ link: Exec ctx != exec_context(B_Q,      │          │
-│          │          │                                          │ Auth_Q, RID_Q) of the Auth statement     │          │
-│ a6       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: run 0:  │ 541.2 ms │
-│          │          │ check returned Err)                      │ link: Exec ctx != exec_context(B_Q,      │          │
-│          │          │                                          │ Auth_Q, RID_Q) of the Auth statement     │          │
-│ a7       │ REJECT   │ REJECTED by the verifier (every counted  │ ledger read proof (QC + Merkle path) did │ 554.4 ms │
-│          │          │ check returned Err)                      │ not verify                               │          │
-╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+choice [1]: The seven attacks (each changes ONE thing, then the real verifier runs)                                        
+                                                                                                               
+  key   what the cheater does                                  what should catch it                            
+ ───────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  a1    The cloud changes the answer: it says COUNT or SUM     The claimed result must equal the sum over the  
+        is one more than the truth. In A1c it also edits the   proved runs; in A1c the R_Exec proof no longer  
+        proof's public numbers so that everything adds up.     verifies.                                       
+  a2    The cloud hides the block with the EXPORT records      A skipped block needs a Bloom opening that      
+        (block 14 when N = 10,000) and says it was skipped     shows the query is NOT in it. That block's      
+        because nothing matched.                               filter says the query may be there, so it       
+                                                               cannot be shown absent.                         
+  a3    The cloud fakes the 'nothing here' evidence for the    Each opening must have a Merkle path to the     
+        hit block: copies the openings of an empty block,      anchored Bloom root, and the opened bits must   
+        shows real openings whose bits are 1, flips one bit,   be 0.                                           
+        or leaves the openings out.                                                                            
+  a4    Someone edits a stored record after the epoch was      The block list must rebuild the root R_e that   
+        anchored (for example, makes an export smaller) and    is anchored on the blockchain; edited data      
+        rebuilds all blocks and proofs from the edited data.   gives another root.                             
+  a5    An old authorization (made for an earlier epoch        The proofs are tied to the authorization; the   
+        state Omega_0) is replayed for the new audit.          ledger gate and the contract reject an Omega    
+                                                               that is not the current one. (A5b shows the     
+                                                               proofs alone are consistent; the ledger check   
+                                                               is what stops it.)                              
+  a6    An authorization granted for one query (P1) is used    The query digest d_Q is bound into the proofs,  
+        for a different query.                                 and the contract checks the predicate hash on   
+                                                               Consume.                                        
+  a7    The blockchain anchor is forged: an edited block       The light-client read needs a quorum            
+        header, too few validator votes (2 of 4), an edited    certificate (3 of 4 votes) and a Merkle path;   
+        stored value, or a fake anchor transaction.            the contract recomputes Omega.                  
+                                                                                                               
+                                                             Summary                                                              
+╭──────────┬──────────┬────────────────────────────────────────────────┬────────────────────────────────────────────────┬────────╮
+│ scenario │ expected │ observed                                       │ first rejecting check                          │   time │
+├──────────┼──────────┼────────────────────────────────────────────────┼────────────────────────────────────────────────┼────────┤
+│ a1       │ REJECT   │ REJECTED by the verifier (every counted check  │ requester native check rejected: claimed       │ 1.05 s │
+│          │          │ returned Err)                                  │ result (21, 6324) differs from the sum over    │        │
+│          │          │                                                │ the runs (20, 6324)                            │        │
+│ a2       │ REJECT   │ REJECTED by the verifier (every counted check  │ block 14 cannot be shown absent (its filter    │ 1.08 s │
+│          │          │ returned Err)                                  │ may contain the query)                         │        │
+│ a3       │ REJECT   │ REJECTED by the verifier (every counted check  │ requester native check rejected: block 14:     │ 1.05 s │
+│          │          │ returned Err)                                  │ Merkle path of leaf 3117 does not verify       │        │
+│          │          │                                                │ against MRoot(S)                               │        │
+│ a4       │ REJECT   │ REJECTED by the verifier (every counted check  │ requester native check rejected: block list:   │ 1.73 s │
+│          │          │ returned Err)                                  │ R_e rebuilt from the blocks differs from the   │        │
+│          │          │                                                │ anchored R_e                                   │        │
+│ a5       │ REJECT   │ REJECTED by the verifier (every counted check  │ requester native check rejected: run 0: link:  │ 1.12 s │
+│          │          │ returned Err)                                  │ Exec ctx != exec_context(B_Q, Auth_Q, RID_Q)   │        │
+│          │          │                                                │ of the Auth statement                          │        │
+│ a6       │ REJECT   │ REJECTED by the verifier (every counted check  │ requester native check rejected: run 0: link:  │ 1.07 s │
+│          │          │ returned Err)                                  │ Exec ctx != exec_context(B_Q, Auth_Q, RID_Q)   │        │
+│          │          │                                                │ of the Auth statement                          │        │
+│ a7       │ REJECT   │ REJECTED by the verifier (every counted check  │ ledger read proof (QC + Merkle path) did not   │ 1.06 s │
+│          │          │ returned Err)                                  │ verify                                         │        │
+╰──────────┴──────────┴────────────────────────────────────────────────┴────────────────────────────────────────────────┴────────╯
 Timings: this laptop, one run, not a paper number.
-  (ENTER to continue) ────────────────────────────────────────────────────── What next? ──────────────────────────────────────────────────────
+  (ENTER to continue) ─────────────────────────────────────────────────────────── What next? ───────────────────────────────────────────────────────────
   1 attack A2: the cloud hides a block with matches   (Enter)
-  2 other attacks (a1..a7)
+  2 choose another attack (list with explanations)
   3 predicate examples (search layer only, no proof)
   4 all attacks, one table
+  5 your own query: pick action, staff, department, patients (search layer)
+  6 full PROVED audit for another action code (phases 1-7, about 5 s)
   q quit
 choice [1]: 

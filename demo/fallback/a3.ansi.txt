@@ -1,55 +1,53 @@
-[34m╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮[0m
-[34m│[0m [1mPQZ-Audit[0m: privacy-preserving, post-quantum, verifiable audit-log queries                                            [34m│[0m
-[34m│[0m Use case: hospital EHR access log, insider data theft                                                                [34m│[0m
-[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
-[?25l[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m
+[34m╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮[0m
+[34m│[0m [1mPQZ-Audit[0m: privacy-preserving, post-quantum, verifiable audit-log queries                                                      [34m│[0m
+[34m│[0m Use case: hospital EHR access log, insider data theft                                                                          [34m│[0m
+[34m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[?25l[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m[2K[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m
 [?25h[1A[2K[32mbuilt[0m demo_scenarios in 0.1 s (cargo, --locked)
-[34m╭─[0m[34m───────────────────────────────[0m[34m [0m[1;34mA3  Bad or missing Bloom opening for a skipped block[0m[34m [0m[34m───────────────────────────────[0m[34m─╮[0m
-[34m│[0m Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                     [34m│[0m
-[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
-[32m╭─[0m[32m───────[0m[32m [0m[1;32mPhase 0[0m[32m  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted [0m[32m────────[0m[32m─╮[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m│[0m  [36mlog                               [0m[36m  [0mN = 10000 hospital access records, insider burst ids 6900..6919                 [32m│[0m
-[32m│[0m  [36mblocks / runs                     [0m[36m  [0m20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,   [32m│[0m
-[32m│[0m  [36m                                    [0m12, 15, 16, 17, 18, 19, 20]                                                     [32m│[0m
-[32m│[0m  [36mhonest claimed result             [0m[36m  [0mCOUNT = 20, SUM(b) = 6324                                                       [32m│[0m
-[32m│[0m  [36mcontrol: requester verdict on the [0m[36m  [0mACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                  [32m│[0m
-[32m│[0m  [36mhonest response                   [0m[36m  [0m                                                                                [32m│[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m│[0m  [33mNote: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.[0m                   [32m│[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m╰─[0m[32m──────────────────────────────────────────────────[0m[32m time 563.1 ms [0m[32m───────────────────────────────────────────────────[0m[32m─╯[0m
-[31m╭─[0m[31m────────────────────────[0m[31m [0m[1;31mA3a: openings of another (empty) block presented for the hit block[0m[31m [0m[31m────────────────────────[0m[31m─╮[0m
-[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mhit block 14 skipped; Bloom openings copied from block 1 and relabelled                  [31m│[0m
-[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: block 14: Merkle path of leaf 3117 does not [0m  [31m│[0m
-[31m│[0m  [36m                           [0m[1;31mverify against MRoot(S)                                                                [0m  [31m│[0m
-[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.1 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
-[31m╭─[0m[31m──────────────────[0m[31m [0m[1;31mA3b: genuine openings of the hit block (paths verify) but its query bits are 1[0m[31m [0m[31m──────────────────[0m[31m─╮[0m
-[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mhit block 14 skipped; 7 Bloom leaves opened with open_many (real paths against           [31m│[0m
-[31m│[0m  [36m                           [0mMRoot(S))                                                                                [31m│[0m
-[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: block 14: the opened zero bits do not show  [0m  [31m│[0m
-[31m│[0m  [36m                           [0m[1;31mthe query false                                                                        [0m  [31m│[0m
-[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.1 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
-[31m╭─[0m[31m──────────────────────────────────[0m[31m [0m[1;31mA3c: one bit of an honest opening word flipped[0m[31m [0m[31m──────────────────────────────────[0m[31m─╮[0m
-[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mblock 1: opening word of leaf 3117 changed by one bit                                    [31m│[0m
-[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: block 1: Merkle path of leaf 3117 does not  [0m  [31m│[0m
-[31m│[0m  [36m                           [0m[1;31mverify against MRoot(S)                                                                [0m  [31m│[0m
-[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.0 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
-[31m╭─[0m[31m────────────────────────────────────[0m[31m [0m[1;31mA3d: openings of a skipped block left out[0m[31m [0m[31m─────────────────────────────────────[0m[31m─╮[0m
-[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mopenings of skipped block 1 removed                                                      [31m│[0m
-[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: block 1 is outside the runs and has no Bloom[0m  [31m│[0m
-[31m│[0m  [36m                           [0m[1;31mopening                                                                                [0m  [31m│[0m
-[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.0 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
-[32m╭─[0m[32m──────────────────────────────────────────────────────[0m[32m Result [0m[32m──────────────────────────────────────────────────────[0m[32m─╮[0m
-[32m│[0m expected: REJECT                                                                                                     [32m│[0m
-[32m│[0m observed: [32mREJECTED by the verifier (every counted check returned Err)[0m                                                [32m│[0m
-[32m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
-[3m                                                        Summary                                                         [0m
-╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
-│[36m [0m[36mscenario[0m[36m [0m│[36m [0m[36mexpected[0m[36m [0m│[36m [0m[36mobserved                                [0m[36m [0m│[36m [0m[36mfirst rejecting check                   [0m[36m [0m│[36m [0m[36m    time[0m[36m [0m│
-├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
-│ a3       │ REJECT   │ [32mREJECTED by the verifier (every counted [0m │ requester native check rejected: block   │ 572.4 ms │
-│          │          │ [32mcheck returned Err)[0m                      │ 14: Merkle path of leaf 3117 does not    │          │
-│          │          │                                          │ verify against MRoot(S)                  │          │
-╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+[34m╭─[0m[34m────────────────────────────────────[0m[34m [0m[1;34mA3  Bad or missing Bloom opening for a skipped block[0m[34m [0m[34m────────────────────────────────────[0m[34m─╮[0m
+[34m│[0m Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                               [34m│[0m
+[34m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[32m╭─[0m[32m────────────[0m[32m [0m[1;32mPhase 0[0m[32m  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted [0m[32m─────────────[0m[32m─╮[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [36mlog                               [0m[36m  [0mN = 10000 hospital access records, insider burst ids 6900..6919                           [32m│[0m
+[32m│[0m  [36mblocks / runs                     [0m[36m  [0m20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15,     [32m│[0m
+[32m│[0m  [36m                                    [0m16, 17, 18, 19, 20]                                                                       [32m│[0m
+[32m│[0m  [36mhonest claimed result             [0m[36m  [0mCOUNT = 20, SUM(patients) = 6324                                                          [32m│[0m
+[32m│[0m  [36mcontrol: requester verdict on the [0m[36m  [0mACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                            [32m│[0m
+[32m│[0m  [36mhonest response                   [0m[36m  [0m                                                                                          [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [33mNote: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.[0m                             [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 1.06 s [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[31m╭─[0m[31m─────────────────────────────[0m[31m [0m[1;31mA3a: openings of another (empty) block presented for the hit block[0m[31m [0m[31m─────────────────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mhit block 14 skipped; Bloom openings copied from block 1 and relabelled                            [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: block 14: Merkle path of leaf 3117 does not verify    [0m  [31m│[0m
+[31m│[0m  [36m                           [0m[1;31magainst MRoot(S)                                                                                 [0m  [31m│[0m
+[31m╰─[0m[31m────────────────────────────────────────────────────────[0m[31m time 0.2 ms [0m[31m─────────────────────────────────────────────────────────[0m[31m─╯[0m
+[31m╭─[0m[31m───────────────────────[0m[31m [0m[1;31mA3b: genuine openings of the hit block (paths verify) but its query bits are 1[0m[31m [0m[31m───────────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mhit block 14 skipped; 7 Bloom leaves opened with open_many (real paths against MRoot(S))           [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: block 14: the opened zero bits do not show the query  [0m  [31m│[0m
+[31m│[0m  [36m                           [0m[1;31mfalse                                                                                            [0m  [31m│[0m
+[31m╰─[0m[31m────────────────────────────────────────────────────────[0m[31m time 0.2 ms [0m[31m─────────────────────────────────────────────────────────[0m[31m─╯[0m
+[31m╭─[0m[31m───────────────────────────────────────[0m[31m [0m[1;31mA3c: one bit of an honest opening word flipped[0m[31m [0m[31m───────────────────────────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mblock 1: opening word of leaf 3117 changed by one bit                                              [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: block 1: Merkle path of leaf 3117 does not verify     [0m  [31m│[0m
+[31m│[0m  [36m                           [0m[1;31magainst MRoot(S)                                                                                 [0m  [31m│[0m
+[31m╰─[0m[31m────────────────────────────────────────────────────────[0m[31m time 0.1 ms [0m[31m─────────────────────────────────────────────────────────[0m[31m─╯[0m
+[31m╭─[0m[31m─────────────────────────────────────────[0m[31m [0m[1;31mA3d: openings of a skipped block left out[0m[31m [0m[31m──────────────────────────────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mopenings of skipped block 1 removed                                                                [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: block 1 is outside the runs and has no Bloom opening[0m    [31m│[0m
+[31m╰─[0m[31m────────────────────────────────────────────────────────[0m[31m time 0.0 ms [0m[31m─────────────────────────────────────────────────────────[0m[31m─╯[0m
+[32m╭─[0m[32m───────────────────────────────────────────────────────────[0m[32m Result [0m[32m───────────────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m expected: REJECT                                                                                                               [32m│[0m
+[32m│[0m observed: [32mREJECTED by the verifier (every counted check returned Err)[0m                                                          [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[3m                                                             Summary                                                              [0m
+╭──────────┬──────────┬────────────────────────────────────────────────┬────────────────────────────────────────────────┬────────╮
+│[36m [0m[36mscenario[0m[36m [0m│[36m [0m[36mexpected[0m[36m [0m│[36m [0m[36mobserved                                      [0m[36m [0m│[36m [0m[36mfirst rejecting check                         [0m[36m [0m│[36m [0m[36m  time[0m[36m [0m│
+├──────────┼──────────┼────────────────────────────────────────────────┼────────────────────────────────────────────────┼────────┤
+│ a3       │ REJECT   │ [32mREJECTED by the verifier (every counted check [0m │ requester native check rejected: block 14:     │ 1.08 s │
+│          │          │ [32mreturned Err)[0m                                  │ Merkle path of leaf 3117 does not verify       │        │
+│          │          │                                                │ against MRoot(S)                               │        │
+╰──────────┴──────────┴────────────────────────────────────────────────┴────────────────────────────────────────────────┴────────╯
 [2mTimings: this laptop, one run, not a paper number.[0m

@@ -1,49 +1,48 @@
-╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                            │
-│ Use case: hospital EHR access log, insider data theft                                                                │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                                      │
+│ Use case: hospital EHR access log, insider data theft                                                                          │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+⠋ cargo build --release --locked --bin demo_scenarios ...⠋ cargo build --release --locked --bin demo_scenarios ...
 built demo_scenarios in 0.1 s (cargo, --locked)
-╭───────────────────────────────────── A1  Cloud changes the result (count / sum) ─────────────────────────────────────╮
-│ Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                     │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭──────── Phase 0  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted ─────────╮
-│                                                                                                                      │
-│  log                                 N = 10000 hospital access records, insider burst ids 6900..6919                 │
-│  blocks / runs                       20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,   │
-│                                      12, 15, 16, 17, 18, 19, 20]                                                     │
-│  honest claimed result               COUNT = 20, SUM(b) = 6324                                                       │
-│  control: requester verdict on the   ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                  │
-│  honest response                                                                                                     │
-│                                                                                                                      │
-│  Note: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.                   │
-│                                                                                                                      │
-╰─────────────────────────────────────────────────── time 529.2 ms ────────────────────────────────────────────────────╯
-╭──────────────────────────────────────────── A1a: cloud claims COUNT + 1 ─────────────────────────────────────────────╮
-│  what the attacker changed  claimed COUNT in the response (+1); proofs untouched: (20, 6324) -> (21, 6324)           │
-│  verifier says              REJECTED: requester native check rejected: claimed result (21, 6324) differs from the    │
-│                             sum over the runs (20, 6324)                                                             │
-╰──────────────────────────────────────────────────── time 0.1 ms ─────────────────────────────────────────────────────╯
-╭───────────────────────────────────────────── A1b: cloud claims SUM + 1 ──────────────────────────────────────────────╮
-│  what the attacker changed  claimed SUM(b) in the response (+1); proofs untouched: (20, 6324) -> (20, 6325)          │
-│  verifier says              REJECTED: requester native check rejected: claimed result (20, 6325) differs from the    │
-│                             sum over the runs (20, 6324)                                                             │
-╰──────────────────────────────────────────────────── time 0.1 ms ─────────────────────────────────────────────────────╯
-╭────────────────────────── A1c: cloud also edits the run statement so claim = sum over runs ──────────────────────────╮
-│  what the attacker changed  run 0 statement count +1 and claim (20, 6324) -> (21, 6324) (native claim check now      │
-│                             passes)                                                                                  │
-│  verifier says              REJECTED: run 0: R_Exec verifier rejected:                                               │
-│                             InvalidOpeningArgument(InvalidPowWitness(Query))                                         │
-╰──────────────────────────────────────────────────── time 1.2 ms ─────────────────────────────────────────────────────╯
-╭─────────────────────────────────────────────────────── Result ───────────────────────────────────────────────────────╮
-│ expected: REJECT                                                                                                     │
-│ observed: REJECTED by the verifier (every counted check returned Err)                                                │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-                                                        Summary                                                         
-╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
-│ scenario │ expected │ observed                                 │ first rejecting check                    │     time │
-├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
-│ a1       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: claimed │ 530.7 ms │
-│          │          │ check returned Err)                      │ result (21, 6324) differs from the sum   │          │
-│          │          │                                          │ over the runs (20, 6324)                 │          │
-╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+╭────────────────────────────────────────── A1  Cloud changes the result (count / sum) ──────────────────────────────────────────╮
+│ Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                               │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭───────────── Phase 0  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted ──────────────╮
+│                                                                                                                                │
+│  log                                 N = 10000 hospital access records, insider burst ids 6900..6919                           │
+│  blocks / runs                       20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15,     │
+│                                      16, 17, 18, 19, 20]                                                                       │
+│  honest claimed result               COUNT = 20, SUM(patients) = 6324                                                          │
+│  control: requester verdict on the   ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                            │
+│  honest response                                                                                                               │
+│                                                                                                                                │
+│  Note: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.                             │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 1.02 s ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────────── A1a: cloud claims COUNT + 1 ──────────────────────────────────────────────────╮
+│  what the attacker changed  claimed COUNT in the response (+1); proofs untouched: (20, 6324) -> (21, 6324)                     │
+│  verifier says              REJECTED: requester native check rejected: claimed result (21, 6324) differs from the sum over     │
+│                             the runs (20, 6324)                                                                                │
+╰───────────────────────────────────────────────────────── time 0.2 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────────── A1b: cloud claims SUM + 1 ───────────────────────────────────────────────────╮
+│  what the attacker changed  claimed SUM(patients) in the response (+1); proofs untouched: (20, 6324) -> (20, 6325)             │
+│  verifier says              REJECTED: requester native check rejected: claimed result (20, 6325) differs from the sum over     │
+│                             the runs (20, 6324)                                                                                │
+╰───────────────────────────────────────────────────────── time 0.2 ms ──────────────────────────────────────────────────────────╯
+╭─────────────────────────────── A1c: cloud also edits the run statement so claim = sum over runs ───────────────────────────────╮
+│  what the attacker changed  run 0 statement count +1 and claim (20, 6324) -> (21, 6324) (native claim check now passes)        │
+│  verifier says              REJECTED: run 0: R_Exec verifier rejected: InvalidOpeningArgument(InvalidPowWitness(Query))        │
+╰───────────────────────────────────────────────────────── time 3.1 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────── Result ────────────────────────────────────────────────────────────╮
+│ expected: REJECT                                                                                                               │
+│ observed: REJECTED by the verifier (every counted check returned Err)                                                          │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+                                                             Summary                                                              
+╭──────────┬──────────┬────────────────────────────────────────────────┬────────────────────────────────────────────────┬────────╮
+│ scenario │ expected │ observed                                       │ first rejecting check                          │   time │
+├──────────┼──────────┼────────────────────────────────────────────────┼────────────────────────────────────────────────┼────────┤
+│ a1       │ REJECT   │ REJECTED by the verifier (every counted check  │ requester native check rejected: claimed       │ 1.03 s │
+│          │          │ returned Err)                                  │ result (21, 6324) differs from the sum over    │        │
+│          │          │                                                │ the runs (20, 6324)                            │        │
+╰──────────┴──────────┴────────────────────────────────────────────────┴────────────────────────────────────────────────┴────────╯
 Timings: this laptop, one run, not a paper number.

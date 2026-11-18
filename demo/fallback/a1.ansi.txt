@@ -1,50 +1,48 @@
-[34m╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮[0m
-[34m│[0m [1mPQZ-Audit[0m: privacy-preserving, post-quantum, verifiable audit-log queries                                            [34m│[0m
-[34m│[0m Use case: hospital EHR access log, insider data theft                                                                [34m│[0m
-[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
-[?25l[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m
+[34m╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮[0m
+[34m│[0m [1mPQZ-Audit[0m: privacy-preserving, post-quantum, verifiable audit-log queries                                                      [34m│[0m
+[34m│[0m Use case: hospital EHR access log, insider data theft                                                                          [34m│[0m
+[34m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[?25l[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m[2K[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m
 [?25h[1A[2K[32mbuilt[0m demo_scenarios in 0.1 s (cargo, --locked)
-[34m╭─[0m[34m────────────────────────────────────[0m[34m [0m[1;34mA1  Cloud changes the result (count / sum)[0m[34m [0m[34m────────────────────────────────────[0m[34m─╮[0m
-[34m│[0m Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                     [34m│[0m
-[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
-[32m╭─[0m[32m───────[0m[32m [0m[1;32mPhase 0[0m[32m  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted [0m[32m────────[0m[32m─╮[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m│[0m  [36mlog                               [0m[36m  [0mN = 10000 hospital access records, insider burst ids 6900..6919                 [32m│[0m
-[32m│[0m  [36mblocks / runs                     [0m[36m  [0m20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,   [32m│[0m
-[32m│[0m  [36m                                    [0m12, 15, 16, 17, 18, 19, 20]                                                     [32m│[0m
-[32m│[0m  [36mhonest claimed result             [0m[36m  [0mCOUNT = 20, SUM(b) = 6324                                                       [32m│[0m
-[32m│[0m  [36mcontrol: requester verdict on the [0m[36m  [0mACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                  [32m│[0m
-[32m│[0m  [36mhonest response                   [0m[36m  [0m                                                                                [32m│[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m│[0m  [33mNote: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.[0m                   [32m│[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m╰─[0m[32m──────────────────────────────────────────────────[0m[32m time 529.2 ms [0m[32m───────────────────────────────────────────────────[0m[32m─╯[0m
-[31m╭─[0m[31m───────────────────────────────────────────[0m[31m [0m[1;31mA1a: cloud claims COUNT + 1[0m[31m [0m[31m────────────────────────────────────────────[0m[31m─╮[0m
-[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mclaimed COUNT in the response (+1); proofs untouched: (20, 6324) -> (21, 6324)           [31m│[0m
-[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: claimed result (21, 6324) differs from the  [0m  [31m│[0m
-[31m│[0m  [36m                           [0m[1;31msum over the runs (20, 6324)                                                           [0m  [31m│[0m
-[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.1 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
-[31m╭─[0m[31m────────────────────────────────────────────[0m[31m [0m[1;31mA1b: cloud claims SUM + 1[0m[31m [0m[31m─────────────────────────────────────────────[0m[31m─╮[0m
-[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mclaimed SUM(b) in the response (+1); proofs untouched: (20, 6324) -> (20, 6325)          [31m│[0m
-[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: claimed result (20, 6325) differs from the  [0m  [31m│[0m
-[31m│[0m  [36m                           [0m[1;31msum over the runs (20, 6324)                                                           [0m  [31m│[0m
-[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.1 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
-[31m╭─[0m[31m─────────────────────────[0m[31m [0m[1;31mA1c: cloud also edits the run statement so claim = sum over runs[0m[31m [0m[31m─────────────────────────[0m[31m─╮[0m
-[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mrun 0 statement count +1 and claim (20, 6324) -> (21, 6324) (native claim check now      [31m│[0m
-[31m│[0m  [36m                           [0mpasses)                                                                                  [31m│[0m
-[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: run 0: R_Exec verifier rejected:                                             [0m  [31m│[0m
-[31m│[0m  [36m                           [0m[1;31mInvalidOpeningArgument(InvalidPowWitness(Query))                                       [0m  [31m│[0m
-[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 1.2 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
-[32m╭─[0m[32m──────────────────────────────────────────────────────[0m[32m Result [0m[32m──────────────────────────────────────────────────────[0m[32m─╮[0m
-[32m│[0m expected: REJECT                                                                                                     [32m│[0m
-[32m│[0m observed: [32mREJECTED by the verifier (every counted check returned Err)[0m                                                [32m│[0m
-[32m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
-[3m                                                        Summary                                                         [0m
-╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
-│[36m [0m[36mscenario[0m[36m [0m│[36m [0m[36mexpected[0m[36m [0m│[36m [0m[36mobserved                                [0m[36m [0m│[36m [0m[36mfirst rejecting check                   [0m[36m [0m│[36m [0m[36m    time[0m[36m [0m│
-├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
-│ a1       │ REJECT   │ [32mREJECTED by the verifier (every counted [0m │ requester native check rejected: claimed │ 530.7 ms │
-│          │          │ [32mcheck returned Err)[0m                      │ result (21, 6324) differs from the sum   │          │
-│          │          │                                          │ over the runs (20, 6324)                 │          │
-╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+[34m╭─[0m[34m─────────────────────────────────────────[0m[34m [0m[1;34mA1  Cloud changes the result (count / sum)[0m[34m [0m[34m─────────────────────────────────────────[0m[34m─╮[0m
+[34m│[0m Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                               [34m│[0m
+[34m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[32m╭─[0m[32m────────────[0m[32m [0m[1;32mPhase 0[0m[32m  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted [0m[32m─────────────[0m[32m─╮[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [36mlog                               [0m[36m  [0mN = 10000 hospital access records, insider burst ids 6900..6919                           [32m│[0m
+[32m│[0m  [36mblocks / runs                     [0m[36m  [0m20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15,     [32m│[0m
+[32m│[0m  [36m                                    [0m16, 17, 18, 19, 20]                                                                       [32m│[0m
+[32m│[0m  [36mhonest claimed result             [0m[36m  [0mCOUNT = 20, SUM(patients) = 6324                                                          [32m│[0m
+[32m│[0m  [36mcontrol: requester verdict on the [0m[36m  [0mACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                            [32m│[0m
+[32m│[0m  [36mhonest response                   [0m[36m  [0m                                                                                          [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [33mNote: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.[0m                             [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 1.02 s [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[31m╭─[0m[31m────────────────────────────────────────────────[0m[31m [0m[1;31mA1a: cloud claims COUNT + 1[0m[31m [0m[31m─────────────────────────────────────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mclaimed COUNT in the response (+1); proofs untouched: (20, 6324) -> (21, 6324)                     [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: claimed result (21, 6324) differs from the sum over   [0m  [31m│[0m
+[31m│[0m  [36m                           [0m[1;31mthe runs (20, 6324)                                                                              [0m  [31m│[0m
+[31m╰─[0m[31m────────────────────────────────────────────────────────[0m[31m time 0.2 ms [0m[31m─────────────────────────────────────────────────────────[0m[31m─╯[0m
+[31m╭─[0m[31m─────────────────────────────────────────────────[0m[31m [0m[1;31mA1b: cloud claims SUM + 1[0m[31m [0m[31m──────────────────────────────────────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mclaimed SUM(patients) in the response (+1); proofs untouched: (20, 6324) -> (20, 6325)             [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: claimed result (20, 6325) differs from the sum over   [0m  [31m│[0m
+[31m│[0m  [36m                           [0m[1;31mthe runs (20, 6324)                                                                              [0m  [31m│[0m
+[31m╰─[0m[31m────────────────────────────────────────────────────────[0m[31m time 0.2 ms [0m[31m─────────────────────────────────────────────────────────[0m[31m─╯[0m
+[31m╭─[0m[31m──────────────────────────────[0m[31m [0m[1;31mA1c: cloud also edits the run statement so claim = sum over runs[0m[31m [0m[31m──────────────────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mrun 0 statement count +1 and claim (20, 6324) -> (21, 6324) (native claim check now passes)        [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: run 0: R_Exec verifier rejected: InvalidOpeningArgument(InvalidPowWitness(Query))[0m        [31m│[0m
+[31m╰─[0m[31m────────────────────────────────────────────────────────[0m[31m time 3.1 ms [0m[31m─────────────────────────────────────────────────────────[0m[31m─╯[0m
+[32m╭─[0m[32m───────────────────────────────────────────────────────────[0m[32m Result [0m[32m───────────────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m expected: REJECT                                                                                                               [32m│[0m
+[32m│[0m observed: [32mREJECTED by the verifier (every counted check returned Err)[0m                                                          [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[3m                                                             Summary                                                              [0m
+╭──────────┬──────────┬────────────────────────────────────────────────┬────────────────────────────────────────────────┬────────╮
+│[36m [0m[36mscenario[0m[36m [0m│[36m [0m[36mexpected[0m[36m [0m│[36m [0m[36mobserved                                      [0m[36m [0m│[36m [0m[36mfirst rejecting check                         [0m[36m [0m│[36m [0m[36m  time[0m[36m [0m│
+├──────────┼──────────┼────────────────────────────────────────────────┼────────────────────────────────────────────────┼────────┤
+│ a1       │ REJECT   │ [32mREJECTED by the verifier (every counted check [0m │ requester native check rejected: claimed       │ 1.03 s │
+│          │          │ [32mreturned Err)[0m                                  │ result (21, 6324) differs from the sum over    │        │
+│          │          │                                                │ the runs (20, 6324)                            │        │
+╰──────────┴──────────┴────────────────────────────────────────────────┴────────────────────────────────────────────────┴────────╯
 [2mTimings: this laptop, one run, not a paper number.[0m

@@ -1,49 +1,50 @@
-╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                            │
-│ Use case: hospital EHR access log, insider data theft                                                                │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                                      │
+│ Use case: hospital EHR access log, insider data theft                                                                          │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+⠋ cargo build --release --locked --bin demo_scenarios ...⠋ cargo build --release --locked --bin demo_scenarios ...
 built demo_scenarios in 0.1 s (cargo, --locked)
-╭─────────────────────────────────── A6  Authorization for a different query (d_Q) ────────────────────────────────────╮
-│ Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                     │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭──────── Phase 0  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted ─────────╮
-│                                                                                                                      │
-│  log                                 N = 10000 hospital access records, insider burst ids 6900..6919                 │
-│  blocks / runs                       20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,   │
-│                                      12, 15, 16, 17, 18, 19, 20]                                                     │
-│  honest claimed result               COUNT = 20, SUM(b) = 6324                                                       │
-│  control: requester verdict on the   ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                  │
-│  honest response                                                                                                     │
-│                                                                                                                      │
-│  Note: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.                   │
-│                                                                                                                      │
-╰─────────────────────────────────────────────────── time 552.9 ms ────────────────────────────────────────────────────╯
-╭──────────────── A6a: authorization for a different query (different d_Q) with the honest run proofs ─────────────────╮
-│  what the attacker changed  d_Q honest [5174721180460814168, 1802547671309111583, 17205963863366542530,              │
-│                             17796667322064207624] -> authorization proof for another query, d_Q                      │
-│                             [13505967899665072968, 14722804034534760616, 13061506954570454558, 8602217323243728031]  │
-│  verifier says              REJECTED: requester native check rejected: run 0: link: Exec ctx != exec_context(B_Q,    │
-│                             Auth_Q, RID_Q) of the Auth statement                                                     │
-╰──────────────────────────────────────────────────── time 0.1 ms ─────────────────────────────────────────────────────╯
-╭───────────────────────────────── A6b-control: ledger Authorize for the predicate P1 ─────────────────────────────────╮
-│  what the attacker changed  nothing                                                                                  │
-│  verifier says              ACCEPTED: committed                                                                      │
-│                             (information step, not counted in the attack verdict)                                    │
-╰──────────────────────────────────────────────────── time 0.0 ms ─────────────────────────────────────────────────────╯
-╭─────────────────────────────── A6b: ledger Consume with the hash of another predicate ───────────────────────────────╮
-│  what the attacker changed  Consume tx names predicate P2, the reservation was authorized for P1                     │
-│  verifier says              REJECTED: contract rejected: predicate_hash_mismatch (PredicateMismatch)                 │
-╰──────────────────────────────────────────────────── time 1.0 ms ─────────────────────────────────────────────────────╯
-╭─────────────────────────────────────────────────────── Result ───────────────────────────────────────────────────────╮
-│ expected: REJECT                                                                                                     │
-│ observed: REJECTED by the verifier (every counted check returned Err)                                                │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-                                                        Summary                                                         
-╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
-│ scenario │ expected │ observed                                 │ first rejecting check                    │     time │
-├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
-│ a6       │ REJECT   │ REJECTED by the verifier (every counted  │ requester native check rejected: run 0:  │ 561.4 ms │
-│          │          │ check returned Err)                      │ link: Exec ctx != exec_context(B_Q,      │          │
-│          │          │                                          │ Auth_Q, RID_Q) of the Auth statement     │          │
-╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+╭──────────────────────────────────────── A6  Authorization for a different query (d_Q) ─────────────────────────────────────────╮
+│ Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                               │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭───────────── Phase 0  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted ──────────────╮
+│                                                                                                                                │
+│  log                                 N = 10000 hospital access records, insider burst ids 6900..6919                           │
+│  blocks / runs                       20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15,     │
+│                                      16, 17, 18, 19, 20]                                                                       │
+│  honest claimed result               COUNT = 20, SUM(patients) = 6324                                                          │
+│  control: requester verdict on the   ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                            │
+│  honest response                                                                                                               │
+│                                                                                                                                │
+│  Note: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.                             │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 1.05 s ──────────────────────────────────────────────────────────╯
+╭───────────────────── A6a: authorization for a different query (different d_Q) with the honest run proofs ──────────────────────╮
+│  what the attacker changed  d_Q honest [5174721180460814168, 1802547671309111583, 17205963863366542530, 17796667322064207624]  │
+│                             -> authorization proof for another query, d_Q [13505967899665072968, 14722804034534760616,         │
+│                             13061506954570454558, 8602217323243728031]                                                         │
+│  verifier says              REJECTED: requester native check rejected: run 0: link: Exec ctx != exec_context(B_Q, Auth_Q,      │
+│                             RID_Q) of the Auth statement                                                                       │
+╰───────────────────────────────────────────────────────── time 0.2 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────── A6b-control: ledger Authorize for the predicate P1 ──────────────────────────────────────╮
+│  what the attacker changed  nothing                                                                                            │
+│  verifier says              ACCEPTED: committed                                                                                │
+│                             (information step, not counted in the attack verdict)                                              │
+╰───────────────────────────────────────────────────────── time 0.0 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────────────────────── A6b: ledger Consume with the hash of another predicate ────────────────────────────────────╮
+│  what the attacker changed  Consume tx names predicate P2, the reservation was authorized for P1                               │
+│  verifier says              REJECTED: contract rejected: predicate_hash_mismatch (PredicateMismatch)                           │
+╰───────────────────────────────────────────────────────── time 1.9 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────── Result ────────────────────────────────────────────────────────────╮
+│ expected: REJECT                                                                                                               │
+│ observed: REJECTED by the verifier (every counted check returned Err)                                                          │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+                                                             Summary                                                              
+╭──────────┬──────────┬────────────────────────────────────────────────┬────────────────────────────────────────────────┬────────╮
+│ scenario │ expected │ observed                                       │ first rejecting check                          │   time │
+├──────────┼──────────┼────────────────────────────────────────────────┼────────────────────────────────────────────────┼────────┤
+│ a6       │ REJECT   │ REJECTED by the verifier (every counted check  │ requester native check rejected: run 0: link:  │ 1.08 s │
+│          │          │ returned Err)                                  │ Exec ctx != exec_context(B_Q, Auth_Q, RID_Q)   │        │
+│          │          │                                                │ of the Auth statement                          │        │
+╰──────────┴──────────┴────────────────────────────────────────────────┴────────────────────────────────────────────────┴────────╯
 Timings: this laptop, one run, not a paper number.

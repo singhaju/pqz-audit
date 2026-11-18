@@ -1,55 +1,54 @@
-[34m╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮[0m
-[34m│[0m [1mPQZ-Audit[0m: privacy-preserving, post-quantum, verifiable audit-log queries                                            [34m│[0m
-[34m│[0m Use case: hospital EHR access log, insider data theft                                                                [34m│[0m
-[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
-[?25l[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m
+[34m╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮[0m
+[34m│[0m [1mPQZ-Audit[0m: privacy-preserving, post-quantum, verifiable audit-log queries                                                      [34m│[0m
+[34m│[0m Use case: hospital EHR access log, insider data theft                                                                          [34m│[0m
+[34m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[?25l[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m[2K[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m
 [?25h[1A[2K[32mbuilt[0m demo_scenarios in 0.1 s (cargo, --locked)
-[34m╭─[0m[34m──────────────────────────────────[0m[34m [0m[1;34mA4  A stored record is changed after anchoring[0m[34m [0m[34m──────────────────────────────────[0m[34m─╮[0m
-[34m│[0m Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                     [34m│[0m
-[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
-[32m╭─[0m[32m───────[0m[32m [0m[1;32mPhase 0[0m[32m  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted [0m[32m────────[0m[32m─╮[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m│[0m  [36mlog                               [0m[36m  [0mN = 10000 hospital access records, insider burst ids 6900..6919                 [32m│[0m
-[32m│[0m  [36mblocks / runs                     [0m[36m  [0m20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,   [32m│[0m
-[32m│[0m  [36m                                    [0m12, 15, 16, 17, 18, 19, 20]                                                     [32m│[0m
-[32m│[0m  [36mhonest claimed result             [0m[36m  [0mCOUNT = 20, SUM(b) = 6324                                                       [32m│[0m
-[32m│[0m  [36mcontrol: requester verdict on the [0m[36m  [0mACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                  [32m│[0m
-[32m│[0m  [36mhonest response                   [0m[36m  [0m                                                                                [32m│[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m│[0m  [33mNote: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.[0m                   [32m│[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m╰─[0m[32m──────────────────────────────────────────────────[0m[32m time 570.2 ms [0m[32m───────────────────────────────────────────────────[0m[32m─╯[0m
-[32m╭─[0m[32m─────────────[0m[32m [0m[1;32mPhase A4[0m[32m  The cloud edits one stored record and rebuilds everything from the edited data [0m[32m─────────────[0m[32m─╮[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m│[0m  [36medit                              [0m[36m  [0mrecord id 6900 (block 14): b 16 -> 1 (an export of 16 patient records made to   [32m│[0m
-[32m│[0m  [36m                                    [0mlook like 1)                                                                    [32m│[0m
-[32m│[0m  [36mblock commitment of block         [0m[36m  [0manchored f9d2f2f6c874...d16684  vs  rebuilt 240eac052378...9ac9d7               [32m│[0m
-[32m│[0m  [36mepoch root                        [0m[36m  [0manchored R_e 477448240652...d83c88  vs  rebuilt e22a50be38a1...0a3774           [32m│[0m
-[32m│[0m  [36mthe cheating result the cloud     [0m[36m  [0mCOUNT = 20, SUM(b) = 6309 (honest: (20, 6324))                                  [32m│[0m
-[32m│[0m  [36mwould like to deliver             [0m[36m  [0m                                                                                [32m│[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m╰─[0m[32m──────────────────────────────────────────────────[0m[32m time 354.1 ms [0m[32m───────────────────────────────────────────────────[0m[32m─╯[0m
-[31m╭─[0m[31m──────────────────[0m[31m [0m[1;31mA4a: edited data, fully consistent response, checked against the anchored R_e[0m[31m [0m[31m───────────────────[0m[31m─╮[0m
-[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mstored record changed after anchoring; blocks, run proofs, openings all rebuilt from     [31m│[0m
-[31m│[0m  [36m                           [0mthe edited data                                                                          [31m│[0m
-[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: block list: R_e rebuilt from the blocks     [0m  [31m│[0m
-[31m│[0m  [36m                           [0m[1;31mdiffers from the anchored R_e                                                          [0m  [31m│[0m
-[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.1 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
-[31m╭─[0m[31m────────────────[0m[31m [0m[1;31mA4b: cloud shows the ANCHORED block list but run proofs made over the edited data[0m[31m [0m[31m─────────────────[0m[31m─╮[0m
-[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mblock list honest (matches R_e), run proofs + claim from the edited records              [31m│[0m
-[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: run 0: s_out is not the anchored state after[0m  [31m│[0m
-[31m│[0m  [36m                           [0m[1;31mblock 14                                                                               [0m  [31m│[0m
-[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.0 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
-[32m╭─[0m[32m──────────────────────────────────────────────────────[0m[32m Result [0m[32m──────────────────────────────────────────────────────[0m[32m─╮[0m
-[32m│[0m expected: REJECT                                                                                                     [32m│[0m
-[32m│[0m observed: [32mREJECTED by the verifier (every counted check returned Err)[0m                                                [32m│[0m
-[32m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
-[3m                                                        Summary                                                         [0m
-╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
-│[36m [0m[36mscenario[0m[36m [0m│[36m [0m[36mexpected[0m[36m [0m│[36m [0m[36mobserved                                [0m[36m [0m│[36m [0m[36mfirst rejecting check                   [0m[36m [0m│[36m [0m[36m    time[0m[36m [0m│
-├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
-│ a4       │ REJECT   │ [32mREJECTED by the verifier (every counted [0m │ requester native check rejected: block   │ 924.6 ms │
-│          │          │ [32mcheck returned Err)[0m                      │ list: R_e rebuilt from the blocks        │          │
-│          │          │                                          │ differs from the anchored R_e            │          │
-╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+[34m╭─[0m[34m───────────────────────────────────────[0m[34m [0m[1;34mA4  A stored record is changed after anchoring[0m[34m [0m[34m───────────────────────────────────────[0m[34m─╮[0m
+[34m│[0m Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                               [34m│[0m
+[34m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[32m╭─[0m[32m────────────[0m[32m [0m[1;32mPhase 0[0m[32m  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted [0m[32m─────────────[0m[32m─╮[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [36mlog                               [0m[36m  [0mN = 10000 hospital access records, insider burst ids 6900..6919                           [32m│[0m
+[32m│[0m  [36mblocks / runs                     [0m[36m  [0m20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15,     [32m│[0m
+[32m│[0m  [36m                                    [0m16, 17, 18, 19, 20]                                                                       [32m│[0m
+[32m│[0m  [36mhonest claimed result             [0m[36m  [0mCOUNT = 20, SUM(patients) = 6324                                                          [32m│[0m
+[32m│[0m  [36mcontrol: requester verdict on the [0m[36m  [0mACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                            [32m│[0m
+[32m│[0m  [36mhonest response                   [0m[36m  [0m                                                                                          [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [33mNote: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.[0m                             [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 1.09 s [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m──────────────────[0m[32m [0m[1;32mPhase A4[0m[32m  The cloud edits one stored record and rebuilds everything from the edited data [0m[32m──────────────────[0m[32m─╮[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [36medit                              [0m[36m  [0mrecord id 6900 (block 14): patients 16 -> 1 (an export of 16 patient records made to      [32m│[0m
+[32m│[0m  [36m                                    [0mlook like 1)                                                                              [32m│[0m
+[32m│[0m  [36mblock commitment of block         [0m[36m  [0manchored f9d2f2f6c874...d16684  vs  rebuilt 240eac052378...9ac9d7                         [32m│[0m
+[32m│[0m  [36mepoch root                        [0m[36m  [0manchored R_e 477448240652...d83c88  vs  rebuilt e22a50be38a1...0a3774                     [32m│[0m
+[32m│[0m  [36mthe cheating result the cloud     [0m[36m  [0mCOUNT = 20, SUM(patients) = 6309 (honest: (20, 6324))                                     [32m│[0m
+[32m│[0m  [36mwould like to deliver             [0m[36m  [0m                                                                                          [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 682.3 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[31m╭─[0m[31m───────────────────────[0m[31m [0m[1;31mA4a: edited data, fully consistent response, checked against the anchored R_e[0m[31m [0m[31m────────────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mstored record changed after anchoring; blocks, run proofs, openings all rebuilt from the edited    [31m│[0m
+[31m│[0m  [36m                           [0mdata                                                                                               [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: block list: R_e rebuilt from the blocks differs from  [0m  [31m│[0m
+[31m│[0m  [36m                           [0m[1;31mthe anchored R_e                                                                                 [0m  [31m│[0m
+[31m╰─[0m[31m────────────────────────────────────────────────────────[0m[31m time 0.1 ms [0m[31m─────────────────────────────────────────────────────────[0m[31m─╯[0m
+[31m╭─[0m[31m─────────────────────[0m[31m [0m[1;31mA4b: cloud shows the ANCHORED block list but run proofs made over the edited data[0m[31m [0m[31m──────────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mblock list honest (matches R_e), run proofs + claim from the edited records                        [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: requester native check rejected: run 0: s_out is not the anchored state after block 14[0m   [31m│[0m
+[31m╰─[0m[31m────────────────────────────────────────────────────────[0m[31m time 0.1 ms [0m[31m─────────────────────────────────────────────────────────[0m[31m─╯[0m
+[32m╭─[0m[32m───────────────────────────────────────────────────────────[0m[32m Result [0m[32m───────────────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m expected: REJECT                                                                                                               [32m│[0m
+[32m│[0m observed: [32mREJECTED by the verifier (every counted check returned Err)[0m                                                          [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[3m                                                             Summary                                                              [0m
+╭──────────┬──────────┬────────────────────────────────────────────────┬────────────────────────────────────────────────┬────────╮
+│[36m [0m[36mscenario[0m[36m [0m│[36m [0m[36mexpected[0m[36m [0m│[36m [0m[36mobserved                                      [0m[36m [0m│[36m [0m[36mfirst rejecting check                         [0m[36m [0m│[36m [0m[36m  time[0m[36m [0m│
+├──────────┼──────────┼────────────────────────────────────────────────┼────────────────────────────────────────────────┼────────┤
+│ a4       │ REJECT   │ [32mREJECTED by the verifier (every counted check [0m │ requester native check rejected: block list:   │ 1.77 s │
+│          │          │ [32mreturned Err)[0m                                  │ R_e rebuilt from the blocks differs from the   │        │
+│          │          │                                                │ anchored R_e                                   │        │
+╰──────────┴──────────┴────────────────────────────────────────────────┴────────────────────────────────────────────────┴────────╯
 [2mTimings: this laptop, one run, not a paper number.[0m

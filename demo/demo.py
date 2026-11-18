@@ -55,7 +55,7 @@ ACTION_INFO = [
     (6, "ORDER_MEDICATION", "order a drug for a patient", "1", "drug misuse"),
     (7, "EXPORT_RECORDS", "download many patients' records to a file", "2-29 or 150-899", "data theft (our story: only staff 417)"),
 ]
-LAST = {}  # values of the main (a = 7) run, shown again in menu 6 for comparison
+LAST = {}  # values of the main (action = 7) run, shown again in menu 6 for comparison
 DEPT_CODES = "101 ER, 118 ICU, 140 Admissions/Records, 205 Oncology, 220 Radiology, 310 Pharmacy, 330 Laboratory, 500 Psychiatry"
 
 # Plain-words card per attack: (what the cheater does, why a real cheater would do it, what catches it)
@@ -89,6 +89,32 @@ ATTACK_INFO = {
            "The light-client read needs a quorum certificate (3 of 4 votes) and a Merkle path; the contract recomputes Omega."),
 }
 FOOT = "Timings: this laptop, one run, not a paper number."
+
+# The Rust program names the four record fields a, b, c, d. On screen we use words:
+# a = action code, b = patients (number of patient records touched), c = department, d = staff id.
+# Display only: the values, hashes and verdicts are unchanged, and the query keys sent to Rust stay a/b/c/d.
+import re
+_WORDS = [
+    (r"SUM\(b\)", "SUM(patients)"),
+    (r"\bsum of b\b", "total patients"),
+    (r"\baction a = ", "action = "),
+    (r"\bstaff d = ", "staff = "),
+    (r"\bdepartment c = ", "department = "),
+    (r"\bpatients b ", "patients "),
+    (r"\ba = ([0-9xX])\b", r"action = \1"),
+    (r"\bd = ([0-9]+)", r"staff = \1"),
+    (r"\bc = ([0-9]+)", r"dept = \1"),
+    (r"\bb (>=|<=|>|<) ([0-9]+)", r"patients \1 \2"),
+    (r"\bb ([0-9]+) -> ([0-9]+)", r"patients \1 -> \2"),
+]
+
+
+def words(x):
+    if not isinstance(x, str):
+        return x
+    for pat, new in _WORDS:
+        x = re.sub(pat, new, x)
+    return x
 
 con = Console(highlight=False)
 PAUSE = True
@@ -134,7 +160,7 @@ def table_of(tb):
     for h in tb["headers"]:
         t.add_column(h, overflow="fold")
     for r in tb["rows"]:
-        t.add_row(*r)
+        t.add_row(*[words(x) for x in r])
     return t
 
 
@@ -143,19 +169,19 @@ def show_phase(e):
     g.add_column(style="cyan", no_wrap=False, max_width=34)
     g.add_column(overflow="fold")
     for k, v in e["items"]:
-        g.add_row(k, v)
+        g.add_row(k, words(v))
     parts = [g]
     for tb in e["tables"]:
         parts.append(Text(""))
         parts.append(table_of(tb))
     if e["note"]:
         parts.append(Text(""))
-        parts.append(Text("Note: " + e["note"], style="yellow"))
+        parts.append(Text("Note: " + words(e["note"]), style="yellow"))
     sub = f"time {fmt_t(e['time_s'])}" if e["time_s"] is not None else ""
     ok = e["status"] == "ok"
     ph = e["phase"]
     con.print(Panel(__import__("rich.console", fromlist=["Group"]).Group(*parts),
-                    title=f"[bold]Phase {ph}[/bold]  {e['title']}", subtitle=sub,
+                    title=f"[bold]Phase {ph}[/bold]  {words(e['title'])}", subtitle=sub,
                     border_style="green" if ok else "red", box=box.ROUNDED, padding=(1, 2)))
 
 
@@ -165,13 +191,13 @@ def show_check(e):
     g.add_column(style="cyan", max_width=30)
     g.add_column(overflow="fold")
     for k, v in e["items"]:
-        g.add_row(k, v)
+        g.add_row(k, words(v))
     verdict = "REJECTED" if rej else "ACCEPTED"
     style = "bold red" if rej else "bold green"
-    g.add_row("verifier says", Text(f"{verdict}: {e['detail']}", style=style))
+    g.add_row("verifier says", Text(f"{verdict}: {words(e['detail'])}", style=style))
     if not e["counts"]:
         g.add_row("", Text("(information step, not counted in the attack verdict)", style="dim"))
-    con.print(Panel(g, title=f"[bold]{e['title']}[/bold]", subtitle=f"time {fmt_t(e['time_s'])}",
+    con.print(Panel(g, title=f"[bold]{words(e['title'])}[/bold]", subtitle=f"time {fmt_t(e['time_s'])}",
                     border_style="red" if rej and e["counts"] else "yellow", box=box.ROUNDED, padding=(0, 2)))
 
 
@@ -280,12 +306,12 @@ def panel(title, lines, t, ok=True, extra=None):
     g.add_column(style="cyan", no_wrap=True)
     g.add_column(overflow="fold")
     for k, v in lines:
-        g.add_row(k, v)
+        g.add_row(k, words(v))
     parts = [g]
     if extra is not None:
         parts += [Text(""), extra]
     from rich.console import Group
-    con.print(Panel(Group(*parts), title=f"[bold]{title}[/bold]", subtitle=f"time {fmt_t(t)}" if t is not None else "",
+    con.print(Panel(Group(*parts), title=f"[bold]{words(title)}[/bold]", subtitle=f"time {fmt_t(t)}" if t is not None else "",
                     border_style="green" if ok else "red", box=box.ROUNDED, padding=(0, 2)))
 
 
@@ -298,9 +324,11 @@ def talk_intro(n):
     g = n // 500
     body = ("[bold]Story:[/bold] a hospital keeps its EHR access log in the cloud, encrypted. An insider (staff 417) "
             "exports patient records in a burst. The auditor must find out, without the cloud being trusted.\n\n"
-            "[bold]Question:[/bold] COUNT and SUM(b) of the EXPORT_RECORDS actions (a = 7) in this epoch.\n"
-            "Each record is (a, b, c, d): a = action code, b = number of patient records touched, c = department, d = staff id.\n"
-            "So a = 7 means \"bulk export of patient records\". The action codes:\n\n"
+            "[bold]Question:[/bold] how many EXPORT_RECORDS actions (action = 7) happened in this epoch, and how many "
+            "patient records did they export in total? In query terms: COUNT and SUM(patients) where action = 7.\n"
+            "Each log record has four fields: [bold]action[/bold] (what was done, a code 1-7), [bold]patients[/bold] "
+            "(how many patient records it touched), [bold]department[/bold] and [bold]staff[/bold] id.\n"
+            "So action = 7 means \"bulk export of patient records\". The action codes:\n\n"
             f"[bold]Log:[/bold] N = {n:,} records, {g} blocks of 500.\n\n"
             "[yellow]Honest labels:[/yellow] blockchain = in-process simulation (4 validators, no network); STARK proofs = plain mode, "
             "not zero-knowledge; timings = this laptop, one run.")
@@ -312,10 +340,10 @@ def talk_intro(n):
 
 def action_table(counts=None):
     t = Table(box=box.SIMPLE_HEAD, header_style="cyan", padding=(0, 1))
-    t.add_column("a", style="bold")
+    t.add_column("code", style="bold")
     t.add_column("action")
     t.add_column("meaning", max_width=40, overflow="fold")
-    t.add_column("b (patients)", max_width=22, overflow="fold")
+    t.add_column("patients touched", max_width=22, overflow="fold")
     if counts:
         t.add_column("records in this log", justify="right")
     t.add_column("an auditor may ask about", max_width=30, overflow="fold", style="dim")
@@ -353,9 +381,9 @@ def talk_phases(n):
     LAST["dq"] = kv(ph["5"][0]["items"], "public: d_Q")
     normal = [r for r in e["tables"][0]["rows"] if r[6] == "-"][:3]
     hits = [r for r in e["tables"][1]["rows"] if r[6] == "HIT"][:3]
-    t = Table(box=box.SIMPLE_HEAD, header_style="cyan", title="Plaintext log rows: a = action, b = patients, c = dept, d = staff",
+    t = Table(box=box.SIMPLE_HEAD, header_style="cyan", title="Plaintext log rows (only the hospital sees these)",
               title_justify="left")
-    for h in ["id", "time", "a", "b", "c", "d"]:
+    for h in ["id", "time", "action", "patients", "dept", "staff"]:
         t.add_column(h)
     for r in normal:
         t.add_row(*short_row(r))
@@ -394,7 +422,7 @@ def talk_phases(n):
     rows = e["tables"][0]["rows"]
     skipped = sum(1 for r in rows if r[2] == "SKIPPED")
     panel("Phase 6  Pruning and execution proof",
-          [("predicate", "P1: a = 7 (EXPORT_RECORDS)"),
+          [("predicate", "P1: action = 7 (EXPORT_RECORDS)"),
            ("pruning", f"{len(rows)} blocks: {len(rows) - skipped} opened, {skipped} skipped by their Bloom summaries (zero-bit openings)"),
            ("claimed result", kv(e["items"], "claimed result")), ("R_Exec proof", kv(e["items"], "R_Exec")),
            ("homomorphic add", kv(he["items"], "what is added").split(",")[0] + " added under encryption")], e["time_s"])
@@ -424,20 +452,20 @@ def talk_attack(sc, n, extra=()):
                     f"[bold]What the cheater does:[/bold] {what}\n"
                     f"[bold]Why (real world):[/bold] {why}\n"
                     f"[bold]What should catch it:[/bold] {catch}\n\n"
-                    f"[dim]Honest setup first: {kv(setup['items'], 'control')}[/dim]",
+                    f"[dim]Honest setup first: {words(kv(setup['items'], 'control'))}[/dim]",
                     border_style="blue", padding=(0, 1)))
     g = Table.grid(padding=(0, 2))
     g.add_column(style="cyan", max_width=8)
     g.add_column(overflow="fold")
     for c in checks:
         mark = "" if c["counts"] else " (information, not counted)"
-        g.add_row("changed" if c["counts"] else "[dim]info[/dim]", f"{c['title']}{mark}\n[dim]{kv(c['items'], 'what the attacker')}[/dim]")
+        g.add_row("changed" if c["counts"] else "[dim]info[/dim]", words(f"{c['title']}{mark}\n[dim]{kv(c['items'], 'what the attacker')}[/dim]"))
     from rich.console import Group
     ok = res["status"] == "ok"
     big = Text(" REJECTED " if ok else " ACCEPTED (unexpected) ", style="bold white on red" if ok else "bold black on yellow")
     big.stylize("underline", 0, 0)
     parts = [g, Text(""), Align.center(big) if False else big,
-             Text(f"first rejecting check: {first['detail'] if first else '-'}", style="bold red"),
+             Text(words(f"first rejecting check: {first['detail'] if first else '-'}"), style="bold red"),
              Text(f"{sum(1 for c in counted if c['status'] == 'reject')} of {len(counted)} counted checks rejected. "
                   f"Time {fmt_t(res['time_s'])} including the honest setup.", style="dim")]
     con.print(Panel(Group(*parts), title=f"[bold]What the attacker changed, and the verifier's answer[/bold]",
@@ -447,7 +475,7 @@ def talk_attack(sc, n, extra=()):
 
 def talk_predicates(n):
     evs = collect("search", n)
-    t = Table(box=box.SIMPLE_HEAD, header_style="cyan", title="Predicate examples: SEARCH LAYER ONLY, no proof (the R_Exec proof covers a = 7 only)",
+    t = Table(box=box.SIMPLE_HEAD, header_style="cyan", title="Predicate examples: SEARCH LAYER ONLY, no proof (the R_Exec proof covers action = 7 only)",
               title_justify="left")
     t.add_column("predicate", max_width=46, overflow="fold")
     t.add_column("hits", justify="right")
@@ -459,9 +487,9 @@ def talk_predicates(n):
             skipped = sum(1 for r in rows if r[2].startswith("SKIPPED"))
             hits = kv(e["items"], "selected").split(" records")[0]
             chk = kv(e["items"], "plaintext reference").split("-> ")[-1]
-            t.add_row(e["title"], hits, f"{len(rows) - skipped} of {len(rows)}", ("[green]" if chk == "MATCH" else "[red]") + chk)
+            t.add_row(words(e["title"]), hits, f"{len(rows) - skipped} of {len(rows)}", ("[green]" if chk == "MATCH" else "[red]") + chk)
     con.print(t)
-    con.print("[yellow]Why search only: the execution proof's predicate is fixed to a = 7 when the log is built (v_of). "
+    con.print("[yellow]Why search only: the execution proof's predicate is fixed to action = 7 when the log is built (v_of). "
               "Opened = block kept by its Bloom summary; the others are skipped.[/yellow]")
     pause()
 
@@ -487,12 +515,12 @@ def ask(prompt, default=""):
 
 def talk_custom(n):
     con.print(Rule("Your own query (search layer only, no proof)"))
-    con.print(f"[dim]a = action: {ACTION_CODES}\nc = department: {DEPT_CODES}\n"
-              "d = staff id (100..999; the insider is 417)   b = patients touched (export burst: up to ~900)\n"
+    con.print(f"[dim]action: {ACTION_CODES}\ndepartment: {DEPT_CODES}\n"
+              "staff id: 100..999 (the insider is 417)   patients touched: 0 to about 900 (export burst)\n"
               "Leave a field empty for 'any'.[/dim]")
     parts = []
-    for key, prompt, default in [("a", "action a", "7"), ("d", "staff d", ""), ("c", "department c", ""),
-                                 ("bmin", "at least b patients", ""), ("bmax", "at most b patients", "")]:
+    for key, prompt, default in [("a", "action code", "7"), ("d", "staff id", ""), ("c", "department", ""),
+                                 ("bmin", "at least how many patients", ""), ("bmax", "at most how many patients", "")]:
         v = ask(prompt, default)
         if v:
             if not v.isdigit():
@@ -509,14 +537,14 @@ def talk_custom(n):
     chk = kv(e["items"], "plaintext reference").split("-> ")[-1]
     sel = e["tables"][1]["rows"]
     st = Table(box=box.SIMPLE, header_style="cyan")
-    for h in ["id", "time", "action", "b", "dept", "staff"]:
+    for h in ["id", "time", "action", "patients", "dept", "staff"]:
         st.add_column(h)
     for r in sel:
         st.add_row(*short_row(r))
     from rich.console import Group
     body = Group(
-        Text.from_markup(f"[bold]{e['title']}[/bold]"),
-        Text.from_markup(f"result: [bold]{kv(e['items'], 'selected')}[/bold]"),
+        Text.from_markup(f"[bold]{words(e['title'])}[/bold]"),
+        Text.from_markup(f"result: [bold]{words(kv(e['items'], 'selected'))}[/bold]"),
         Text.from_markup(f"blocks opened: [bold]{len(opened)} of {len(rows)}[/bold]"
                          + (f" (blocks {', '.join(opened[:10])}{' ...' if len(opened) > 10 else ''})" if opened else "")
                          + f"; the other {len(rows) - len(opened)} are skipped by their Bloom summary"),
@@ -530,7 +558,7 @@ def talk_custom(n):
 
 
 def talk_proved(n):
-    con.print(Rule("Full proved audit for another action: phases 1 to 7 again, with P1 = (a = x)"))
+    con.print(Rule("Full proved audit for another action: phases 1 to 7 again, with P1 = (action = x)"))
     con.print(action_table(LAST.get("hist")))
     v = ask("action code x for the proved audit (1-7)", "3")
     if v not in ("1", "2", "3", "4", "5", "6", "7"):
@@ -551,9 +579,9 @@ def talk_proved(n):
     ok = res["status"] == "ok"
     match = kv(e7["items"], "comparison")
     lines = [
-        ("question", f"COUNT and SUM(b) where a = {v} ({name})"),
-        ("phases 1-4", f"log rebuilt and anchored again for a = {v}: new Omega_e {omega[:16]}..."
-                       + (" (differs from the a = 7 run)" if LAST.get("omega") and LAST["omega"] != omega else "")),
+        ("question", f"COUNT and SUM(patients) where action = {v} ({name})"),
+        ("phases 1-4", f"log rebuilt and anchored again for action = {v}: new Omega_e {omega[:16]}..."
+                       + (" (differs from the action = 7 run)" if LAST.get("omega") and LAST["omega"] != omega else "")),
         ("phase 5 R_Auth", kv(ph["5"][0]["items"], "verify_auth_stage")),
         ("phase 6 pruning", f"{len(rows)} blocks: {len(rows) - skipped} opened, {skipped} skipped"),
         ("phase 6 R_Exec", kv(e6["items"], "R_Exec")),
@@ -563,15 +591,15 @@ def talk_proved(n):
         ("plaintext reference", kv(e7["items"], "plain reference")),
         ("comparison", ("[bold green]" if match == "MATCH" else "[bold red]") + match + ("[/bold green]" if match == "MATCH" else "[/bold red]")),
     ]
-    panel(f"Proved audit for a = {v} ({name})", lines, total, ok=ok and match == "MATCH")
+    panel(f"Proved audit for action = {v} ({name})", lines, total, ok=ok and match == "MATCH")
     notes = []
     if skipped == 0:
         notes.append(f"{name} is a common action, so every block may contain it and nothing is skipped. "
-                     "Only EXPORT (a = 7) is rare in this log, so only a = 7 shows block skipping.")
+                     "Only EXPORT (action = 7) is rare in this log, so only action = 7 shows block skipping.")
     notes.append("Honest limits: x is fixed when the log is built (v_of puts the value into the log), so a new action needs a "
                  "rebuilt and re-anchored epoch, as done here.")
     if LAST.get("dq") and LAST["dq"] == dq:
-        notes.append("The authorization hashes the text 'P1: A = x', not the value of x: d_Q is the same as in the a = 7 run.")
+        notes.append("The authorization hashes the text 'P1: A = x', not the value of x: d_Q is the same as in the action = 7 run.")
     con.print("[yellow]" + "\n".join(notes) + "[/yellow]")
     pause()
     if ask("let the cloud cheat on this answer (claim one more, attack A1)? y/n", "y").lower().startswith("y"):

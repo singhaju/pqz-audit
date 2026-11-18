@@ -1,7 +1,9 @@
 # PQZ-Audit live demo
 
 Use case: hospital EHR access-log audit (insider data theft). Audit question: how many EXPORT_RECORDS actions in this
-epoch, and how many patient records in total? (COUNT and SUM(b) where a = 7.)
+epoch, and how many patient records in total? (COUNT and SUM(patients) where action = 7.)
+Record fields on screen: action (code 1-7), patients (number of patient records touched), dept, staff. The Rust
+program and its JSON use the short names a, b, c, d; `demo.py` only renames them for display.
 
 ## Run (from the `PQZ-Audit-code` folder; any other folder also works)
 ```
@@ -17,11 +19,11 @@ Talk-mode menu after the phases: [1] attack A2 (Enter), [2] other attacks a1..a7
 cheater does, what catches it), [3] predicate examples (Q1..Q5, search layer only, no proof; hits, blocks opened of 20,
 plaintext check), [4] all attacks in one table, [5] your own query (action, staff, department, patients; search layer;
 `demo_scenarios --scenario custom --q a=7,d=417,bmin=101`), [6] full PROVED audit for another action code
-(phases 1-7 rebuilt with P1 = (a = x): `demo_scenarios --scenario s1 --x 3`; then optional attack A1 with the same x), [q] quit. Each attack screen starts with a card: what the
+(phases 1-7 rebuilt with P1 = (action = x): `demo_scenarios --scenario s1 --x 3`; then optional attack A1 with the same x), [q] quit. Each attack screen starts with a card: what the
 cheater does, why, what should catch it. After each choice the menu returns.
 First run builds once (`cargo build --release --locked --bin demo_scenarios`, with a spinner). Needs cargo, python3 with `rich`.
 Saved output in case the live run fails: `demo/fallback/*.txt` (plain) and `*.ansi.txt` (colour; view with `cat`):
-`talk-nopause`, `talk-menu` (scripted: A2, a5, predicates, all attacks; older layout), `s1`, `a1`..`a7`, `search`, `all-attacks`,
+`talk-nopause`, `talk-menu` (scripted: A2, a1, predicates, all attacks), `s1`, `a1`..`a7`, `search`, `all-attacks`,
 `attack-list`, `custom-a7-staff417`, `custom-view-b50`, `proved-a3` (menu 6, PRINT, then A1).
 
 ## What is real and what is simulated
@@ -32,8 +34,8 @@ Saved output in case the live run fails: `demo/fallback/*.txt` (plain) and `*.an
 - Simulated: the blockchain is an in-process simulation (4 validators, quorum 3, no network, no real consensus latency).
 - STARK proofs are plain mode, not zero-knowledge.
 - The R_Auth policy leaf and scope are fixed synthetic values (`auth_stage`), not a real hospital policy.
-- HE: ciphertexts come from a pool of 1024 pre-encrypted values; value b uses (b mod 1024). The encrypted COUNT is exact; the encrypted
-  SUM is the sum of (b mod 1024). The exact SUM(b) comes from the proved result.
+- HE: ciphertexts come from a pool of 1024 pre-encrypted values; a value of patients p uses (p mod 1024). The encrypted COUNT is exact; the encrypted
+  SUM is the sum of (patients mod 1024). The exact SUM(patients) comes from the proved result.
 - Threshold recovery: only a Shamir 3-of-5 stand-in exists (reconstruct hands over the key; not a threshold decryption).
 - Timings: this laptop, one run, not a paper number. The log is 10,000 records by default (`--n 2000` for a shorter screen), blocks of 500, chunk 2; the insider burst sits in one block.
 

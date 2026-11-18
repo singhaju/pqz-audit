@@ -1,55 +1,55 @@
-[34m╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮[0m
-[34m│[0m [1mPQZ-Audit[0m: privacy-preserving, post-quantum, verifiable audit-log queries                                            [34m│[0m
-[34m│[0m Use case: hospital EHR access log, insider data theft                                                                [34m│[0m
-[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
-[?25l[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m
+[34m╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮[0m
+[34m│[0m [1mPQZ-Audit[0m: privacy-preserving, post-quantum, verifiable audit-log queries                                                      [34m│[0m
+[34m│[0m Use case: hospital EHR access log, insider data theft                                                                          [34m│[0m
+[34m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[?25l[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m[2K[32m⠋[0m [36mcargo build --release --locked --bin demo_scenarios ...[0m
 [?25h[1A[2K[32mbuilt[0m demo_scenarios in 0.1 s (cargo, --locked)
-[34m╭─[0m[34m───────────────────────────────────────[0m[34m [0m[1;34mA7  Forged or tampered ledger anchor[0m[34m [0m[34m───────────────────────────────────────[0m[34m─╮[0m
-[34m│[0m Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                     [34m│[0m
-[34m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
-[32m╭─[0m[32m───────[0m[32m [0m[1;32mPhase 0[0m[32m  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted [0m[32m────────[0m[32m─╮[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m│[0m  [36mlog                               [0m[36m  [0mN = 10000 hospital access records, insider burst ids 6900..6919                 [32m│[0m
-[32m│[0m  [36mblocks / runs                     [0m[36m  [0m20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,   [32m│[0m
-[32m│[0m  [36m                                    [0m12, 15, 16, 17, 18, 19, 20]                                                     [32m│[0m
-[32m│[0m  [36mhonest claimed result             [0m[36m  [0mCOUNT = 20, SUM(b) = 6324                                                       [32m│[0m
-[32m│[0m  [36mcontrol: requester verdict on the [0m[36m  [0mACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                  [32m│[0m
-[32m│[0m  [36mhonest response                   [0m[36m  [0m                                                                                [32m│[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m│[0m  [33mNote: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.[0m                   [32m│[0m
-[32m│[0m                                                                                                                      [32m│[0m
-[32m╰─[0m[32m──────────────────────────────────────────────────[0m[32m time 552.5 ms [0m[32m───────────────────────────────────────────────────[0m[32m─╯[0m
-[33m╭─[0m[33m───────────────────────────────────[0m[33m [0m[1;33mA7-control: honest ledger, light-client read[0m[33m [0m[33m───────────────────────────────────[0m[33m─╮[0m
-[33m│[0m  [36mwhat the attacker changed[0m[36m  [0mnothing                                                                                  [33m│[0m
-[33m│[0m  [36mverifier says            [0m[36m  [0m[1;32mACCEPTED: gate passed in 0.0002 s                    [0m                                    [33m│[0m
-[33m│[0m  [36m                         [0m[36m  [0m[2m(information step, not counted in the attack verdict)[0m                                    [33m│[0m
-[33m╰─[0m[33m───────────────────────────────────────────────────[0m[33m time 0.2 ms [0m[33m────────────────────────────────────────────────────[0m[33m─╯[0m
-[31m╭─[0m[31m───────────────────────────[0m[31m [0m[1;31mA7a: forged ledger block header (state_root edited, QC kept)[0m[31m [0m[31m───────────────────────────[0m[31m─╮[0m
-[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mone bit of the latest block's state_root                                                 [31m│[0m
-[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: ledger read proof (QC + Merkle path) did not verify[0m                            [31m│[0m
-[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.2 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
-[31m╭─[0m[31m───────────────────────────────[0m[31m [0m[1;31mA7b: quorum certificate with too few validator votes[0m[31m [0m[31m───────────────────────────────[0m[31m─╮[0m
-[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mQC cut to 2 votes, quorum is 3 of 4                                                      [31m│[0m
-[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: ledger read proof (QC + Merkle path) did not verify[0m                            [31m│[0m
-[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.1 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
-[31m╭─[0m[31m────────────────────────[0m[31m [0m[1;31mA7c: tampered anchor entry (State[0m[1;31m value edited in the read proof)[0m[31m [0m[31m─────────────────────────[0m[31m─╮[0m
-[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mone bit of the stored State entry (Gamma/Omega) in the light-client read proof           [31m│[0m
-[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: verify_read returned false (Merkle path from the edited entry does not reach [0m  [31m│[0m
-[31m│[0m  [36m                           [0m[1;31mthe QC-signed state_root); the library returns a bool, no text                         [0m  [31m│[0m
-[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.2 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
-[31m╭─[0m[31m────────[0m[31m [0m[1;31mA7d: forged anchor transaction for epoch 2 (Omega not equal to H(label, e, Gamma, R_pol, v_auth))[0m[31m [0m[31m─────────[0m[31m─╮[0m
-[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mattacker-chosen Gamma and Omega in an Anchor tx                                          [31m│[0m
-[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: contract rejected: omega_recompute_mismatch (OmegaRecompute)[0m                   [31m│[0m
-[31m╰─[0m[31m───────────────────────────────────────────────────[0m[31m time 0.2 ms [0m[31m────────────────────────────────────────────────────[0m[31m─╯[0m
-[32m╭─[0m[32m──────────────────────────────────────────────────────[0m[32m Result [0m[32m──────────────────────────────────────────────────────[0m[32m─╮[0m
-[32m│[0m expected: REJECT                                                                                                     [32m│[0m
-[32m│[0m observed: [32mREJECTED by the verifier (every counted check returned Err)[0m                                                [32m│[0m
-[32m╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
-[3m                                                        Summary                                                         [0m
-╭──────────┬──────────┬──────────────────────────────────────────┬──────────────────────────────────────────┬──────────╮
-│[36m [0m[36mscenario[0m[36m [0m│[36m [0m[36mexpected[0m[36m [0m│[36m [0m[36mobserved                                [0m[36m [0m│[36m [0m[36mfirst rejecting check                   [0m[36m [0m│[36m [0m[36m    time[0m[36m [0m│
-├──────────┼──────────┼──────────────────────────────────────────┼──────────────────────────────────────────┼──────────┤
-│ a7       │ REJECT   │ [32mREJECTED by the verifier (every counted [0m │ ledger read proof (QC + Merkle path) did │ 553.4 ms │
-│          │          │ [32mcheck returned Err)[0m                      │ not verify                               │          │
-╰──────────┴──────────┴──────────────────────────────────────────┴──────────────────────────────────────────┴──────────╯
+[34m╭─[0m[34m────────────────────────────────────────────[0m[34m [0m[1;34mA7  Forged or tampered ledger anchor[0m[34m [0m[34m────────────────────────────────────────────[0m[34m─╮[0m
+[34m│[0m Honest setup first (control: ACCEPT), then ONE thing is changed and the real verifier is called.                               [34m│[0m
+[34m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[32m╭─[0m[32m────────────[0m[32m [0m[1;32mPhase 0[0m[32m  Honest setup (phases 1 to 6 exactly as in S1) and control: the honest response is accepted [0m[32m─────────────[0m[32m─╮[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [36mlog                               [0m[36m  [0mN = 10000 hospital access records, insider burst ids 6900..6919                           [32m│[0m
+[32m│[0m  [36mblocks / runs                     [0m[36m  [0m20 blocks, runs [(6, 6)], skipped blocks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15,     [32m│[0m
+[32m│[0m  [36m                                    [0m16, 17, 18, 19, 20]                                                                       [32m│[0m
+[32m│[0m  [36mhonest claimed result             [0m[36m  [0mCOUNT = 20, SUM(patients) = 6324                                                          [32m│[0m
+[32m│[0m  [36mcontrol: requester verdict on the [0m[36m  [0mACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                            [32m│[0m
+[32m│[0m  [36mhonest response                   [0m[36m  [0m                                                                                          [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [33mNote: Setup time is shown once; every attack below changes ONE thing and calls the real verifier.[0m                             [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 1.06 s [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[33m╭─[0m[33m────────────────────────────────────────[0m[33m [0m[1;33mA7-control: honest ledger, light-client read[0m[33m [0m[33m────────────────────────────────────────[0m[33m─╮[0m
+[33m│[0m  [36mwhat the attacker changed[0m[36m  [0mnothing                                                                                            [33m│[0m
+[33m│[0m  [36mverifier says            [0m[36m  [0m[1;32mACCEPTED: gate passed in 0.0006 s                    [0m                                              [33m│[0m
+[33m│[0m  [36m                         [0m[36m  [0m[2m(information step, not counted in the attack verdict)[0m                                              [33m│[0m
+[33m╰─[0m[33m────────────────────────────────────────────────────────[0m[33m time 0.6 ms [0m[33m─────────────────────────────────────────────────────────[0m[33m─╯[0m
+[31m╭─[0m[31m────────────────────────────────[0m[31m [0m[1;31mA7a: forged ledger block header (state_root edited, QC kept)[0m[31m [0m[31m────────────────────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mone bit of the latest block's state_root                                                           [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: ledger read proof (QC + Merkle path) did not verify[0m                                      [31m│[0m
+[31m╰─[0m[31m────────────────────────────────────────────────────────[0m[31m time 0.5 ms [0m[31m─────────────────────────────────────────────────────────[0m[31m─╯[0m
+[31m╭─[0m[31m────────────────────────────────────[0m[31m [0m[1;31mA7b: quorum certificate with too few validator votes[0m[31m [0m[31m────────────────────────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mQC cut to 2 votes, quorum is 3 of 4                                                                [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: ledger read proof (QC + Merkle path) did not verify[0m                                      [31m│[0m
+[31m╰─[0m[31m────────────────────────────────────────────────────────[0m[31m time 0.3 ms [0m[31m─────────────────────────────────────────────────────────[0m[31m─╯[0m
+[31m╭─[0m[31m─────────────────────────────[0m[31m [0m[1;31mA7c: tampered anchor entry (State[0m[1;31m value edited in the read proof)[0m[31m [0m[31m──────────────────────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mone bit of the stored State entry (Gamma/Omega) in the light-client read proof                     [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: verify_read returned false (Merkle path from the edited entry does not reach the       [0m  [31m│[0m
+[31m│[0m  [36m                           [0m[1;31mQC-signed state_root); the library returns a bool, no text                                       [0m  [31m│[0m
+[31m╰─[0m[31m────────────────────────────────────────────────────────[0m[31m time 0.5 ms [0m[31m─────────────────────────────────────────────────────────[0m[31m─╯[0m
+[31m╭─[0m[31m─────────────[0m[31m [0m[1;31mA7d: forged anchor transaction for epoch 2 (Omega not equal to H(label, e, Gamma, R_pol, v_auth))[0m[31m [0m[31m──────────────[0m[31m─╮[0m
+[31m│[0m  [36mwhat the attacker changed[0m[36m  [0mattacker-chosen Gamma and Omega in an Anchor tx                                                    [31m│[0m
+[31m│[0m  [36mverifier says            [0m[36m  [0m[1;31mREJECTED: contract rejected: omega_recompute_mismatch (OmegaRecompute)[0m                             [31m│[0m
+[31m╰─[0m[31m────────────────────────────────────────────────────────[0m[31m time 0.6 ms [0m[31m─────────────────────────────────────────────────────────[0m[31m─╯[0m
+[32m╭─[0m[32m───────────────────────────────────────────────────────────[0m[32m Result [0m[32m───────────────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m expected: REJECT                                                                                                               [32m│[0m
+[32m│[0m observed: [32mREJECTED by the verifier (every counted check returned Err)[0m                                                          [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[3m                                                             Summary                                                              [0m
+╭──────────┬──────────┬────────────────────────────────────────────────┬────────────────────────────────────────────────┬────────╮
+│[36m [0m[36mscenario[0m[36m [0m│[36m [0m[36mexpected[0m[36m [0m│[36m [0m[36mobserved                                      [0m[36m [0m│[36m [0m[36mfirst rejecting check                         [0m[36m [0m│[36m [0m[36m  time[0m[36m [0m│
+├──────────┼──────────┼────────────────────────────────────────────────┼────────────────────────────────────────────────┼────────┤
+│ a7       │ REJECT   │ [32mREJECTED by the verifier (every counted check [0m │ ledger read proof (QC + Merkle path) did not   │ 1.06 s │
+│          │          │ [32mreturned Err)[0m                                  │ verify                                         │        │
+╰──────────┴──────────┴────────────────────────────────────────────────┴────────────────────────────────────────────────┴────────╯
 [2mTimings: this laptop, one run, not a paper number.[0m
