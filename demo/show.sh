@@ -123,6 +123,7 @@ predicate	pqz-eval/src/search.rs	186	216	pub fn rps_eval	Exact record-level eval
 predicate	pqz-integrated-w46/src/lib.rs	751	781	pub fn predicate_formula	The proved predicate (a = X)
 predicate	pqz-integrated-w46/src/lib.rs	173	203	pub fn v_of	Why only a = X can be proved end to end
 predicate	pqz-integrated-w46/src/bin/demo_scenarios.rs	912	942	fn search_scenario	Demo: compound predicates, search layer only
+predicate	pqz-integrated-w46/src/bin/demo_scenarios.rs	998	1044	fn custom_case	Demo menu 5: the audience's own query as a search formula
 pruning	pqz-integrated-w46/src/w35.rs	640	670	pub fn plan_runs	Choose runs from the Bloom flags
 pruning	pqz-integrated-w46/src/w35.rs	160	190	pub fn plan_absent	Bloom positions that must be 0 to show a block empty
 pruning	pqz-integrated-w46/src/w35.rs	741	771	pub fn openings_for_blocks	Openings for the skipped blocks

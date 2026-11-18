@@ -1,0 +1,25 @@
+[92m────────────────────────────────────────── [0mYour own query (search layer only, no proof)[92m ──────────────────────────────────────────[0m
+[2ma = action: 1 VIEW, 2 EDIT, 3 PRINT, 4 LOGIN, 5 LOGOUT, 6 ORDER_MEDICATION, 7 EXPORT_RECORDS[0m
+[2mc = department: 101 ER, 118 ICU, 140 Admissions/Records, 205 Oncology, 220 Radiology, 310 Pharmacy, 330 Laboratory, 500 Psychiatry[0m
+[2md = staff id (100..999; the insider is 417)   b = patients touched (export burst: up to ~900)[0m
+[2mLeave a field empty for 'any'.[0m
+[36maction a[0m [2m[7][0m: [36mstaff d[0m : [36mdepartment c[0m : [36mat least b patients[0m : [36mat most b patients[0m : [?25l[32m⠋[0m [36mrunning custom on the real library ...[0m[2K[32m⠙[0m [36mrunning custom on the real library ...[0m[2K[32m⠹[0m [36mrunning custom on the real library ...[0m[2K[32m⠸[0m [36mrunning custom on the real library ...[0m[2K[32m⠼[0m [36mrunning custom on the real library ...[0m[2K[32m⠼[0m [36mrunning custom on the real library ...[0m
+[?25h[1A[2K[32m╭─[0m[32m──────────────────────────────────────────────[0m[32m [0m[1;32mYour query on the encrypted log[0m[32m [0m[32m───────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [1mYour query: action a = 7 (EXPORT_RECORDS) AND staff d = 417 AND patients b >= 101[0m                                             [32m│[0m
+[32m│[0m  result: [1m14 records, sum of b = 6213 (search layer, not proved)[0m                                                                [32m│[0m
+[32m│[0m  blocks opened: [1m1 of 20[0m (blocks 14); the other 19 are skipped by their Bloom summary                                           [32m│[0m
+[32m│[0m  plaintext check: [32mMATCH[0m  [2m(the same condition run on the plain log)[0m                                                             [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid  [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mb  [0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                              [32m│[0m
+[32m│[0m   ───────────────────────────────────────────────                                                                              [32m│[0m
+[32m│[0m    6901   10:15:40   EXPORT   791   140    417                                                                                 [32m│[0m
+[32m│[0m    6902   10:16:01   EXPORT   401   140    417                                                                                 [32m│[0m
+[32m│[0m    6903   10:16:11   EXPORT   507   140    417                                                                                 [32m│[0m
+[32m│[0m    6904   10:16:35   EXPORT   547   140    417                                                                                 [32m│[0m
+[32m│[0m    6905   10:16:46   EXPORT   356   140    417                                                                                 [32m│[0m
+[32m│[0m    6906   10:17:19   EXPORT   168   140    417                                                                                 [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [33mRare condition -> few blocks opened. Common condition -> most blocks opened. Search layer only: the end-to-end proof in this[0m  [32m│[0m
+[32m│[0m  [33mprototype covers a = 7.[0m                                                                                                       [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m

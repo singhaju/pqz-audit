@@ -1,0 +1,30 @@
+The seven attacks (each changes ONE thing, then the real verifier runs)                                        
+                                                                                                               
+  key   what the cheater does                                  what should catch it                            
+ ───────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  a1    The cloud changes the answer: it says COUNT or SUM     The claimed result must equal the sum over the  
+        is one more than the truth. In A1c it also edits the   proved runs; in A1c the R_Exec proof no longer  
+        proof's public numbers so that everything adds up.     verifies.                                       
+  a2    The cloud hides the block with the EXPORT records      A skipped block needs a Bloom opening that      
+        (block 14 when N = 10,000) and says it was skipped     shows the query is NOT in it. That block's      
+        because nothing matched.                               filter says the query may be there, so it       
+                                                               cannot be shown absent.                         
+  a3    The cloud fakes the 'nothing here' evidence for the    Each opening must have a Merkle path to the     
+        hit block: copies the openings of an empty block,      anchored Bloom root, and the opened bits must   
+        shows real openings whose bits are 1, flips one bit,   be 0.                                           
+        or leaves the openings out.                                                                            
+  a4    Someone edits a stored record after the epoch was      The block list must rebuild the root R_e that   
+        anchored (for example, makes an export smaller) and    is anchored on the blockchain; edited data      
+        rebuilds all blocks and proofs from the edited data.   gives another root.                             
+  a5    An old authorization (made for an earlier epoch        The proofs are tied to the authorization; the   
+        state Omega_0) is replayed for the new audit.          ledger gate and the contract reject an Omega    
+                                                               that is not the current one. (A5b shows the     
+                                                               proofs alone are consistent; the ledger check   
+                                                               is what stops it.)                              
+  a6    An authorization granted for one query (P1) is used    The query digest d_Q is bound into the proofs,  
+        for a different query.                                 and the contract checks the predicate hash on   
+                                                               Consume.                                        
+  a7    The blockchain anchor is forged: an edited block       The light-client read needs a quorum            
+        header, too few validator votes (2 of 4), an edited    certificate (3 of 4 votes) and a Merkle path;   
+        stored value, or a fake anchor transaction.            the contract recomputes Omega.                  
+                                                                                                               

@@ -1,95 +1,100 @@
-╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                            │
-│ Use case: hospital EHR access log, insider data theft                                                                │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ PQZ-Audit: privacy-preserving, post-quantum, verifiable audit-log queries                                                      │
+│ Use case: hospital EHR access log, insider data theft                                                                          │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 built demo_scenarios in 0.1 s (cargo, --locked)
-╭─────────────────────────────────────────────────── PQZ-Audit demo ───────────────────────────────────────────────────╮
-│                                                                                                                      │
-│  Story: a hospital keeps its EHR access log in the cloud, encrypted. An insider (staff 417, night shift) exports     │
-│  patient records in a burst. The auditor must find out, without the cloud being trusted.                             │
-│                                                                                                                      │
-│  Question: COUNT and SUM(b) of the EXPORT_RECORDS actions (a = 7) in this epoch.                                     │
-│                                                                                                                      │
-│  Log: N = 10,000 records, 20 blocks of 500.                                                                          │
-│                                                                                                                      │
-│  Honest labels: blockchain = in-process simulation (4 validators, no network); STARK proofs = plain mode, not        │
-│  zero-knowledge; timings = this laptop, one run.                                                                     │
-│                                                                                                                      │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-
-╭────────────────────────────────────────────── Phase 1  Initialization ───────────────────────────────────────────────╮
-│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                             │
-│  Omega_0      e84210ea3952...536d48                                                                                  │
-│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                      │
-╰──────────────────────────────────────────────────── time 2.7 ms ─────────────────────────────────────────────────────╯
-╭───────────────────────────────────────── Phase 2  Registration (plain log) ──────────────────────────────────────────╮
-│  insider burst  own seeded generator (xorshift), 10000 records; a = 7 appears only in the insider's burst (ids       │
-│                 6900..6919)                                                                                          │
-│                                                                                                                      │
-│  Plaintext log rows: a = action, b = patients,                                                                       │
-│  c = dept, d = staff                                                                                                 │
-│                                                                                                                      │
-│    id     time       a        b     c     d                                                                          │
-│   ────────────────────────────────────────────                                                                       │
-│    0      18:00:02   VIEW     1     310   984                                                                        │
-│    1      18:00:22   EDIT     1     205   170                                                                        │
-│    2      18:00:55   EDIT     1     118   799                                                                        │
-│    6900   10:15:07   EXPORT   16    140   417                                                                        │
-│    6901   10:15:40   EXPORT   791   140   417                                                                        │
-│    6902   10:16:01   EXPORT   401   140   417                                                                        │
-│                                                                                                                      │
-╰──────────────────────────────────────────────────── time 0.2 ms ─────────────────────────────────────────────────────╯
-╭───────────────────────────────── Phase 3a  Encrypt and tag (what the cloud stores) ──────────────────────────────────╮
-│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                              │
-│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter     │
-│                              per block (20 blocks)                                                                   │
-│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                 │
-╰─────────────────────────────────────────────────── time 239.7 ms ────────────────────────────────────────────────────╯
-╭────────────────────────────────────── Phase 3b  Blocks, R_RC proofs, AA check ───────────────────────────────────────╮
-│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                      │
-│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1623986 bytes in total, ~127 conjectured bits, 0.104 s        │
-│  AA check     passed in 0.091 s                                                                                      │
-╰─────────────────────────────────────────────────── time 283.8 ms ────────────────────────────────────────────────────╯
-╭─────────────────────────────────── Phase 4  Anchor on the (simulated) blockchain ────────────────────────────────────╮
-│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                      │
-│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4       │
-│                     validators)                                                                                      │
-│  light-client read  verified in 0.0002 s                                                                             │
-╰──────────────────────────────────────────────────── time 2.8 ms ─────────────────────────────────────────────────────╯
-╭──────────────────────────────────────── Phase 5  Authorization proof R_Auth ─────────────────────────────────────────╮
-│  request       auditor asks for COUNT and SUM(b) where a = 7 (qid 1, predicate text "P1: A = x")                     │
-│  R_Auth proof  127269 bytes, 64 trace rows, proving 0.0056 s                                                         │
-│  verifier      accepted                                                                                              │
-╰──────────────────────────────────────────────────── time 7.6 ms ─────────────────────────────────────────────────────╯
-╭──────────────────────────────────────── Phase 6  Pruning and execution proof ────────────────────────────────────────╮
-│  predicate        P1: a = 7 (EXPORT_RECORDS)                                                                         │
-│  pruning          20 blocks: 2 opened, 18 skipped by their Bloom summaries (zero-bit openings)                       │
-│  claimed result   COUNT = 20, SUM(b) = 6324                                                                          │
-│  R_Exec proof     1 run proof(s), 149381 bytes, 0.012 s, ~127 conjectured bits                                       │
-│  homomorphic add  20 ciphertexts (only the records selected by the exact predicate) added under encryption           │
-╰──────────────────────────────────────────────────── time 17.9 ms ────────────────────────────────────────────────────╯
-╭──────────────────────────────────────────── Phase 7  Requester verifies ─────────────────────────────────────────────╮
-│  verdict              ACCEPT                                                                                         │
-│  verified result      COUNT = 20, SUM(b) = 6324                                                                      │
-│  plaintext reference  COUNT = 20, SUM(b) = 6324                                                                      │
-│  comparison           MATCH                                                                                          │
-╰──────────────────────────────────────────────────── time 1.9 ms ─────────────────────────────────────────────────────╯
-Sum of phase times 556.7 ms (BFV pool setup excluded). Timings: this laptop, one run, not a paper number.
-
-╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ A2  Cloud hides a block that contains matches   (recommended for the talk)                                           │
-│ Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                   │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ What the attacker changed, and the verifier's answer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃                                                                                                                      ┃
-┃  changed  A2a: honest opening function asked to prove the hit block empty                                            ┃
-┃           asked openings_for_blocks for block 14 (it holds 20 matching records)                                      ┃
-┃  changed  A2b: cloud drops the run that contains the matches and pretends the blocks were pruned                     ┃
-┃           run over blocks 13..14 removed, claim recomputed (20, 6324) -> (0, 0), no openings for those blocks        ┃
-┃                                                                                                                      ┃
-┃   REJECTED                                                                                                           ┃
-┃  first rejecting check: block 14 cannot be shown absent (its filter may contain the query)                           ┃
-┃  2 of 2 counted checks rejected. Time 565.6 ms including the honest setup.                                           ┃
-┃                                                                                                                      ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+╭──────────────────────────────────────────────────────── PQZ-Audit demo ────────────────────────────────────────────────────────╮
+│                                                                                                                                │
+│  Story: a hospital keeps its EHR access log in the cloud, encrypted. An insider (staff 417) exports patient records in a       │
+│  burst. The auditor must find out, without the cloud being trusted.                                                            │
+│                                                                                                                                │
+│  Question: COUNT and SUM(b) of the EXPORT_RECORDS actions (a = 7) in this epoch.                                               │
+│  Each record is (a, b, c, d): a = action code, b = number of patient records touched, c = department, d = staff id.            │
+│  Action codes: 1 VIEW, 2 EDIT, 3 PRINT, 4 LOGIN, 5 LOGOUT, 6 ORDER_MEDICATION, 7 EXPORT_RECORDS. So a = 7 means "bulk export   │
+│  of patient records".                                                                                                          │
+│                                                                                                                                │
+│  Log: N = 10,000 records, 20 blocks of 500.                                                                                    │
+│                                                                                                                                │
+│  Honest labels: blockchain = in-process simulation (4 validators, no network); STARK proofs = plain mode, not zero-knowledge;  │
+│  timings = this laptop, one run.                                                                                               │
+│                                                                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────────────── Phase 1  Initialization ────────────────────────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.7 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────── Phase 2  Registration (plain log) ───────────────────────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; a = 7 appears only in the insider's burst (ids 6900..6919)     │
+│                                                                                                                                │
+│  Plaintext log rows: a = action, b = patients,                                                                                 │
+│  c = dept, d = staff                                                                                                           │
+│                                                                                                                                │
+│    id     time       a        b     c     d                                                                                    │
+│   ────────────────────────────────────────────                                                                                 │
+│    0      18:00:02   VIEW     1     310   984                                                                                  │
+│    1      18:00:22   EDIT     1     205   170                                                                                  │
+│    2      18:00:55   EDIT     1     118   799                                                                                  │
+│    6900   10:15:07   EXPORT   16    140   417                                                                                  │
+│    6901   10:15:40   EXPORT   791   140   417                                                                                  │
+│    6902   10:16:01   EXPORT   401   140   417                                                                                  │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.5 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────── Phase 3a  Encrypt and tag (what the cloud stores) ───────────────────────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 434.1 ms ─────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────── Phase 3b  Blocks, R_RC proofs, AA check ────────────────────────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1625618 bytes in total, ~127 conjectured bits, 0.212 s                  │
+│  AA check     passed in 0.183 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 559.4 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 4  Anchor on the (simulated) blockchain ─────────────────────────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0004 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 6.2 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 5  Authorization proof R_Auth ──────────────────────────────────────────────╮
+│  request       auditor asks for COUNT and SUM(b) where a = 7 (qid 1, predicate text "P1: A = x")                               │
+│  R_Auth proof  126501 bytes, 64 trace rows, proving 0.0077 s                                                                   │
+│  verifier      accepted                                                                                                        │
+╰───────────────────────────────────────────────────────── time 10.0 ms ─────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 6  Pruning and execution proof ─────────────────────────────────────────────╮
+│  predicate        P1: a = 7 (EXPORT_RECORDS)                                                                                   │
+│  pruning          20 blocks: 2 opened, 18 skipped by their Bloom summaries (zero-bit openings)                                 │
+│  claimed result   COUNT = 20, SUM(b) = 6324                                                                                    │
+│  R_Exec proof     1 run proof(s), 147589 bytes, 0.023 s, ~127 conjectured bits                                                 │
+│  homomorphic add  20 ciphertexts (only the records selected by the exact predicate) added under encryption                     │
+╰───────────────────────────────────────────────────────── time 31.6 ms ─────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────────── Phase 7  Requester verifies ──────────────────────────────────────────────────╮
+│  verdict              ACCEPT                                                                                                   │
+│  verified result      COUNT = 20, SUM(b) = 6324                                                                                │
+│  plaintext reference  COUNT = 20, SUM(b) = 6324                                                                                │
+│  comparison           MATCH                                                                                                    │
+╰───────────────────────────────────────────────────────── time 3.6 ms ──────────────────────────────────────────────────────────╯
+Sum of phase times 1.05 s (BFV pool setup excluded). Timings: this laptop, one run, not a paper number.
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ A2  Cloud hides a block that contains matches   (recommended for the talk)                                                     │
+│                                                                                                                                │
+│ What the cheater does: The cloud hides the block with the EXPORT records (block 14 when N = 10,000) and says it was skipped    │
+│ because nothing matched.                                                                                                       │
+│ Why (real world): Hide the insider completely: the auditor would get COUNT 0.                                                  │
+│ What should catch it: A skipped block needs a Bloom opening that shows the query is NOT in it. That block's filter says the    │
+│ query may be there, so it cannot be shown absent.                                                                              │
+│                                                                                                                                │
+│ Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                             │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ What the attacker changed, and the verifier's answer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                                                                                ┃
+┃  changed  A2a: honest opening function asked to prove the hit block empty                                                      ┃
+┃           asked openings_for_blocks for block 14 (it holds 20 matching records)                                                ┃
+┃  changed  A2b: cloud drops the run that contains the matches and pretends the blocks were pruned                               ┃
+┃           run over blocks 13..14 removed, claim recomputed (20, 6324) -> (0, 0), no openings for those blocks                  ┃
+┃                                                                                                                                ┃
+┃   REJECTED                                                                                                                     ┃
+┃  first rejecting check: block 14 cannot be shown absent (its filter may contain the query)                                     ┃
+┃  2 of 2 counted checks rejected. Time 1.10 s including the honest setup.                                                       ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛

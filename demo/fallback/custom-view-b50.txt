@@ -1,0 +1,25 @@
+────────────────────────────────────────── Your own query (search layer only, no proof) ──────────────────────────────────────────
+a = action: 1 VIEW, 2 EDIT, 3 PRINT, 4 LOGIN, 5 LOGOUT, 6 ORDER_MEDICATION, 7 EXPORT_RECORDS
+c = department: 101 ER, 118 ICU, 140 Admissions/Records, 205 Oncology, 220 Radiology, 310 Pharmacy, 330 Laboratory, 500 Psychiatry
+d = staff id (100..999; the insider is 417)   b = patients touched (export burst: up to ~900)
+Leave a field empty for 'any'.
+action a [7]: staff d : department c : at least b patients : at most b patients : ⠋ running custom on the real library ...⠙ running custom on the real library ...⠹ running custom on the real library ...⠸ running custom on the real library ...⠼ running custom on the real library ...⠼ running custom on the real library ...
+╭─────────────────────────────────────────────── Your query on the encrypted log ────────────────────────────────────────────────╮
+│  Your query: action a = 1 (VIEW_CHART) AND patients b >= 50                                                                    │
+│  result: 281 records, sum of b = 18162 (search layer, not proved)                                                              │
+│  blocks opened: 20 of 20 (blocks 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ...); the other 0 are skipped by their Bloom summary            │
+│  plaintext check: MATCH  (the same condition run on the plain log)                                                             │
+│                                                                                                                                │
+│                                                                                                                                │
+│    id    time       action   b    dept   staff                                                                                 │
+│   ─────────────────────────────────────────────                                                                                │
+│    158   18:55:22   VIEW     61   101    434                                                                                   │
+│    181   19:03:35   VIEW     63   220    472                                                                                   │
+│    276   19:36:38   VIEW     69   330    922                                                                                   │
+│    298   19:44:33   VIEW     71   101    217                                                                                   │
+│    304   19:46:40   VIEW     72   101    385                                                                                   │
+│    412   20:24:26   VIEW     56   220    458                                                                                   │
+│                                                                                                                                │
+│  Rare condition -> few blocks opened. Common condition -> most blocks opened. Search layer only: the end-to-end proof in this  │
+│  prototype covers a = 7.                                                                                                       │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯

@@ -909,7 +909,7 @@ impl BqHash for AuthProof {
 }
 
 // ------------------------------------------------------------------------------------------------ search layer
-fn search_scenario(n: usize) {
+fn search_scenario(n: usize, custom: Option<String>) {
     let t_all = Instant::now();
     let (records, meta) = make_records(n, 0xC0FFEE_5EED);
     let keys = EpochKeys::from_seed(DEFAULT_SEED);
@@ -941,6 +941,10 @@ fn search_scenario(n: usize) {
             Box::new(|r: &Record| r.a == X && r.d == INSIDER && r.b >= 101),
         ),
     ];
+    let cases: Vec<(String, String, Formula, Rf)> = match custom {
+        None => cases.into_iter().map(|(i, t, f, p)| (i.to_string(), t.to_string(), f, p)).collect(),
+        Some(spec) => vec![custom_case(&spec, kk)],
+    };
     Ev::new("phase", "search", "0", "Setup: same hospital log, encrypted and tagged exactly as in S1")
         .item("log", format!("N = {n}, {} blocks of {BLOCK}; insider burst ids {}..{}", log.n_blocks(), meta.burst_start, meta.burst_start + meta.burst_len - 1))
         .item("build_log", format!("{t_log:.3} s"))
@@ -970,7 +974,7 @@ fn search_scenario(n: usize) {
             .collect();
         let sel_rows: Vec<Vec<String>> = so.sel.iter().take(6).map(|&sid| rows_plain(&records, &[sid as usize]).remove(0)).collect();
         let (cnt, sum) = so.sel.iter().fold((0u64, 0u64), |s, &sid| (s.0 + 1, s.1 + records[sid as usize].b as u64));
-        Ev::new("phase", "search", id, text)
+        Ev::new("phase", "search", &id, &text)
             .table("Per block", &["block", "Bloom summary (bps_eval)", "decision", "records selected (rps_eval)"], rows)
             .table("First selected records (plaintext shown here only because this is the demo)", &["id", "time (UTC)", "a action", "b patients", "c dept", "d staff", "P1 (a=7)"], sel_rows)
             .item("trapdoor", format!("{} distinct search tags in the formula", f.tag_count()))
@@ -990,18 +994,68 @@ fn search_scenario(n: usize) {
         .emit();
 }
 
+/// One audience-chosen query for the search layer: spec "a=7,d=417,bmin=101,bmax=900,c=140" (every key optional, at least one).
+fn custom_case(spec: &str, kk: &pqz_eval::search::TagKey) -> (String, String, Formula, Box<dyn Fn(&Record) -> bool>) {
+    let mut a: Option<u32> = None;
+    let mut c: Option<u32> = None;
+    let mut dd: Option<u32> = None;
+    let mut bmin: u32 = 0;
+    let mut bmax: Option<u32> = None;
+    for part in spec.split(',').map(str::trim).filter(|s| !s.is_empty()) {
+        let (k, v) = part.split_once('=').unwrap_or_else(|| panic!("bad part {part:?}, use key=value"));
+        let v: u32 = v.trim().parse().unwrap_or_else(|_| panic!("bad number in {part:?}"));
+        match k.trim() {
+            "a" => a = Some(v),
+            "c" => c = Some(v),
+            "d" => dd = Some(v),
+            "bmin" => bmin = v,
+            "bmax" => bmax = Some(v),
+            o => panic!("unknown key {o:?} (use a, c, d, bmin, bmax)"),
+        }
+    }
+    let hi = bmax.map(|x| x + 1).unwrap_or(B_DOMAIN).min(B_DOMAIN);
+    assert!(bmin < hi, "bmin must be <= bmax");
+    let mut parts: Vec<Formula> = vec![];
+    let mut words: Vec<String> = vec![];
+    if let Some(v) = a {
+        parts.push(Formula::leaf(vec![eq_tag(kk, ATTR_A, v)]));
+        words.push(format!("action a = {v} ({})", action_name(v)));
+    }
+    if let Some(v) = dd {
+        parts.push(Formula::leaf(vec![eq_tag(kk, ATTR_D, v)]));
+        words.push(format!("staff d = {v}"));
+    }
+    if let Some(v) = c {
+        parts.push(Formula::leaf(vec![eq_tag(kk, ATTR_C, v)]));
+        words.push(format!("dept c = {v} ({})", dept_name(v)));
+    }
+    if bmin > 0 || bmax.is_some() {
+        parts.push(Formula::leaf(range_tags(kk, ATTR_B, bmin, hi)));
+        words.push(match bmax {
+            Some(m) => format!("{bmin} <= patients b <= {m}"),
+            None => format!("patients b >= {bmin}"),
+        });
+    }
+    let f = parts.into_iter().reduce(Formula::and).expect("give at least one of a, c, d, bmin, bmax");
+    let plain: Box<dyn Fn(&Record) -> bool> = Box::new(move |r: &Record| {
+        a.map_or(true, |v| r.a == v) && c.map_or(true, |v| r.c == v) && dd.map_or(true, |v| r.d == v) && r.b >= bmin && r.b < hi
+    });
+    ("Q*".to_string(), format!("Your query: {}", words.join(" AND ")), f, plain)
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let get = |k: &str| args.iter().position(|a| a == k).and_then(|i| args.get(i + 1)).cloned();
     let sc = get("--scenario").unwrap_or_else(|| {
-        eprintln!("usage: demo_scenarios --scenario <s1|a1|a2|a3|a4|a5|a6|a7|search> [--n N]");
+        eprintln!("usage: demo_scenarios --scenario <s1|a1|a2|a3|a4|a5|a6|a7|search|custom> [--n N] [--q a=7,d=417,bmin=101]");
         std::process::exit(2)
     });
     let n: usize = get("--n").map(|s| s.parse().expect("--n number")).unwrap_or(2000);
     assert!(n >= 2000 && n % BLOCK == 0, "--n must be a multiple of {BLOCK} and at least 2000");
     match sc.as_str() {
         "s1" => s1(n),
-        "search" => search_scenario(n),
+        "search" => search_scenario(n, None),
+        "custom" => search_scenario(n, Some(get("--q").expect("--q a=..,d=..,c=..,bmin=..,bmax=.."))),
         "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" => attack(&sc, n),
         o => {
             eprintln!("unknown scenario {o}");

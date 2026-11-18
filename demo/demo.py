@@ -43,6 +43,40 @@ SCEN = {
 }
 ATTACKS = ["a1", "a2", "a3", "a4", "a5", "a6", "a7"]
 RECOMMENDED = "a2"
+
+ACTION_CODES = "1 VIEW, 2 EDIT, 3 PRINT, 4 LOGIN, 5 LOGOUT, 6 ORDER_MEDICATION, 7 EXPORT_RECORDS"
+DEPT_CODES = "101 ER, 118 ICU, 140 Admissions/Records, 205 Oncology, 220 Radiology, 310 Pharmacy, 330 Laboratory, 500 Psychiatry"
+
+# Plain-words card per attack: (what the cheater does, why a real cheater would do it, what catches it)
+ATTACK_INFO = {
+    "a1": ("The cloud changes the answer: it says COUNT or SUM is one more than the truth. In A1c it also edits the "
+           "proof's public numbers so that everything adds up.",
+           "Make the insider look smaller or bigger than they are (hide or frame someone).",
+           "The claimed result must equal the sum over the proved runs; in A1c the R_Exec proof no longer verifies."),
+    "a2": ("The cloud hides the block with the EXPORT records (block 14 when N = 10,000) and says it was skipped because nothing matched.",
+           "Hide the insider completely: the auditor would get COUNT 0.",
+           "A skipped block needs a Bloom opening that shows the query is NOT in it. That block's filter says the query may be "
+           "there, so it cannot be shown absent."),
+    "a3": ("The cloud fakes the 'nothing here' evidence for the hit block: copies the openings of an empty block, shows real "
+           "openings whose bits are 1, flips one bit, or leaves the openings out.",
+           "Same goal as A2, but with forged evidence instead of no evidence.",
+           "Each opening must have a Merkle path to the anchored Bloom root, and the opened bits must be 0."),
+    "a4": ("Someone edits a stored record after the epoch was anchored (for example, makes an export smaller) and "
+           "rebuilds all blocks and proofs from the edited data.",
+           "Change history after the fact, so the log tells a different story.",
+           "The block list must rebuild the root R_e that is anchored on the blockchain; edited data gives another root."),
+    "a5": ("An old authorization (made for an earlier epoch state Omega_0) is replayed for the new audit.",
+           "Run an audit that was never approved for this log state, or reuse an old approval.",
+           "The proofs are tied to the authorization; the ledger gate and the contract reject an Omega that is not "
+           "the current one. (A5b shows the proofs alone are consistent; the ledger check is what stops it.)"),
+    "a6": ("An authorization granted for one query (P1) is used for a different query.",
+           "Get approval for a harmless query, then run a more revealing one.",
+           "The query digest d_Q is bound into the proofs, and the contract checks the predicate hash on Consume."),
+    "a7": ("The blockchain anchor is forged: an edited block header, too few validator votes (2 of 4), an edited "
+           "stored value, or a fake anchor transaction.",
+           "Make the auditor trust a fake 'official' log state.",
+           "The light-client read needs a quorum certificate (3 of 4 votes) and a Merkle path; the contract recomputes Omega."),
+}
 FOOT = "Timings: this laptop, one run, not a paper number."
 
 con = Console(highlight=False)
@@ -68,8 +102,8 @@ def build():
     con.print(f"[green]built[/green] demo_scenarios in {time.time() - t:.1f} s (cargo, --locked)")
 
 
-def run_events(sc, n):
-    p = subprocess.Popen([str(BIN), "--scenario", sc, "--n", str(n)], stdout=subprocess.PIPE, text=True, cwd=CRATE)
+def run_events(sc, n, extra=()):
+    p = subprocess.Popen([str(BIN), "--scenario", sc, "--n", str(n), *extra], stdout=subprocess.PIPE, text=True, cwd=CRATE)
     for line in p.stdout:
         line = line.strip()
         if line.startswith("{"):
@@ -218,9 +252,9 @@ def menu():
 
 
 # ---------------------------------------------------------------------------------------------- TALK mode
-def collect(sc, n):
+def collect(sc, n, extra=()):
     with con.status(f"[cyan]running {sc} on the real library ...", spinner="dots"):
-        return list(run_events(sc, n))
+        return list(run_events(sc, n, extra))
 
 
 def kv(items, key_start):
@@ -251,9 +285,11 @@ def short_row(r):
 
 def talk_intro(n):
     g = n // 500
-    body = ("[bold]Story:[/bold] a hospital keeps its EHR access log in the cloud, encrypted. An insider (staff 417, night shift) "
+    body = ("[bold]Story:[/bold] a hospital keeps its EHR access log in the cloud, encrypted. An insider (staff 417) "
             "exports patient records in a burst. The auditor must find out, without the cloud being trusted.\n\n"
-            "[bold]Question:[/bold] COUNT and SUM(b) of the EXPORT_RECORDS actions (a = 7) in this epoch.\n\n"
+            "[bold]Question:[/bold] COUNT and SUM(b) of the EXPORT_RECORDS actions (a = 7) in this epoch.\n"
+            "Each record is (a, b, c, d): a = action code, b = number of patient records touched, c = department, d = staff id.\n"
+            f"[dim]Action codes: {ACTION_CODES}. So a = 7 means \"bulk export of patient records\".[/dim]\n\n"
             f"[bold]Log:[/bold] N = {n:,} records, {g} blocks of 500.\n\n"
             "[yellow]Honest labels:[/yellow] blockchain = in-process simulation (4 validators, no network); STARK proofs = plain mode, "
             "not zero-knowledge; timings = this laptop, one run.")
@@ -346,14 +382,19 @@ def talk_attack(sc, n):
     res = [e for e in evs if e["kind"] == "result"][0]
     counted = [c for c in checks if c["counts"]]
     first = next((c for c in counted if c["status"] == "reject"), None)
-    con.print(Panel(f"[bold]{SCEN[sc]}[/bold]\nHonest setup first: {kv(setup['items'], 'control')}",
-                    border_style="blue"))
+    what, why, catch = ATTACK_INFO[sc]
+    con.print(Panel(f"[bold]{SCEN[sc]}[/bold]\n\n"
+                    f"[bold]What the cheater does:[/bold] {what}\n"
+                    f"[bold]Why (real world):[/bold] {why}\n"
+                    f"[bold]What should catch it:[/bold] {catch}\n\n"
+                    f"[dim]Honest setup first: {kv(setup['items'], 'control')}[/dim]",
+                    border_style="blue", padding=(0, 1)))
     g = Table.grid(padding=(0, 2))
     g.add_column(style="cyan", max_width=8)
     g.add_column(overflow="fold")
     for c in checks:
         mark = "" if c["counts"] else " (information, not counted)"
-        g.add_row("changed", f"{c['title']}{mark}\n[dim]{kv(c['items'], 'what the attacker')}[/dim]")
+        g.add_row("changed" if c["counts"] else "[dim]info[/dim]", f"{c['title']}{mark}\n[dim]{kv(c['items'], 'what the attacker')}[/dim]")
     from rich.console import Group
     ok = res["status"] == "ok"
     big = Text(" REJECTED " if ok else " ACCEPTED (unexpected) ", style="bold white on red" if ok else "bold black on yellow")
@@ -388,12 +429,76 @@ def talk_predicates(n):
     pause()
 
 
+def attack_table():
+    t = Table(box=box.SIMPLE_HEAD, header_style="cyan", title="The seven attacks (each changes ONE thing, then the real verifier runs)",
+              title_justify="left")
+    t.add_column("key", style="bold")
+    t.add_column("what the cheater does", max_width=52, overflow="fold")
+    t.add_column("what should catch it", max_width=46, overflow="fold")
+    for k in ATTACKS:
+        t.add_row(k, ATTACK_INFO[k][0], ATTACK_INFO[k][2])
+    con.print(t)
+
+
+def ask(prompt, default=""):
+    try:
+        v = con.input(f"[cyan]{prompt}[/cyan] [dim][{default or 'any'}][/dim]: ").strip()
+    except EOFError:
+        v = ""
+    return v or default
+
+
+def talk_custom(n):
+    con.print(Rule("Your own query (search layer only, no proof)"))
+    con.print(f"[dim]a = action: {ACTION_CODES}\nc = department: {DEPT_CODES}\n"
+              "d = staff id (100..999; the insider is 417)   b = patients touched (export burst: up to ~900)\n"
+              "Leave a field empty for 'any'.[/dim]")
+    parts = []
+    for key, prompt, default in [("a", "action a", "7"), ("d", "staff d", ""), ("c", "department c", ""),
+                                 ("bmin", "at least b patients", ""), ("bmax", "at most b patients", "")]:
+        v = ask(prompt, default)
+        if v:
+            if not v.isdigit():
+                con.print(f"[red]{v!r} is not a number; ignored[/red]")
+                continue
+            parts.append(f"{key}={v}")
+    if not parts:
+        con.print("[red]no condition given[/red]")
+        return
+    evs = collect("custom", n, ("--q", ",".join(parts)))
+    e = next(x for x in evs if x["kind"] == "phase" and x["phase"] == "Q*")
+    rows = e["tables"][0]["rows"]
+    opened = [r[0] for r in rows if not r[2].startswith("SKIPPED")]
+    chk = kv(e["items"], "plaintext reference").split("-> ")[-1]
+    sel = e["tables"][1]["rows"]
+    st = Table(box=box.SIMPLE, header_style="cyan")
+    for h in ["id", "time", "action", "b", "dept", "staff"]:
+        st.add_column(h)
+    for r in sel:
+        st.add_row(*short_row(r))
+    from rich.console import Group
+    body = Group(
+        Text.from_markup(f"[bold]{e['title']}[/bold]"),
+        Text.from_markup(f"result: [bold]{kv(e['items'], 'selected')}[/bold]"),
+        Text.from_markup(f"blocks opened: [bold]{len(opened)} of {len(rows)}[/bold]"
+                         + (f" (blocks {', '.join(opened[:10])}{' ...' if len(opened) > 10 else ''})" if opened else "")
+                         + f"; the other {len(rows) - len(opened)} are skipped by their Bloom summary"),
+        Text.from_markup("plaintext check: " + ("[green]MATCH[/green]" if chk == "MATCH" else f"[red]{chk}[/red]")
+                         + "  [dim](the same condition run on the plain log)[/dim]"),
+        Text(""), st if sel else Text("no record matches", style="dim"),
+        Text("Rare condition -> few blocks opened. Common condition -> most blocks opened. "
+             "Search layer only: the end-to-end proof in this prototype covers a = 7.", style="yellow"))
+    con.print(Panel(body, title="[bold]Your query on the encrypted log[/bold]", border_style="green", padding=(0, 2)))
+    pause()
+
+
 def talk_menu():
     con.print(Rule("What next?"))
     con.print("  [bold]1[/bold] attack A2: the cloud hides a block with matches   [dim](Enter)[/dim]")
-    con.print("  [bold]2[/bold] other attacks (a1..a7)")
+    con.print("  [bold]2[/bold] choose another attack (list with explanations)")
     con.print("  [bold]3[/bold] predicate examples (search layer only, no proof)")
     con.print("  [bold]4[/bold] all attacks, one table")
+    con.print("  [bold]5[/bold] your own query: pick action, staff, department, patients (search layer)")
     con.print("  [bold]q[/bold] quit")
     try:
         return con.input("[cyan]choice [1]: [/cyan]").strip().lower() or "1"
@@ -415,8 +520,7 @@ def talk(n, no_pause):
         if c == "1":
             talk_attack("a2", n)
         elif c == "2":
-            for k in ATTACKS:
-                con.print(f"  [bold]{k}[/bold]  {SCEN[k][4:]}")
+            attack_table()
             try:
                 k = con.input("[cyan]attack: [/cyan]").strip().lower()
             except EOFError:
@@ -425,7 +529,10 @@ def talk(n, no_pause):
                 talk_attack(k, n)
         elif c == "3":
             talk_predicates(n)
+        elif c == "5":
+            talk_custom(n)
         elif c == "4":
+            attack_table()
             outs = []
             for sc in ATTACKS:
                 outs.append(run_scenario(sc, n, quiet=True))

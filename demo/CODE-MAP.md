@@ -105,6 +105,7 @@ Open one in VS Code: `bash demo/show.sh <key>` (e.g. `blockchain`, `p6`); in a t
 | `pqz-integrated-w46/src/lib.rs:751` | `pub fn predicate_formula` | The proved predicate (a = X) |
 | `pqz-integrated-w46/src/lib.rs:173` | `pub fn v_of` | Why only a = X can be proved end to end |
 | `pqz-integrated-w46/src/bin/demo_scenarios.rs:912` | `fn search_scenario` | Demo: compound predicates, search layer only |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:998` | `fn custom_case` | Demo menu 5: the audience's own query as a search formula |
 
 ## pruning  (`pruning`)
 

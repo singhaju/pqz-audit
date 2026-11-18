@@ -13,12 +13,15 @@ bash demo/demo.sh --all-attacks      # A1..A7, one results table
 bash demo/demo.sh --n 2000           # smaller log (default N = 10000, as on slide 27)
 bash demo/show.sh list               # code browser menu (VS Code at file:line); add --term for bat in the terminal
 ```
-Talk-mode menu after the phases: [1] attack A2 (Enter), [2] other attacks a1..a7 (sub-menu with one-line
-descriptions), [3] predicate examples (Q1..Q5, search layer only, no proof; hits, blocks opened of 20, plaintext
-check), [4] all attacks in one table, [q] quit. After each choice the menu returns.
+Talk-mode menu after the phases: [1] attack A2 (Enter), [2] other attacks a1..a7 (table in plain words: what the
+cheater does, what catches it), [3] predicate examples (Q1..Q5, search layer only, no proof; hits, blocks opened of 20,
+plaintext check), [4] all attacks in one table, [5] your own query (action, staff, department, patients; search layer;
+`demo_scenarios --scenario custom --q a=7,d=417,bmin=101`), [q] quit. Each attack screen starts with a card: what the
+cheater does, why, what should catch it. After each choice the menu returns.
 First run builds once (`cargo build --release --locked --bin demo_scenarios`, with a spinner). Needs cargo, python3 with `rich`.
 Saved output in case the live run fails: `demo/fallback/*.txt` (plain) and `*.ansi.txt` (colour; view with `cat`):
-`talk-nopause`, `talk-menu` (scripted: A2, a5, predicates, all attacks), `s1`, `a1`..`a7`, `search`, `all-attacks`.
+`talk-nopause`, `talk-menu` (scripted: A2, a5, predicates, all attacks; older layout), `s1`, `a1`..`a7`, `search`, `all-attacks`,
+`attack-list`, `custom-a7-staff417`, `custom-view-b50`.
 
 ## What is real and what is simulated
 - Real: all numbers, hashes, proof sizes, ACCEPT/REJECT and error texts come from the library code run by
