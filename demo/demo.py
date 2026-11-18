@@ -45,6 +45,17 @@ ATTACKS = ["a1", "a2", "a3", "a4", "a5", "a6", "a7"]
 RECOMMENDED = "a2"
 
 ACTION_CODES = "1 VIEW, 2 EDIT, 3 PRINT, 4 LOGIN, 5 LOGOUT, 6 ORDER_MEDICATION, 7 EXPORT_RECORDS"
+# Action codes in plain words: (code, name, meaning, typical b in this synthetic log, why an auditor may ask about it)
+ACTION_INFO = [
+    (1, "VIEW_CHART", "open and read one patient's chart", "1-3 (sometimes 20-79: a ward list)", "snooping on a famous patient"),
+    (2, "EDIT_CHART", "change a chart (notes, vital signs)", "1", "who changed a record"),
+    (3, "PRINT", "print a record on paper", "1-2", "paper copies leaving the hospital"),
+    (4, "LOGIN", "start a session", "0 (no patient touched)", "logins at odd hours"),
+    (5, "LOGOUT", "end a session", "0", "session length"),
+    (6, "ORDER_MEDICATION", "order a drug for a patient", "1", "drug misuse"),
+    (7, "EXPORT_RECORDS", "download many patients' records to a file", "2-29 or 150-899", "data theft (our story: only staff 417)"),
+]
+LAST = {}  # values of the main (a = 7) run, shown again in menu 6 for comparison
 DEPT_CODES = "101 ER, 118 ICU, 140 Admissions/Records, 205 Oncology, 220 Radiology, 310 Pharmacy, 330 Laboratory, 500 Psychiatry"
 
 # Plain-words card per attack: (what the cheater does, why a real cheater would do it, what catches it)
@@ -289,11 +300,32 @@ def talk_intro(n):
             "exports patient records in a burst. The auditor must find out, without the cloud being trusted.\n\n"
             "[bold]Question:[/bold] COUNT and SUM(b) of the EXPORT_RECORDS actions (a = 7) in this epoch.\n"
             "Each record is (a, b, c, d): a = action code, b = number of patient records touched, c = department, d = staff id.\n"
-            f"[dim]Action codes: {ACTION_CODES}. So a = 7 means \"bulk export of patient records\".[/dim]\n\n"
+            "So a = 7 means \"bulk export of patient records\". The action codes:\n\n"
             f"[bold]Log:[/bold] N = {n:,} records, {g} blocks of 500.\n\n"
             "[yellow]Honest labels:[/yellow] blockchain = in-process simulation (4 validators, no network); STARK proofs = plain mode, "
             "not zero-knowledge; timings = this laptop, one run.")
-    con.print(Panel(body, title="[bold]PQZ-Audit demo[/bold]", border_style="blue", padding=(1, 2)))
+    from rich.console import Group
+    head, tail = body.split("The action codes:\n\n")
+    con.print(Panel(Group(Text.from_markup(head + "The action codes:"), action_table(), Text.from_markup(tail)),
+                    title="[bold]PQZ-Audit demo[/bold]", border_style="blue", padding=(1, 2)))
+
+
+def action_table(counts=None):
+    t = Table(box=box.SIMPLE_HEAD, header_style="cyan", padding=(0, 1))
+    t.add_column("a", style="bold")
+    t.add_column("action")
+    t.add_column("meaning", max_width=40, overflow="fold")
+    t.add_column("b (patients)", max_width=22, overflow="fold")
+    if counts:
+        t.add_column("records in this log", justify="right")
+    t.add_column("an auditor may ask about", max_width=30, overflow="fold", style="dim")
+    for code, name, meaning, b, why in ACTION_INFO:
+        row = [str(code), name, meaning, b]
+        if counts:
+            row.append(f"{int(counts.get(str(code), 0)):,}")
+        row.append(why)
+        t.add_row(*row, style="bold red" if code == 7 else None)
+    return t
 
 
 def talk_phases(n):
@@ -314,6 +346,11 @@ def talk_phases(n):
     pause()
     # phase 2: 3 normal + 3 insider export rows (taken from the real tables)
     e = ph["2"][0]
+    hist = next((tb for tb in e["tables"] if "histogram" in tb["caption"]), None)
+    if hist:
+        LAST["hist"] = {r[0]: r[2] for r in hist["rows"]}
+    LAST["omega"] = kv(ph["4"][0]["items"], "Omega_e")
+    LAST["dq"] = kv(ph["5"][0]["items"], "public: d_Q")
     normal = [r for r in e["tables"][0]["rows"] if r[6] == "-"][:3]
     hits = [r for r in e["tables"][1]["rows"] if r[6] == "HIT"][:3]
     t = Table(box=box.SIMPLE_HEAD, header_style="cyan", title="Plaintext log rows: a = action, b = patients, c = dept, d = staff",
@@ -375,8 +412,8 @@ def talk_phases(n):
     pause()
 
 
-def talk_attack(sc, n):
-    evs = collect(sc, n)
+def talk_attack(sc, n, extra=()):
+    evs = collect(sc, n, extra)
     setup = [e for e in evs if e["kind"] == "phase"][0]
     checks = [e for e in evs if e["kind"] == "check"]
     res = [e for e in evs if e["kind"] == "result"][0]
@@ -487,9 +524,58 @@ def talk_custom(n):
                          + "  [dim](the same condition run on the plain log)[/dim]"),
         Text(""), st if sel else Text("no record matches", style="dim"),
         Text("Rare condition -> few blocks opened. Common condition -> most blocks opened. "
-             "Search layer only: the end-to-end proof in this prototype covers a = 7.", style="yellow"))
+             "Search layer only (no proof). For a proved result for one action code, use menu 6.", style="yellow"))
     con.print(Panel(body, title="[bold]Your query on the encrypted log[/bold]", border_style="green", padding=(0, 2)))
     pause()
+
+
+def talk_proved(n):
+    con.print(Rule("Full proved audit for another action: phases 1 to 7 again, with P1 = (a = x)"))
+    con.print(action_table(LAST.get("hist")))
+    v = ask("action code x for the proved audit (1-7)", "3")
+    if v not in ("1", "2", "3", "4", "5", "6", "7"):
+        con.print(f"[red]{v!r} is not an action code 1-7[/red]")
+        return
+    name = next(a[1] for a in ACTION_INFO if str(a[0]) == v)
+    evs = collect("s1", n, ("--x", v))
+    ph = {}
+    for e in evs:
+        if e["kind"] == "phase":
+            ph.setdefault(e["phase"], []).append(e)
+    res = [e for e in evs if e["kind"] == "result"][0]
+    e6, e7 = ph["6"][0], ph["7"][0]
+    rows = e6["tables"][0]["rows"]
+    skipped = sum(1 for r in rows if r[2] == "SKIPPED")
+    total = sum(e["time_s"] or 0 for e in evs if e["kind"] == "phase" and e is not ph["6"][1])
+    omega, dq = kv(ph["4"][0]["items"], "Omega_e"), kv(ph["5"][0]["items"], "public: d_Q")
+    ok = res["status"] == "ok"
+    match = kv(e7["items"], "comparison")
+    lines = [
+        ("question", f"COUNT and SUM(b) where a = {v} ({name})"),
+        ("phases 1-4", f"log rebuilt and anchored again for a = {v}: new Omega_e {omega[:16]}..."
+                       + (" (differs from the a = 7 run)" if LAST.get("omega") and LAST["omega"] != omega else "")),
+        ("phase 5 R_Auth", kv(ph["5"][0]["items"], "verify_auth_stage")),
+        ("phase 6 pruning", f"{len(rows)} blocks: {len(rows) - skipped} opened, {skipped} skipped"),
+        ("phase 6 R_Exec", kv(e6["items"], "R_Exec")),
+        ("claimed result", kv(e6["items"], "claimed result")),
+        ("phase 7 verdict", ("[bold green]" if ok else "[bold red]") + kv(e7["items"], "requester verdict") + ("[/bold green]" if ok else "[/bold red]")),
+        ("verified result", kv(e7["items"], "verified result")),
+        ("plaintext reference", kv(e7["items"], "plain reference")),
+        ("comparison", ("[bold green]" if match == "MATCH" else "[bold red]") + match + ("[/bold green]" if match == "MATCH" else "[/bold red]")),
+    ]
+    panel(f"Proved audit for a = {v} ({name})", lines, total, ok=ok and match == "MATCH")
+    notes = []
+    if skipped == 0:
+        notes.append(f"{name} is a common action, so every block may contain it and nothing is skipped. "
+                     "Only EXPORT (a = 7) is rare in this log, so only a = 7 shows block skipping.")
+    notes.append("Honest limits: x is fixed when the log is built (v_of puts the value into the log), so a new action needs a "
+                 "rebuilt and re-anchored epoch, as done here.")
+    if LAST.get("dq") and LAST["dq"] == dq:
+        notes.append("The authorization hashes the text 'P1: A = x', not the value of x: d_Q is the same as in the a = 7 run.")
+    con.print("[yellow]" + "\n".join(notes) + "[/yellow]")
+    pause()
+    if ask("let the cloud cheat on this answer (claim one more, attack A1)? y/n", "y").lower().startswith("y"):
+        talk_attack("a1", n, ("--x", v))
 
 
 def talk_menu():
@@ -499,6 +585,7 @@ def talk_menu():
     con.print("  [bold]3[/bold] predicate examples (search layer only, no proof)")
     con.print("  [bold]4[/bold] all attacks, one table")
     con.print("  [bold]5[/bold] your own query: pick action, staff, department, patients (search layer)")
+    con.print("  [bold]6[/bold] full PROVED audit for another action code (phases 1-7, about 5 s)")
     con.print("  [bold]q[/bold] quit")
     try:
         return con.input("[cyan]choice [1]: [/cyan]").strip().lower() or "1"
@@ -531,6 +618,8 @@ def talk(n, no_pause):
             talk_predicates(n)
         elif c == "5":
             talk_custom(n)
+        elif c == "6":
+            talk_proved(n)
         elif c == "4":
             attack_table()
             outs = []

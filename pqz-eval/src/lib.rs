@@ -22,6 +22,18 @@ pub const B_DOMAIN: u32 = 1 << B_BITS;
 pub const B_BITS: u32 = 20;
 /// Fixed predicate parameter `x`.
 pub const X: u32 = 7;
+/// Value of `x` used by `Predicate::matches` and `search::formula_for`. It is `X` (7) unless the
+/// live demo calls `set_x_for_demo` before it builds a log. Benchmarks and tests never change it.
+static X_RUNTIME: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(X);
+/// Current predicate parameter `x` (default `X`).
+pub fn x() -> u32 {
+    X_RUNTIME.load(std::sync::atomic::Ordering::SeqCst)
+}
+/// Demo only: choose the action code `x` of predicate P1 (`A = x`). Call it once, before the log is built.
+pub fn set_x_for_demo(v: u32) {
+    assert!(v < A_DOMAIN, "x must be < A_DOMAIN");
+    X_RUNTIME.store(v, std::sync::atomic::Ordering::SeqCst);
+}
 /// Fixed predicate parameter `y` (`2^19`).
 pub const Y: u32 = 1 << 19;
 /// Fixed predicate parameter `z`.
@@ -67,10 +79,10 @@ impl Predicate {
     /// Plaintext evaluation, used by `trad_scan` and by the correctness gate.
     pub fn matches(self, r: &Record) -> bool {
         match self {
-            Predicate::P1 => r.a == X,
-            Predicate::P2 => r.a == X && r.b >= Y,
-            Predicate::P3 => (r.a == X && r.b >= Y) || r.c == Z,
-            Predicate::P4 => (r.a == X && r.b >= Y) && (r.c < Z || r.d == W),
+            Predicate::P1 => r.a == x(),
+            Predicate::P2 => r.a == x() && r.b >= Y,
+            Predicate::P3 => (r.a == x() && r.b >= Y) || r.c == Z,
+            Predicate::P4 => (r.a == x() && r.b >= Y) && (r.c < Z || r.d == W),
         }
     }
 }

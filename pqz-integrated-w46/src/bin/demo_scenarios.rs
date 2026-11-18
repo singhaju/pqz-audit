@@ -138,6 +138,13 @@ const START_HOUR: u64 = 18;
 fn action_name(a: u32) -> &'static str {
     ACTIONS.iter().find(|x| x.0 == a).map(|x| x.1).unwrap_or("?")
 }
+/// The action code x of the proved predicate P1 (a = x). 7 unless `--x` was given (demo choice).
+fn xa() -> u32 {
+    pqz_eval::x()
+}
+fn p1_col() -> String {
+    format!("P1 (a={})", xa())
+}
 fn dept_name(c: u32) -> &'static str {
     DEPTS.iter().find(|x| x.0 == c).map(|x| x.1).unwrap_or("?")
 }
@@ -310,14 +317,14 @@ fn honest(n: usize, sc: &str, verbose: bool) -> H {
             .item("Gamma_0 (genesis)", short(&ep0.gamma))
             .item("Omega_0 (genesis canonical state)", short(&ep0.omega))
             .item("epoch e / log size N", format!("e = {EPOCH}, N = {n} records in {} blocks of {BLOCK}, chunk = {CHUNK} blocks, stream format {}", n / BLOCK, FMT.name()))
-            .item("audit question", "How many EXPORT_RECORDS actions happened in this epoch, and how many patient records were exported in total?  ->  COUNT and SUM(b) where a = 7")
+            .item("audit question", if xa() == X { "How many EXPORT_RECORDS actions happened in this epoch, and how many patient records were exported in total?  ->  COUNT and SUM(b) where a = 7".to_string() } else { format!("CHOSEN ACTION: how many {} actions happened in this epoch, and how many patient records did they touch?  ->  COUNT and SUM(b) where a = {}", action_name(xa()), xa()) })
             .table(
                 "How the library record Record {id, ts, a, b, c, d} is used for the hospital access log",
                 &["field", "meaning in this demo", "values"],
                 vec![
                     vec!["id".into(), "position in the log".into(), format!("0..{}", n - 1)],
                     vec!["ts".into(), "event time, seconds since Unix epoch (UTC), shown as date and time".into(), format!("{} to {}", fmt_ts(base_ts()), fmt_ts(base_ts() + n as u64 * 21))],
-                    vec!["a".into(), "action code (a = 7 = EXPORT_RECORDS must equal X, because the pipeline's predicate P1 is a = X)".into(), ACTIONS.iter().map(|(c, nm)| format!("{c} {nm}")).collect::<Vec<_>>().join(", ")],
+                    vec!["a".into(), format!("action code; the proved predicate P1 is a = x, here x = {} ({})", xa(), action_name(xa())), ACTIONS.iter().map(|(c, nm)| format!("{c} {nm}")).collect::<Vec<_>>().join(", ")],
                     vec!["b".into(), "number of patient records touched by the action (must be < 2^20)".into(), "0 for LOGIN/LOGOUT, mostly 1 for chart actions, large for exports".into()],
                     vec!["c".into(), "department / ward code".into(), DEPTS.iter().map(|(c, nm)| format!("{c} {nm}")).collect::<Vec<_>>().join(", ")],
                     vec!["d".into(), "staff id (< 1000)".into(), format!("100..999; the insider is staff {INSIDER}")],
@@ -341,10 +348,10 @@ fn honest(n: usize, sc: &str, verbose: bool) -> H {
             hist[r.a as usize] += 1;
         }
         ev("2", "Registration: the plaintext access log (what the log producer sees; the cloud never sees this)")
-            .table("First 12 rows of the log (plaintext)", &["id", "time (UTC)", "a action", "b patients", "c dept", "d staff", "P1 (a=7)"], rows_plain(&records, &first))
+            .table("First 12 rows of the log (plaintext)", &["id", "time (UTC)", "a action", "b patients", "c dept", "d staff", p1_col().as_str()], rows_plain(&records, &first))
             .table(
                 &format!("Rows {}..{} (inside the insider's burst, same plaintext view)", around[0], around[around.len() - 1]),
-                &["id", "time (UTC)", "a action", "b patients", "c dept", "d staff", "P1 (a=7)"],
+                &["id", "time (UTC)", "a action", "b patients", "c dept", "d staff", p1_col().as_str()],
                 rows_plain(&records, &around),
             )
             .table(
@@ -450,7 +457,7 @@ fn honest(n: usize, sc: &str, verbose: bool) -> H {
     let t5 = t.elapsed().as_secs_f64();
     if verbose {
         ev("5", "Audit request: authorization proof R_Auth (bound to Omega_e)")
-            .item("request", "auditor asks for COUNT and SUM(b) where a = 7 (qid 1, predicate text \"P1: A = x\")")
+            .item("request", format!("auditor asks for COUNT and SUM(b) where a = {} (qid 1, predicate text \"P1: A = x\")", xa()))
             .item("R_Auth proof", format!("{} bytes, {} trace rows, proving {:.4} s", auth.bytes.len(), ast.rows, ast.prove_s))
             .item("public: Omega", format!("{:?}", auth.stmt.omega))
             .item("public: d_Q (hash of the query)", format!("{:?}", auth.stmt.d_q))
@@ -496,10 +503,10 @@ fn honest(n: usize, sc: &str, verbose: bool) -> H {
                 let nop = resp.openings.iter().find(|(b, _)| *b == g as u64 + 1).map(|(_, o)| o.len());
                 vec![
                     (g + 1).to_string(),
-                    if so.flags[g] { "may contain a = 7".into() } else { "no a = 7".into() },
+                    if so.flags[g] { format!("may contain a = {}", xa()) } else { format!("no a = {}", xa()) },
                     if covered[g] { "proved (inside a run)".into() } else { "SKIPPED".into() },
                     match nop {
-                        Some(k) => format!("{k} Bloom leaves opened; all query positions are 0 bits -> a = 7 cannot be here"),
+                        Some(k) => format!("{k} Bloom leaves opened; all query positions are 0 bits -> a = {} cannot be here", xa()),
                         None => "-".into(),
                     },
                     sel_per_block[g].to_string(),
@@ -514,7 +521,7 @@ fn honest(n: usize, sc: &str, verbose: bool) -> H {
             .item("claimed result from the proofs", format!("COUNT = {}, SUM(b) = {}", claim.0, claim.1))
             .time(t6a + t6b)
             .status("ok")
-            .note("R_Exec proves the equality predicate a = X only (the value v = THETA is set by v_of in the log builder); it is plain-mode STARK, not zero-knowledge.")
+            .note(format!("R_Exec proves the equality predicate a = x only, here x = {} (the value v = THETA is set by v_of in the log builder, so x is fixed when the epoch is built); it is plain-mode STARK, not zero-knowledge.", xa()))
             .emit();
     }
     let _ = t_all;
@@ -976,7 +983,7 @@ fn search_scenario(n: usize, custom: Option<String>) {
         let (cnt, sum) = so.sel.iter().fold((0u64, 0u64), |s, &sid| (s.0 + 1, s.1 + records[sid as usize].b as u64));
         Ev::new("phase", "search", &id, &text)
             .table("Per block", &["block", "Bloom summary (bps_eval)", "decision", "records selected (rps_eval)"], rows)
-            .table("First selected records (plaintext shown here only because this is the demo)", &["id", "time (UTC)", "a action", "b patients", "c dept", "d staff", "P1 (a=7)"], sel_rows)
+            .table("First selected records (plaintext shown here only because this is the demo)", &["id", "time (UTC)", "a action", "b patients", "c dept", "d staff", p1_col().as_str()], sel_rows)
             .item("trapdoor", format!("{} distinct search tags in the formula", f.tag_count()))
             .item("selected", format!("{cnt} records, sum of b = {sum} (search layer, not proved)"))
             .item("plaintext reference (same predicate evaluated on the plaintext records)", format!("{} records -> {}", want.len(), if ok { "MATCH" } else { "MISMATCH" }))
@@ -1047,11 +1054,17 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let get = |k: &str| args.iter().position(|a| a == k).and_then(|i| args.get(i + 1)).cloned();
     let sc = get("--scenario").unwrap_or_else(|| {
-        eprintln!("usage: demo_scenarios --scenario <s1|a1|a2|a3|a4|a5|a6|a7|search|custom> [--n N] [--q a=7,d=417,bmin=101]");
+        eprintln!("usage: demo_scenarios --scenario <s1|a1|a2|a3|a4|a5|a6|a7|search|custom> [--n N] [--q a=7,d=417,bmin=101] [--x 1..7 (s1: proved action code, default 7)]");
         std::process::exit(2)
     });
     let n: usize = get("--n").map(|s| s.parse().expect("--n number")).unwrap_or(2000);
     assert!(n >= 2000 && n % BLOCK == 0, "--n must be a multiple of {BLOCK} and at least 2000");
+    if let Some(v) = get("--x") {
+        let v: u32 = v.parse().expect("--x number");
+        assert!(ACTIONS.iter().any(|a| a.0 == v), "--x must be an action code 1..7");
+        // demo choice: the proved predicate becomes P1 = (a = v); set before any log is built
+        pqz_eval::set_x_for_demo(v);
+    }
     match sc.as_str() {
         "s1" => s1(n),
         "search" => search_scenario(n, None),

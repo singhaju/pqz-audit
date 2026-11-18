@@ -16,9 +16,9 @@ Open one in VS Code: `bash demo/show.sh <key>` (e.g. `blockchain`, `p6`); in a t
 
 | location | function / item | what it does |
 |---|---|---|
-| `pqz-eval/src/lib.rs:37` | `pub struct Record` | The record {id, ts, a, b, c, d} that the library audits |
-| `pqz-eval/src/lib.rs:68` | `pub fn matches` | Predicate::matches: plaintext reference predicates (P1 is a = X) |
-| `pqz-integrated-w46/src/bin/demo_scenarios.rs:194` | `fn make_records` | Demo only: seeded hospital log generator (xorshift), insider burst of EXPORT_RECORDS |
+| `pqz-eval/src/lib.rs:49` | `pub struct Record` | The record {id, ts, a, b, c, d} that the library audits |
+| `pqz-eval/src/lib.rs:80` | `pub fn matches` | Predicate::matches: plaintext reference predicates (P1 is a = X) |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:201` | `fn make_records` | Demo only: seeded hospital log generator (xorshift), insider burst of EXPORT_RECORDS |
 | `pqz-eval/src/gen.rs:15` | `pub fn r#gen` | Library benchmark log generator (not used by the demo) |
 
 ## Phase 3a Encrypt and tag  (`p3a`)
@@ -79,7 +79,7 @@ Open one in VS Code: `bash demo/show.sh <key>` (e.g. `blockchain`, `p6`); in a t
 | `pqz-integrated-w46/src/w35.rs:827` | `pub fn requester_native35_fmt` | The native checks: R_e, run shape, anchored states, PruneValid, claim |
 | `pqz-integrated-w46/src/w35.rs:931` | `does not verify against MRoot` | PruneValid: Merkle path of each Bloom opening against MRoot(S) |
 | `pqz-integrated-w46/src/w35.rs:937` | `do not show the query false` | PruneValid: opened bits must prove the query absent |
-| `pqz-integrated-w46/src/bin/demo_scenarios.rs:250` | `fn plain_ref` | Demo: plaintext reference answer used for the MATCH line |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:257` | `fn plain_ref` | Demo: plaintext reference answer used for the MATCH line |
 
 ## blockchain  (`blockchain`)
 
@@ -97,15 +97,16 @@ Open one in VS Code: `bash demo/show.sh <key>` (e.g. `blockchain`, `p6`); in a t
 
 | location | function / item | what it does |
 |---|---|---|
-| `pqz-eval/src/lib.rs:68` | `pub fn matches` | Predicate P1..P4 on plaintext |
+| `pqz-eval/src/lib.rs:80` | `pub fn matches` | Predicate P1..P4 on plaintext |
 | `pqz-eval/src/search.rs:118` | `pub enum Formula` | Formula tree (leaf / and / or) over search tags |
 | `pqz-eval/src/search.rs:164` | `pub fn formula_for` | Formula of P1..P4 |
 | `pqz-eval/src/search.rs:96` | `pub fn range_tags` | Range predicate as a set of prefix tags |
 | `pqz-eval/src/search.rs:186` | `pub fn rps_eval` | Exact record-level evaluation on tags |
 | `pqz-integrated-w46/src/lib.rs:751` | `pub fn predicate_formula` | The proved predicate (a = X) |
 | `pqz-integrated-w46/src/lib.rs:173` | `pub fn v_of` | Why only a = X can be proved end to end |
-| `pqz-integrated-w46/src/bin/demo_scenarios.rs:912` | `fn search_scenario` | Demo: compound predicates, search layer only |
-| `pqz-integrated-w46/src/bin/demo_scenarios.rs:998` | `fn custom_case` | Demo menu 5: the audience's own query as a search formula |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:919` | `fn search_scenario` | Demo: compound predicates, search layer only |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:1005` | `fn custom_case` | Demo menu 5: the audience's own query as a search formula |
+| `pqz-eval/src/lib.rs:29` | `pub fn x() -> u32 {` | Demo menu 6: the action code x of P1 (default 7); set_x_for_demo changes it before the log is built |
 
 ## pruning  (`pruning`)
 
@@ -193,8 +194,8 @@ Open one in VS Code: `bash demo/show.sh <key>` (e.g. `blockchain`, `p6`); in a t
 
 | location | function / item | what it does |
 |---|---|---|
-| `pqz-integrated-w46/src/bin/demo_scenarios.rs:672` | `fn attack` | Demo: attacks A1..A7, each changes ONE thing |
-| `pqz-integrated-w46/src/bin/demo_scenarios.rs:664` | `fn drop_run_of` | Demo: cloud removes the run that holds the matches |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:679` | `fn attack` | Demo: attacks A1..A7, each changes ONE thing |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:671` | `fn drop_run_of` | Demo: cloud removes the run that holds the matches |
 | `pqz-ledger/src/audit.rs:187` | `pub fn drop_block` | Library attack: drop a block from the response |
 | `pqz-ledger/src/audit.rs:195` | `pub fn forge_shorter_epoch` | Library attack: shorter epoch |
 | `pqz-ledger/src/attacks.rs:128` | `pub fn run_with` | Library attack suite on the contract |
@@ -205,35 +206,35 @@ Open one in VS Code: `bash demo/show.sh <key>` (e.g. `blockchain`, `p6`); in a t
 
 | location | function / item | what it does |
 |---|---|---|
-| `pqz-integrated-w46/src/bin/demo_scenarios.rs:681` | `"a1" => {` | Demo scenario A1: cloud changes the result |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:688` | `"a1" => {` | Demo scenario A1: cloud changes the result |
 | `pqz-integrated-w46/src/w35.rs:945` | `differs from the sum over the runs` | The check that rejects A1a/A1b |
 
 ## attack-a2  (`attack-a2`)
 
 | location | function / item | what it does |
 |---|---|---|
-| `pqz-integrated-w46/src/bin/demo_scenarios.rs:706` | `"a2" => {` | Demo scenario A2: cloud hides a block that has matches |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:713` | `"a2" => {` | Demo scenario A2: cloud hides a block that has matches |
 | `pqz-integrated-w46/src/w35.rs:918` | `outside the runs and has no Bloom opening` | The check that rejects A2 |
 
 ## attack-a3  (`attack-a3`)
 
 | location | function / item | what it does |
 |---|---|---|
-| `pqz-integrated-w46/src/bin/demo_scenarios.rs:717` | `"a3" => {` | Demo scenario A3: bad or missing Bloom opening |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:724` | `"a3" => {` | Demo scenario A3: bad or missing Bloom opening |
 | `pqz-integrated-w46/src/w35.rs:937` | `do not show the query false` | The check that rejects A3b |
 
 ## attack-a4  (`attack-a4`)
 
 | location | function / item | what it does |
 |---|---|---|
-| `pqz-integrated-w46/src/bin/demo_scenarios.rs:766` | `"a4" => {` | Demo scenario A4: stored record changed after anchoring |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:773` | `"a4" => {` | Demo scenario A4: stored record changed after anchoring |
 | `pqz-integrated-w46/src/w35.rs:855` | `rebuilt from the blocks differs` | The check that rejects A4a |
 
 ## attack-a5  (`attack-a5`)
 
 | location | function / item | what it does |
 |---|---|---|
-| `pqz-integrated-w46/src/bin/demo_scenarios.rs:801` | `"a5" => {` | Demo scenario A5: authorization for another epoch / Omega |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:808` | `"a5" => {` | Demo scenario A5: authorization for another epoch / Omega |
 | `pqz-ledger/src/contract.rs:173` | `Reject::OmegaNotCanonical` | The contract rule that rejects A5d |
 | `pqz-integrated-w46/src/lib.rs:666` | `pub fn ledger_read_gate` | Gate that rejects A5c |
 
@@ -241,7 +242,7 @@ Open one in VS Code: `bash demo/show.sh <key>` (e.g. `blockchain`, `p6`); in a t
 
 | location | function / item | what it does |
 |---|---|---|
-| `pqz-integrated-w46/src/bin/demo_scenarios.rs:832` | `"a6" => {` | Demo scenario A6: authorization for another query |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:839` | `"a6" => {` | Demo scenario A6: authorization for another query |
 | `pqz-plonky3-w46/src/request.rs:41` | `pub fn check_ctx` | The link check that rejects A6a |
 | `pqz-ledger/src/contract.rs:176` | `Reject::PredicateMismatch` | The contract rule that rejects A6b |
 
@@ -249,6 +250,6 @@ Open one in VS Code: `bash demo/show.sh <key>` (e.g. `blockchain`, `p6`); in a t
 
 | location | function / item | what it does |
 |---|---|---|
-| `pqz-integrated-w46/src/bin/demo_scenarios.rs:849` | `"a7" => {` | Demo scenario A7: forged ledger anchor |
+| `pqz-integrated-w46/src/bin/demo_scenarios.rs:856` | `"a7" => {` | Demo scenario A7: forged ledger anchor |
 | `pqz-ledger/src/ledger.rs:455` | `pub fn verify_read` | Rejects A7a to A7c |
 | `pqz-ledger/src/contract.rs:170` | `Reject::OmegaRecompute` | Rejects A7d |

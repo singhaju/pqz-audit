@@ -12,7 +12,7 @@ use p3_symmetric::Permutation;
 use pqz_eval::eapat::{encrypt_record, EpochKeys};
 use pqz_eval::r#gen::r#gen;
 use pqz_eval::search::{bps_eval, eq_tag, formula_for, rps_eval, Bloom, Formula, Tag, ATTR_A};
-use pqz_eval::{sha3_parts, Layout, Predicate, Record, X};
+use pqz_eval::{sha3_parts, Layout, Predicate, Record};
 use pqz_ledger::audit::{epoch_root, AuditBlock, Chain};
 use pqz_ledger::contract::key_state;
 use pqz_ledger::hashing::{h, leaf_hash, merkle_root, u64b, Hash};
@@ -750,7 +750,7 @@ pub fn verify_auth_stage(a: &AuthProof) -> Res<()> {
 /// The predicate of this driver: P1 = (A = x), one leaf with one tag (the same formula pqz-integrated used).
 pub fn predicate_formula(keys: &EpochKeys) -> (Formula, Tag) {
     let f = formula_for(Predicate::P1, &keys.tag_key);
-    let tag = eq_tag(&keys.tag_key, ATTR_A, X);
+    let tag = eq_tag(&keys.tag_key, ATTR_A, pqz_eval::x());
     match &f {
         Formula::Leaf(t) if t.len() == 1 && t[0] == tag => {}
         _ => panic!("P1 is expected to be a single leaf with one tag"),

@@ -8,7 +8,7 @@
 
 use std::collections::BTreeSet;
 
-use crate::{B_BITS, B_DOMAIN, Predicate, Record, W, X, Y, Z, sha3_parts};
+use crate::{B_BITS, B_DOMAIN, Predicate, Record, W, Y, Z, sha3_parts};
 
 /// A keyed tag. 16 bytes is enough to make accidental collisions negligible.
 pub type Tag = [u8; 16];
@@ -162,7 +162,7 @@ impl Formula {
 
 /// Build the trapdoor formula for a paper predicate.
 pub fn formula_for(p: Predicate, key: &TagKey) -> Formula {
-    let a_x = || Formula::leaf(vec![eq_tag(key, ATTR_A, X)]);
+    let a_x = || Formula::leaf(vec![eq_tag(key, ATTR_A, crate::x())]);
     let b_ge_y = || Formula::leaf(range_tags(key, ATTR_B, Y, B_DOMAIN));
     match p {
         Predicate::P1 => a_x(),
@@ -301,6 +301,7 @@ pub fn bps_eval(bloom: &Bloom, f: &Formula) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::X;
     use crate::r#gen::r#gen;
     use crate::{A_DOMAIN, B_DOMAIN, Layout};
 

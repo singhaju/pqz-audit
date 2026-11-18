@@ -74,9 +74,9 @@ __TABLE__
 p1	pqz-integrated-w46/src/lib.rs	617	647	ledger_setup	Phase 1: AA key, 4-validator ledger, genesis chain (Gamma_0, Omega_0)
 p1	pqz-ledger/src/audit.rs	120	150	genesis	Chain::genesis: builds the genesis policy root and epoch-0 state
 p1	pqz-eval/src/eapat.rs	27	57	from_seed	EpochKeys::from_seed: AES key, tag key and block-signing key from one seed
-p2	pqz-eval/src/lib.rs	37	67	pub struct Record	The record {id, ts, a, b, c, d} that the library audits
-p2	pqz-eval/src/lib.rs	68	98	pub fn matches	Predicate::matches: plaintext reference predicates (P1 is a = X)
-p2	pqz-integrated-w46/src/bin/demo_scenarios.rs	194	224	fn make_records	Demo only: seeded hospital log generator (xorshift), insider burst of EXPORT_RECORDS
+p2	pqz-eval/src/lib.rs	49	79	pub struct Record	The record {id, ts, a, b, c, d} that the library audits
+p2	pqz-eval/src/lib.rs	80	110	pub fn matches	Predicate::matches: plaintext reference predicates (P1 is a = X)
+p2	pqz-integrated-w46/src/bin/demo_scenarios.rs	201	231	fn make_records	Demo only: seeded hospital log generator (xorshift), insider burst of EXPORT_RECORDS
 p2	pqz-eval/src/gen.rs	15	45	pub fn r#gen	Library benchmark log generator (not used by the demo)
 p3a	pqz-eval/src/eapat.rs	150	180	pub fn encrypt_record	One record -> AES-256-GCM ciphertext + 45 keyed search tags
 p3a	pqz-eval/src/eapat.rs	100	130	pub fn aead_encrypt	AES-256-GCM encryption of the record body
@@ -107,7 +107,7 @@ p7	pqz-integrated-w46/src/w35.rs	966	996	pub fn verify_requester35_fmt	Requester
 p7	pqz-integrated-w46/src/w35.rs	827	857	pub fn requester_native35_fmt	The native checks: R_e, run shape, anchored states, PruneValid, claim
 p7	pqz-integrated-w46/src/w35.rs	931	961	does not verify against MRoot	PruneValid: Merkle path of each Bloom opening against MRoot(S)
 p7	pqz-integrated-w46/src/w35.rs	937	967	do not show the query false	PruneValid: opened bits must prove the query absent
-p7	pqz-integrated-w46/src/bin/demo_scenarios.rs	250	280	fn plain_ref	Demo: plaintext reference answer used for the MATCH line
+p7	pqz-integrated-w46/src/bin/demo_scenarios.rs	257	287	fn plain_ref	Demo: plaintext reference answer used for the MATCH line
 blockchain	pqz-integrated-w46/src/lib.rs	617	647	pub fn ledger_setup	Ledger and AA setup
 blockchain	pqz-ledger/src/ledger.rs	231	261	pub fn new	Ledger::new: 4 validators, quorum 3 (simulation, in one process)
 blockchain	pqz-ledger/src/ledger.rs	279	309	pub fn submit	Ledger::submit: block production and votes
@@ -115,15 +115,16 @@ blockchain	pqz-ledger/src/ledger.rs	427	457	pub fn read_state	Light-client read 
 blockchain	pqz-ledger/src/ledger.rs	455	485	pub fn verify_read	Verify a read proof against validator keys and quorum
 blockchain	pqz-ledger/src/contract.rs	336	366	pub fn apply	Smart-contract rules (Reject reasons)
 blockchain	pqz-ledger/src/contract.rs	145	175	pub enum Reject	All contract rejection reasons
-predicate	pqz-eval/src/lib.rs	68	98	pub fn matches	Predicate P1..P4 on plaintext
+predicate	pqz-eval/src/lib.rs	80	110	pub fn matches	Predicate P1..P4 on plaintext
 predicate	pqz-eval/src/search.rs	118	148	pub enum Formula	Formula tree (leaf / and / or) over search tags
 predicate	pqz-eval/src/search.rs	164	194	pub fn formula_for	Formula of P1..P4
 predicate	pqz-eval/src/search.rs	96	126	pub fn range_tags	Range predicate as a set of prefix tags
 predicate	pqz-eval/src/search.rs	186	216	pub fn rps_eval	Exact record-level evaluation on tags
 predicate	pqz-integrated-w46/src/lib.rs	751	781	pub fn predicate_formula	The proved predicate (a = X)
 predicate	pqz-integrated-w46/src/lib.rs	173	203	pub fn v_of	Why only a = X can be proved end to end
-predicate	pqz-integrated-w46/src/bin/demo_scenarios.rs	912	942	fn search_scenario	Demo: compound predicates, search layer only
-predicate	pqz-integrated-w46/src/bin/demo_scenarios.rs	998	1044	fn custom_case	Demo menu 5: the audience's own query as a search formula
+predicate	pqz-integrated-w46/src/bin/demo_scenarios.rs	919	949	fn search_scenario	Demo: compound predicates, search layer only
+predicate	pqz-integrated-w46/src/bin/demo_scenarios.rs	1005	1051	fn custom_case	Demo menu 5: the audience's own query as a search formula
+predicate	pqz-eval/src/lib.rs	29	37	pub fn x() -> u32 {	Demo menu 6: the action code x of P1 (default 7); set_x_for_demo changes it before the log is built
 pruning	pqz-integrated-w46/src/w35.rs	640	670	pub fn plan_runs	Choose runs from the Bloom flags
 pruning	pqz-integrated-w46/src/w35.rs	160	190	pub fn plan_absent	Bloom positions that must be 0 to show a block empty
 pruning	pqz-integrated-w46/src/w35.rs	741	771	pub fn openings_for_blocks	Openings for the skipped blocks
@@ -166,27 +167,27 @@ mldsa	pqz-ledger/src/sig.rs	25	55	pub fn sign	ML-DSA-65 sign
 mldsa	pqz-ledger/src/sig.rs	31	61	pub fn verify	ML-DSA-65 verify
 mldsa	pqz-ledger/src/ledger.rs	68	98	pub fn sign	SignedTx::sign: transaction signature
 mldsa	pqz-eval/src/eapat.rs	57	87	pub fn sign_header	Block header signature
-attacks	pqz-integrated-w46/src/bin/demo_scenarios.rs	672	702	fn attack	Demo: attacks A1..A7, each changes ONE thing
-attacks	pqz-integrated-w46/src/bin/demo_scenarios.rs	664	694	fn drop_run_of	Demo: cloud removes the run that holds the matches
+attacks	pqz-integrated-w46/src/bin/demo_scenarios.rs	679	709	fn attack	Demo: attacks A1..A7, each changes ONE thing
+attacks	pqz-integrated-w46/src/bin/demo_scenarios.rs	671	701	fn drop_run_of	Demo: cloud removes the run that holds the matches
 attacks	pqz-ledger/src/audit.rs	187	217	pub fn drop_block	Library attack: drop a block from the response
 attacks	pqz-ledger/src/audit.rs	195	225	pub fn forge_shorter_epoch	Library attack: shorter epoch
 attacks	pqz-ledger/src/attacks.rs	128	158	pub fn run_with	Library attack suite on the contract
 attacks	pqz-attack-w38/src/main.rs	110	140	fn vcatch	Proof-level attack harness (tampered proofs)
 attacks	pqz-attack-w38/src/p2r.rs	87	117	fn ver_x	Verifier used by the packed-format attacks
-attack-a1	pqz-integrated-w46/src/bin/demo_scenarios.rs	681	711	"a1" => {	Demo scenario A1: cloud changes the result
+attack-a1	pqz-integrated-w46/src/bin/demo_scenarios.rs	688	718	"a1" => {	Demo scenario A1: cloud changes the result
 attack-a1	pqz-integrated-w46/src/w35.rs	945	975	differs from the sum over the runs	The check that rejects A1a/A1b
-attack-a2	pqz-integrated-w46/src/bin/demo_scenarios.rs	706	736	"a2" => {	Demo scenario A2: cloud hides a block that has matches
+attack-a2	pqz-integrated-w46/src/bin/demo_scenarios.rs	713	743	"a2" => {	Demo scenario A2: cloud hides a block that has matches
 attack-a2	pqz-integrated-w46/src/w35.rs	918	948	outside the runs and has no Bloom opening	The check that rejects A2
-attack-a3	pqz-integrated-w46/src/bin/demo_scenarios.rs	717	747	"a3" => {	Demo scenario A3: bad or missing Bloom opening
+attack-a3	pqz-integrated-w46/src/bin/demo_scenarios.rs	724	754	"a3" => {	Demo scenario A3: bad or missing Bloom opening
 attack-a3	pqz-integrated-w46/src/w35.rs	937	967	do not show the query false	The check that rejects A3b
-attack-a4	pqz-integrated-w46/src/bin/demo_scenarios.rs	766	796	"a4" => {	Demo scenario A4: stored record changed after anchoring
+attack-a4	pqz-integrated-w46/src/bin/demo_scenarios.rs	773	803	"a4" => {	Demo scenario A4: stored record changed after anchoring
 attack-a4	pqz-integrated-w46/src/w35.rs	855	885	rebuilt from the blocks differs	The check that rejects A4a
-attack-a5	pqz-integrated-w46/src/bin/demo_scenarios.rs	801	831	"a5" => {	Demo scenario A5: authorization for another epoch / Omega
+attack-a5	pqz-integrated-w46/src/bin/demo_scenarios.rs	808	838	"a5" => {	Demo scenario A5: authorization for another epoch / Omega
 attack-a5	pqz-ledger/src/contract.rs	173	203	Reject::OmegaNotCanonical	The contract rule that rejects A5d
 attack-a5	pqz-integrated-w46/src/lib.rs	666	696	pub fn ledger_read_gate	Gate that rejects A5c
-attack-a6	pqz-integrated-w46/src/bin/demo_scenarios.rs	832	862	"a6" => {	Demo scenario A6: authorization for another query
+attack-a6	pqz-integrated-w46/src/bin/demo_scenarios.rs	839	869	"a6" => {	Demo scenario A6: authorization for another query
 attack-a6	pqz-plonky3-w46/src/request.rs	41	71	pub fn check_ctx	The link check that rejects A6a
 attack-a6	pqz-ledger/src/contract.rs	176	206	Reject::PredicateMismatch	The contract rule that rejects A6b
-attack-a7	pqz-integrated-w46/src/bin/demo_scenarios.rs	849	879	"a7" => {	Demo scenario A7: forged ledger anchor
+attack-a7	pqz-integrated-w46/src/bin/demo_scenarios.rs	856	886	"a7" => {	Demo scenario A7: forged ledger anchor
 attack-a7	pqz-ledger/src/ledger.rs	455	485	pub fn verify_read	Rejects A7a to A7c
 attack-a7	pqz-ledger/src/contract.rs	170	200	Reject::OmegaRecompute	Rejects A7d
