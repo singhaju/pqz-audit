@@ -1,0 +1,575 @@
+Auditor asks: Did the insider make big exports, more than 100 patients each?
+⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠋ running s1 on the real library ...
+╭───────────────────────────────── Phase 1  Initialization  (same log and anchor as question 1) ─────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.3 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────────────── Phase 2  Registration (plain log)  (same log and anchor as question 1) ────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────── Phase 3a  Encrypt and tag (what the cloud stores)  (same log and anchor as question 1) ────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 218.4 ms ─────────────────────────────────────────────────────────╯
+╭───────────────────────── Phase 3b  Blocks, R_RC proofs, AA check  (same log and anchor as question 1) ─────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  │
+│  AA check     passed in 0.089 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 289.7 ms ─────────────────────────────────────────────────────────╯
+╭────────────────────── Phase 4  Anchor on the (simulated) blockchain  (same log and anchor as question 1) ──────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+⠋ running custom on the real library ...⠙ running custom on the real library ...⠹ running custom on the real library ...⠹ running custom on the real library ...
+╭────────────────────────────────────── Phase 5  Request: the query becomes a search token ──────────────────────────────────────╮
+│  query         action = 7 (EXPORT_RECORDS) AND patients >= 101                                                                 │
+│  search token  18 distinct search tags in the formula (the cloud sees tags, not the values)                                    │
+│  R_Auth proof  not run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only            │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 6  Execution: skip blocks, test records ─────────────────────────────────────────╮
+│  pruning       20 blocks: 1 opened, 19 skipped by their Bloom summaries                                                        │
+│  blocks        1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  (green = opened)                                            │
+│  result        COUNT = 14 records, SUM = 6,213 patients, AVG = 443.8 patients per record  (search layer, not proved)           │
+│  R_Exec proof  not made on this path (search layer)                                                                            │
+╰───────────────────────────────────────────────────────── time 0.0 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────────── Phase 7  Check the answer ───────────────────────────────────────────────────╮
+│  plaintext check  MATCH  (the same condition run on the plain log)                                                             │
+│  verdict          search answer, checked against the plain log; no proof to verify on this path                                │
+│  what this shows  a rare condition: the Bloom summaries let the cloud skip almost every block.                                 │
+│                                                                                                                                │
+│  Selected records (plaintext shown only because this is                                                                        │
+│  a demo)                                                                                                                       │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│    6903   10:16:11   EXPORT   507        140    417                                                                            │
+│    6904   10:16:35   EXPORT   547        140    417                                                                            │
+│    6905   10:16:46   EXPORT   356        140    417                                                                            │
+│    6906   10:17:19   EXPORT   168        140    417                                                                            │
+│                                                                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Auditor asks: Did the insider make small exports, 100 patients or fewer?
+╭───────────────────────────────── Phase 1  Initialization  (same log and anchor as question 1) ─────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.3 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────────────── Phase 2  Registration (plain log)  (same log and anchor as question 1) ────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────── Phase 3a  Encrypt and tag (what the cloud stores)  (same log and anchor as question 1) ────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 218.4 ms ─────────────────────────────────────────────────────────╯
+╭───────────────────────── Phase 3b  Blocks, R_RC proofs, AA check  (same log and anchor as question 1) ─────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  │
+│  AA check     passed in 0.089 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 289.7 ms ─────────────────────────────────────────────────────────╯
+╭────────────────────── Phase 4  Anchor on the (simulated) blockchain  (same log and anchor as question 1) ──────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+⠋ running custom on the real library ...⠙ running custom on the real library ...⠙ running custom on the real library ...
+╭────────────────────────────────────── Phase 5  Request: the query becomes a search token ──────────────────────────────────────╮
+│  query         action = 7 (EXPORT_RECORDS) AND 0 <= patients <= 100                                                            │
+│  search token  5 distinct search tags in the formula (the cloud sees tags, not the values)                                     │
+│  R_Auth proof  not run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only            │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 6  Execution: skip blocks, test records ─────────────────────────────────────────╮
+│  pruning       20 blocks: 1 opened, 19 skipped by their Bloom summaries                                                        │
+│  blocks        1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  (green = opened)                                            │
+│  result        COUNT = 6 records, SUM = 111 patients, AVG = 18.5 patients per record  (search layer, not proved)               │
+│  R_Exec proof  not made on this path (search layer)                                                                            │
+╰───────────────────────────────────────────────────────── time 0.0 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────────── Phase 7  Check the answer ───────────────────────────────────────────────────╮
+│  plaintext check  MATCH  (the same condition run on the plain log)                                                             │
+│  verdict          search answer, checked against the plain log; no proof to verify on this path                                │
+│  what this shows  a range on the patients field, not only equality.                                                            │
+│                                                                                                                                │
+│  Selected records (plaintext shown only because this is                                                                        │
+│  a demo)                                                                                                                       │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6910   10:18:41   EXPORT   9          140    417                                                                            │
+│    6911   10:18:51   EXPORT   18         140    417                                                                            │
+│    6912   10:19:23   EXPORT   22         140    417                                                                            │
+│    6918   10:21:36   EXPORT   23         140    417                                                                            │
+│    6919   10:21:46   EXPORT   23         140    417                                                                            │
+│                                                                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Auditor asks: What else did the insider, staff 417, do in this epoch?
+╭───────────────────────────────── Phase 1  Initialization  (same log and anchor as question 1) ─────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.3 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────────────── Phase 2  Registration (plain log)  (same log and anchor as question 1) ────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────── Phase 3a  Encrypt and tag (what the cloud stores)  (same log and anchor as question 1) ────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 218.4 ms ─────────────────────────────────────────────────────────╯
+╭───────────────────────── Phase 3b  Blocks, R_RC proofs, AA check  (same log and anchor as question 1) ─────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  │
+│  AA check     passed in 0.089 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 289.7 ms ─────────────────────────────────────────────────────────╯
+╭────────────────────── Phase 4  Anchor on the (simulated) blockchain  (same log and anchor as question 1) ──────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+⠋ running custom on the real library ...⠙ running custom on the real library ...⠹ running custom on the real library ...
+╭────────────────────────────────────── Phase 5  Request: the query becomes a search token ──────────────────────────────────────╮
+│  query         staff = 417                                                                                                     │
+│  search token  1 distinct search tags in the formula (the cloud sees tags, not the values)                                     │
+│  R_Auth proof  not run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only            │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 6  Execution: skip blocks, test records ─────────────────────────────────────────╮
+│  pruning       20 blocks: 1 opened, 19 skipped by their Bloom summaries                                                        │
+│  blocks        1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  (green = opened)                                            │
+│  result        COUNT = 27 records, SUM = 6,329 patients, AVG = 234.4 patients per record  (search layer, not proved)           │
+│  R_Exec proof  not made on this path (search layer)                                                                            │
+╰───────────────────────────────────────────────────────── time 0.1 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────────── Phase 7  Check the answer ───────────────────────────────────────────────────╮
+│  plaintext check  MATCH  (the same condition run on the plain log)                                                             │
+│  verdict          search answer, checked against the plain log; no proof to verify on this path                                │
+│  what this shows  a question about a person instead of an action: all their records, not only the exports.                     │
+│                                                                                                                                │
+│  Selected records (plaintext shown only because this is                                                                        │
+│  a demo)                                                                                                                       │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    6894   10:13:03   LOGIN    0          140    417                                                                            │
+│    6895   10:13:23   VIEW     1          140    417                                                                            │
+│    6896   10:13:42   EDIT     1          140    417                                                                            │
+│    6897   10:14:15   VIEW     1          140    417                                                                            │
+│    6898   10:14:18   EDIT     1          140    417                                                                            │
+│    6899   10:14:43   VIEW     1          140    417                                                                            │
+│                                                                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Auditor asks: Did the insider export any Psychiatry (department 500) records?
+╭───────────────────────────────── Phase 1  Initialization  (same log and anchor as question 1) ─────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.3 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────────────── Phase 2  Registration (plain log)  (same log and anchor as question 1) ────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────── Phase 3a  Encrypt and tag (what the cloud stores)  (same log and anchor as question 1) ────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 218.4 ms ─────────────────────────────────────────────────────────╯
+╭───────────────────────── Phase 3b  Blocks, R_RC proofs, AA check  (same log and anchor as question 1) ─────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  │
+│  AA check     passed in 0.089 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 289.7 ms ─────────────────────────────────────────────────────────╯
+╭────────────────────── Phase 4  Anchor on the (simulated) blockchain  (same log and anchor as question 1) ──────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+⠋ running custom on the real library ...⠙ running custom on the real library ...⠙ running custom on the real library ...
+╭────────────────────────────────────── Phase 5  Request: the query becomes a search token ──────────────────────────────────────╮
+│  query         action = 7 (EXPORT_RECORDS) AND dept = 500 (Psychiatry (restricted))                                            │
+│  search token  2 distinct search tags in the formula (the cloud sees tags, not the values)                                     │
+│  R_Auth proof  not run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only            │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 6  Execution: skip blocks, test records ─────────────────────────────────────────╮
+│  pruning       20 blocks: 0 opened, 20 skipped by their Bloom summaries                                                        │
+│  blocks        1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  (green = opened)                                            │
+│  result        COUNT = 0 records, SUM = 0 patients, AVG = undefined (no record matches)  (search layer, not proved)            │
+│  R_Exec proof  not made on this path (search layer)                                                                            │
+╰───────────────────────────────────────────────────────── time 0.0 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────────── Phase 7  Check the answer ───────────────────────────────────────────────────╮
+│  plaintext check  MATCH  (the same condition run on the plain log)                                                             │
+│  verdict          search answer, checked against the plain log; no proof to verify on this path                                │
+│  what this shows  a question whose honest answer is 'none'. The empty answer is also checked against the plain log.            │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Auditor asks: What did an ordinary staff member (staff 123) do?
+╭───────────────────────────────── Phase 1  Initialization  (same log and anchor as question 1) ─────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.3 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────────────── Phase 2  Registration (plain log)  (same log and anchor as question 1) ────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────── Phase 3a  Encrypt and tag (what the cloud stores)  (same log and anchor as question 1) ────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 218.4 ms ─────────────────────────────────────────────────────────╯
+╭───────────────────────── Phase 3b  Blocks, R_RC proofs, AA check  (same log and anchor as question 1) ─────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  │
+│  AA check     passed in 0.089 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 289.7 ms ─────────────────────────────────────────────────────────╯
+╭────────────────────── Phase 4  Anchor on the (simulated) blockchain  (same log and anchor as question 1) ──────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+⠋ running custom on the real library ...⠙ running custom on the real library ...⠹ running custom on the real library ...
+╭────────────────────────────────────── Phase 5  Request: the query becomes a search token ──────────────────────────────────────╮
+│  query         staff = 123                                                                                                     │
+│  search token  1 distinct search tags in the formula (the cloud sees tags, not the values)                                     │
+│  R_Auth proof  not run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only            │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 6  Execution: skip blocks, test records ─────────────────────────────────────────╮
+│  pruning       20 blocks: 9 opened, 11 skipped by their Bloom summaries                                                        │
+│  blocks        1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  (green = opened)                                            │
+│  result        COUNT = 15 records, SUM = 135 patients, AVG = 9.0 patients per record  (search layer, not proved)               │
+│  R_Exec proof  not made on this path (search layer)                                                                            │
+╰───────────────────────────────────────────────────────── time 0.1 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────────── Phase 7  Check the answer ───────────────────────────────────────────────────╮
+│  plaintext check  MATCH  (the same condition run on the plain log)                                                             │
+│  verdict          search answer, checked against the plain log; no proof to verify on this path                                │
+│  what this shows  a normal user's records are spread over the epoch, so many more blocks are opened than for the insider.      │
+│                                                                                                                                │
+│  Selected records (plaintext shown only because this is                                                                        │
+│  a demo)                                                                                                                       │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    227    19:19:42   VIEW     1          310    123                                                                            │
+│    1294   01:33:05   VIEW     2          310    123                                                                            │
+│    2058   06:00:24   VIEW     1          310    123                                                                            │
+│    2357   07:45:11   VIEW     1          310    123                                                                            │
+│    2573   09:00:38   VIEW     2          310    123                                                                            │
+│    5723   03:23:06   LOGOUT   0          310    123                                                                            │
+│                                                                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Auditor asks: Who opened records in Psychiatry (department 500)?
+╭───────────────────────────────── Phase 1  Initialization  (same log and anchor as question 1) ─────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.3 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────────────── Phase 2  Registration (plain log)  (same log and anchor as question 1) ────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────── Phase 3a  Encrypt and tag (what the cloud stores)  (same log and anchor as question 1) ────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 218.4 ms ─────────────────────────────────────────────────────────╯
+╭───────────────────────── Phase 3b  Blocks, R_RC proofs, AA check  (same log and anchor as question 1) ─────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  │
+│  AA check     passed in 0.089 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 289.7 ms ─────────────────────────────────────────────────────────╯
+╭────────────────────── Phase 4  Anchor on the (simulated) blockchain  (same log and anchor as question 1) ──────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+⠋ running custom on the real library ...⠙ running custom on the real library ...⠹ running custom on the real library ...⠹ running custom on the real library ...
+╭────────────────────────────────────── Phase 5  Request: the query becomes a search token ──────────────────────────────────────╮
+│  query         dept = 500 (Psychiatry (restricted))                                                                            │
+│  search token  1 distinct search tags in the formula (the cloud sees tags, not the values)                                     │
+│  R_Auth proof  not run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only            │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 6  Execution: skip blocks, test records ─────────────────────────────────────────╮
+│  pruning       20 blocks: 1 opened, 19 skipped by their Bloom summaries                                                        │
+│  blocks        1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  (green = opened)                                            │
+│  result        COUNT = 3 records, SUM = 3 patients, AVG = 1.0 patients per record  (search layer, not proved)                  │
+│  R_Exec proof  not made on this path (search layer)                                                                            │
+╰───────────────────────────────────────────────────────── time 0.0 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────────── Phase 7  Check the answer ───────────────────────────────────────────────────╮
+│  plaintext check  MATCH  (the same condition run on the plain log)                                                             │
+│  verdict          search answer, checked against the plain log; no proof to verify on this path                                │
+│  what this shows  a sensitive department: only a few records, so only a few blocks are opened.                                 │
+│                                                                                                                                │
+│  Selected records (plaintext shown only because this                                                                           │
+│  is a demo)                                                                                                                    │
+│                                                                                                                                │
+│    id    time       action   patients   dept   staff                                                                           │
+│   ───────────────────────────────────────────────────                                                                          │
+│    59    18:20:47   VIEW     1          500    664                                                                             │
+│    176   19:01:52   VIEW     1          500    813                                                                             │
+│    346   20:01:14   VIEW     1          500    898                                                                             │
+│                                                                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Auditor asks: How many chart views touched 50 or more patients?
+╭───────────────────────────────── Phase 1  Initialization  (same log and anchor as question 1) ─────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.3 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────────────── Phase 2  Registration (plain log)  (same log and anchor as question 1) ────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────── Phase 3a  Encrypt and tag (what the cloud stores)  (same log and anchor as question 1) ────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 218.4 ms ─────────────────────────────────────────────────────────╯
+╭───────────────────────── Phase 3b  Blocks, R_RC proofs, AA check  (same log and anchor as question 1) ─────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  │
+│  AA check     passed in 0.089 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 289.7 ms ─────────────────────────────────────────────────────────╯
+╭────────────────────── Phase 4  Anchor on the (simulated) blockchain  (same log and anchor as question 1) ──────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+⠋ running custom on the real library ...⠙ running custom on the real library ...⠹ running custom on the real library ...⠹ running custom on the real library ...
+╭────────────────────────────────────── Phase 5  Request: the query becomes a search token ──────────────────────────────────────╮
+│  query         action = 1 (VIEW_CHART) AND patients >= 50                                                                      │
+│  search token  18 distinct search tags in the formula (the cloud sees tags, not the values)                                    │
+│  R_Auth proof  not run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only            │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 6  Execution: skip blocks, test records ─────────────────────────────────────────╮
+│  pruning       20 blocks: 20 opened, 0 skipped by their Bloom summaries                                                        │
+│  blocks        1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  (green = opened)                                            │
+│  result        COUNT = 281 records, SUM = 18,162 patients, AVG = 64.6 patients per record  (search layer, not proved)          │
+│  R_Exec proof  not made on this path (search layer)                                                                            │
+╰───────────────────────────────────────────────────────── time 1.2 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────────── Phase 7  Check the answer ───────────────────────────────────────────────────╮
+│  plaintext check  MATCH  (the same condition run on the plain log)                                                             │
+│  verdict          search answer, checked against the plain log; no proof to verify on this path                                │
+│  what this shows  a common condition: every block may match, so nothing is skipped. Pruning helps only rare conditions.        │
+│                                                                                                                                │
+│  Selected records (plaintext shown only because this                                                                           │
+│  is a demo)                                                                                                                    │
+│                                                                                                                                │
+│    id    time       action   patients   dept   staff                                                                           │
+│   ───────────────────────────────────────────────────                                                                          │
+│    158   18:55:22   VIEW     61         101    434                                                                             │
+│    181   19:03:35   VIEW     63         220    472                                                                             │
+│    276   19:36:38   VIEW     69         330    922                                                                             │
+│    298   19:44:33   VIEW     71         101    217                                                                             │
+│    304   19:46:40   VIEW     72         101    385                                                                             │
+│    412   20:24:26   VIEW     56         220    458                                                                             │
+│                                                                                                                                │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+Auditor asks: How many prints were there? (proved)
+⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠙ running s1 on the real library ...
+╭─────────────────────────────────────────────────── Phase 1  Initialization ────────────────────────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 3.1 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────── Phase 2  Registration (plain log) ───────────────────────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id   time       action   patients   dept   staff                                                                            │
+│   ──────────────────────────────────────────────────                                                                           │
+│    0    18:00:02   VIEW     1          310    984                                                                              │
+│    1    18:00:22   EDIT     1          205    170                                                                              │
+│    2    18:00:55   EDIT     1          118    799                                                                              │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.3 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────── Phase 3a  Encrypt and tag (what the cloud stores) ───────────────────────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 225.5 ms ─────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────── Phase 3b  Blocks, R_RC proofs, AA check ────────────────────────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = f7dd18dc187f...595b92                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1623602 bytes in total, ~127 conjectured bits, 0.105 s                  │
+│  AA check     passed in 0.096 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 293.2 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 4  Anchor on the (simulated) blockchain ─────────────────────────────────────────╮
+│  Omega_e            f09339448da3aec9d30c6fd8...                                                                                │
+│  ledger block       height 1, 1 tx, state_root aa647f32759e...ba2656, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 3.9 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 5  Authorization proof R_Auth ──────────────────────────────────────────────╮
+│  request       auditor asks for COUNT and SUM(patients) where action = 3 (qid 1, predicate text "P1: A = x")                   │
+│  R_Auth proof  127301 bytes, 64 trace rows, proving 0.0046 s                                                                   │
+│  verifier      accepted                                                                                                        │
+╰───────────────────────────────────────────────────────── time 6.5 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 6  Pruning and execution proof ─────────────────────────────────────────────╮
+│  predicate        P1: action = 3 (PRINT)                                                                                       │
+│  pruning          20 blocks: 20 opened, 0 skipped by their Bloom summaries (zero-bit openings)                                 │
+│  claimed result   COUNT = 401, SUM(patients) = 590                                                                             │
+│  R_Exec proof     1 run proof(s), 174789 bytes, 0.107 s, ~127 conjectured bits                                                 │
+│  homomorphic add  401 ciphertexts (only the records selected by the exact predicate) added under encryption                    │
+╰──────────────────────────────────────────────────────── time 107.7 ms ─────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────────── Phase 7  Requester verifies ──────────────────────────────────────────────────╮
+│  verdict              ACCEPT                                                                                                   │
+│  verified result      COUNT = 401, SUM(patients) = 590                                                                         │
+│  plaintext reference  COUNT = 401, SUM(patients) = 590                                                                         │
+│  comparison           MATCH                                                                                                    │
+╰───────────────────────────────────────────────────────── time 1.9 ms ──────────────────────────────────────────────────────────╯
+Sum of phase times 642.1 ms (BFV pool setup excluded). Timings: this laptop, one run, not a paper number.
+What this shows: a common action: the proof still verifies, but no block is skipped. Note: x is fixed when the log is built, so 
+the epoch was rebuilt and re-anchored for action = 3.
+Auditor asks: How many logins were there? (proved)
+⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...
+╭─────────────────────────────────────────────────── Phase 1  Initialization ────────────────────────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 3.1 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────── Phase 2  Registration (plain log) ───────────────────────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id   time       action   patients   dept   staff                                                                            │
+│   ──────────────────────────────────────────────────                                                                           │
+│    0    18:00:02   VIEW     1          310    984                                                                              │
+│    1    18:00:22   EDIT     1          205    170                                                                              │
+│    2    18:00:55   EDIT     1          118    799                                                                              │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.3 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────── Phase 3a  Encrypt and tag (what the cloud stores) ───────────────────────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 237.6 ms ─────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────── Phase 3b  Blocks, R_RC proofs, AA check ────────────────────────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 2aa3a99e18fc...d5ffdb                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1623474 bytes in total, ~127 conjectured bits, 0.109 s                  │
+│  AA check     passed in 0.089 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 288.1 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 4  Anchor on the (simulated) blockchain ─────────────────────────────────────────╮
+│  Omega_e            82aac0e506b0f9e0eeb8e277...                                                                                │
+│  ledger block       height 1, 1 tx, state_root 27323ccc1518...5716f6, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 4.4 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 5  Authorization proof R_Auth ──────────────────────────────────────────────╮
+│  request       auditor asks for COUNT and SUM(patients) where action = 4 (qid 1, predicate text "P1: A = x")                   │
+│  R_Auth proof  126917 bytes, 64 trace rows, proving 0.0044 s                                                                   │
+│  verifier      accepted                                                                                                        │
+╰───────────────────────────────────────────────────────── time 5.4 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 6  Pruning and execution proof ─────────────────────────────────────────────╮
+│  predicate        P1: action = 4 (LOGIN)                                                                                       │
+│  pruning          20 blocks: 20 opened, 0 skipped by their Bloom summaries (zero-bit openings)                                 │
+│  claimed result   COUNT = 1152, SUM(patients) = 0                                                                              │
+│  R_Exec proof     1 run proof(s), 174117 bytes, 0.095 s, ~127 conjectured bits                                                 │
+│  homomorphic add  1152 ciphertexts (only the records selected by the exact predicate) added under encryption                   │
+╰───────────────────────────────────────────────────────── time 95.3 ms ─────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────────── Phase 7  Requester verifies ──────────────────────────────────────────────────╮
+│  verdict              ACCEPT                                                                                                   │
+│  verified result      COUNT = 1152, SUM(patients) = 0                                                                          │
+│  plaintext reference  COUNT = 1152, SUM(patients) = 0                                                                          │
+│  comparison           MATCH                                                                                                    │
+╰───────────────────────────────────────────────────────── time 2.1 ms ──────────────────────────────────────────────────────────╯
+Sum of phase times 636.3 ms (BFV pool setup excluded). Timings: this laptop, one run, not a paper number.
+What this shows: a login touches no patient records, so SUM(patients) = 0 is the correct proved answer. Note: x is fixed when the 
+log is built, so the epoch was rebuilt and re-anchored for action = 4.

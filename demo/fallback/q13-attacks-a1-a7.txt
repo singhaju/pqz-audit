@@ -1,0 +1,665 @@
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ A1  Cloud changes the result (count / sum)                                                                                     │
+│                                                                                                                                │
+│ What the cheater does: The cloud changes the answer: it says COUNT or SUM is one more than the truth. In A1c it also edits the │
+│ proof's public numbers so that everything adds up.                                                                             │
+│ Why (real world): Make the insider look smaller or bigger than they are (hide or frame someone).                               │
+│ What should catch it: The claimed result must equal the sum over the proved runs; in A1c the R_Exec proof no longer verifies.  │
+│                                                                                                                                │
+│ Next: Phases 1-7 of the honest audit (question 1). A red panel marks where the attacker acts (Phase 6) and where each check    │
+│ rejects.                                                                                                                       │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+⠋ running a1 on the real library ...⠙ running a1 on the real library ...⠹ running a1 on the real library ...⠸ running a1 on the real library ...⠼ running a1 on the real library ...⠴ running a1 on the real library ...⠦ running a1 on the real library ...⠦ running a1 on the real library ...
+⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...⠴ running s1 on the real library ...⠦ running s1 on the real library ...⠧ running s1 on the real library ...⠇ running s1 on the real library ...⠏ running s1 on the real library ...⠋ running s1 on the real library ...⠙ running s1 on the real library ...⠹ running s1 on the real library ...⠸ running s1 on the real library ...⠼ running s1 on the real library ...
+╭─────────────────────────────────────────────────── Phase 1  Initialization ────────────────────────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.0 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────── Phase 2  Registration (plain log) ───────────────────────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────── Phase 3a  Encrypt and tag (what the cloud stores) ───────────────────────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 223.5 ms ─────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────── Phase 3b  Blocks, R_RC proofs, AA check ────────────────────────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1625714 bytes in total, ~127 conjectured bits, 0.106 s                  │
+│  AA check     passed in 0.103 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 292.4 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 4  Anchor on the (simulated) blockchain ─────────────────────────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 5  Authorization proof R_Auth ──────────────────────────────────────────────╮
+│  request       auditor asks for COUNT and SUM(patients) where action = 7 (qid 1, predicate text "P1: A = x")                   │
+│  R_Auth proof  126789 bytes, 64 trace rows, proving 0.0038 s                                                                   │
+│  verifier      accepted                                                                                                        │
+╰───────────────────────────────────────────────────────── time 5.7 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────── Phase 6  Pruning and execution proof  <- ATTACK HERE ─────────────────────────────────────╮
+│  predicate        P1: action = 7 (EXPORT_RECORDS)                                                                              │
+│  pruning          20 blocks: 2 opened, 18 skipped by their Bloom summaries (zero-bit openings)                                 │
+│  claimed result   COUNT = 20, SUM(patients) = 6324                                                                             │
+│  R_Exec proof     1 run proof(s), 147749 bytes, 0.012 s, ~127 conjectured bits                                                 │
+│  homomorphic add  20 ciphertexts (only the records selected by the exact predicate) added under encryption                     │
+│  above            the honest run; red lines below = the attack                                                                 │
+│  ATTACK           the cloud changes the claimed result (COUNT or SUM + 1); in A1c it also edits the run's public numbers       │
+╰───────────────────────────────────────────────────────── time 17.4 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 7  Requester verifies  <- REJECTED HERE ─────────────────────────────────────────╮
+│  honest verdict       ACCEPT                                                                                                   │
+│  verified result      COUNT = 20, SUM(patients) = 6324                                                                         │
+│  plaintext reference  COUNT = 20, SUM(patients) = 6324                                                                         │
+│  comparison           MATCH                                                                                                    │
+│  above                the honest run; red lines below = the attack                                                             │
+│  REJECTED             A1a: cloud claims COUNT + 1 -> requester native check rejected: claimed result (21, 6324) differs from   │
+│                       the sum over the runs (20, 6324)                                                                         │
+│  REJECTED             A1b: cloud claims SUM + 1 -> requester native check rejected: claimed result (20, 6325) differs from     │
+│                       the sum over the runs (20, 6324)                                                                         │
+│  REJECTED             A1c: cloud also edits the run statement so claim = sum over runs -> run 0: R_Exec verifier rejected:     │
+│                       InvalidOpeningArgument(InvalidPowWitness(Query))                                                         │
+│  verdict now           REJECTED                                                                                                │
+╰───────────────────────────────────────────────────────── time 1.8 ms ──────────────────────────────────────────────────────────╯
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ What the attacker changed, and the verifier's answer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                                                                                ┃
+┃  changed  A1a: cloud claims COUNT + 1                                                                                          ┃
+┃           claimed COUNT in the response (+1); proofs untouched: (20, 6324) -> (21, 6324)                                       ┃
+┃  changed  A1b: cloud claims SUM + 1                                                                                            ┃
+┃           claimed SUM(patients) in the response (+1); proofs untouched: (20, 6324) -> (20, 6325)                               ┃
+┃  changed  A1c: cloud also edits the run statement so claim = sum over runs                                                     ┃
+┃           run 0 statement count +1 and claim (20, 6324) -> (21, 6324) (native claim check now passes)                          ┃
+┃                                                                                                                                ┃
+┃   REJECTED                                                                                                                     ┃
+┃  first rejecting check: requester native check rejected: claimed result (21, 6324) differs from the sum over the runs (20,     ┃
+┃  6324)                                                                                                                         ┃
+┃  rejected in phase: 7  (attack acts in phase 6)                                                                                ┃
+┃  Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                            ┃
+┃  3 of 3 counted checks rejected. Time 579.0 ms including the honest setup.                                                     ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ A2  Cloud hides a block that contains matches   (recommended for the talk)                                                     │
+│                                                                                                                                │
+│ What the cheater does: The cloud hides the block with the EXPORT records (block 14 when N = 10,000) and says it was skipped    │
+│ because nothing matched.                                                                                                       │
+│ Why (real world): Hide the insider completely: the auditor would get COUNT 0.                                                  │
+│ What should catch it: A skipped block needs a Bloom opening that shows the query is NOT in it. That block's filter says the    │
+│ query may be there, so it cannot be shown absent.                                                                              │
+│                                                                                                                                │
+│ Next: Phases 1-7 of the honest audit (question 1). A red panel marks where the attacker acts (Phase 6) and where each check    │
+│ rejects.                                                                                                                       │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+⠋ running a2 on the real library ...⠙ running a2 on the real library ...⠹ running a2 on the real library ...⠸ running a2 on the real library ...⠼ running a2 on the real library ...⠴ running a2 on the real library ...⠦ running a2 on the real library ...⠦ running a2 on the real library ...
+╭─────────────────────────────────────────────────── Phase 1  Initialization ────────────────────────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.0 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────── Phase 2  Registration (plain log) ───────────────────────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────── Phase 3a  Encrypt and tag (what the cloud stores) ───────────────────────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 223.5 ms ─────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────── Phase 3b  Blocks, R_RC proofs, AA check ────────────────────────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1625714 bytes in total, ~127 conjectured bits, 0.106 s                  │
+│  AA check     passed in 0.103 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 292.4 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 4  Anchor on the (simulated) blockchain ─────────────────────────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 5  Authorization proof R_Auth ──────────────────────────────────────────────╮
+│  request       auditor asks for COUNT and SUM(patients) where action = 7 (qid 1, predicate text "P1: A = x")                   │
+│  R_Auth proof  126789 bytes, 64 trace rows, proving 0.0038 s                                                                   │
+│  verifier      accepted                                                                                                        │
+╰───────────────────────────────────────────────────────── time 5.7 ms ──────────────────────────────────────────────────────────╯
+╭─────────────────────────────── Phase 6  Pruning and execution proof  <- ATTACK + REJECTED HERE ────────────────────────────────╮
+│  predicate        P1: action = 7 (EXPORT_RECORDS)                                                                              │
+│  pruning          20 blocks: 2 opened, 18 skipped by their Bloom summaries (zero-bit openings)                                 │
+│  claimed result   COUNT = 20, SUM(patients) = 6324                                                                             │
+│  R_Exec proof     1 run proof(s), 147749 bytes, 0.012 s, ~127 conjectured bits                                                 │
+│  homomorphic add  20 ciphertexts (only the records selected by the exact predicate) added under encryption                     │
+│  above            the honest run; red lines below = the attack                                                                 │
+│  ATTACK           the cloud drops the block with the matches (block 14) and says it was skipped                                │
+│  REJECTED         A2a: honest opening function asked to prove the hit block empty -> block 14 cannot be shown absent (its      │
+│                   filter may contain the query)                                                                                │
+╰───────────────────────────────────────────────────────── time 17.4 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 7  Requester verifies  <- REJECTED HERE ─────────────────────────────────────────╮
+│  honest verdict       ACCEPT                                                                                                   │
+│  verified result      COUNT = 20, SUM(patients) = 6324                                                                         │
+│  plaintext reference  COUNT = 20, SUM(patients) = 6324                                                                         │
+│  comparison           MATCH                                                                                                    │
+│  above                the honest run; red lines below = the attack                                                             │
+│  REJECTED             A2b: cloud drops the run that contains the matches and pretends the blocks were pruned -> requester      │
+│                       native check rejected: block 13 is outside the runs and has no Bloom opening                             │
+│  verdict now           REJECTED                                                                                                │
+╰───────────────────────────────────────────────────────── time 1.8 ms ──────────────────────────────────────────────────────────╯
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ What the attacker changed, and the verifier's answer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                                                                                ┃
+┃  changed  A2a: honest opening function asked to prove the hit block empty                                                      ┃
+┃           asked openings_for_blocks for block 14 (it holds 20 matching records)                                                ┃
+┃  changed  A2b: cloud drops the run that contains the matches and pretends the blocks were pruned                               ┃
+┃           run over blocks 13..14 removed, claim recomputed (20, 6324) -> (0, 0), no openings for those blocks                  ┃
+┃                                                                                                                                ┃
+┃   REJECTED                                                                                                                     ┃
+┃  first rejecting check: block 14 cannot be shown absent (its filter may contain the query)                                     ┃
+┃  rejected in phase: 6, 7  (attack acts in phase 6)                                                                             ┃
+┃  Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                            ┃
+┃  2 of 2 counted checks rejected. Time 573.9 ms including the honest setup.                                                     ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ A3  Bad or missing Bloom opening for a skipped block                                                                           │
+│                                                                                                                                │
+│ What the cheater does: The cloud fakes the 'nothing here' evidence for the hit block: copies the openings of an empty block,   │
+│ shows real openings whose bits are 1, flips one bit, or leaves the openings out.                                               │
+│ Why (real world): Same goal as A2, but with forged evidence instead of no evidence.                                            │
+│ What should catch it: Each opening must have a Merkle path to the anchored Bloom root, and the opened bits must be 0.          │
+│                                                                                                                                │
+│ Next: Phases 1-7 of the honest audit (question 1). A red panel marks where the attacker acts (Phase 6) and where each check    │
+│ rejects.                                                                                                                       │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+⠋ running a3 on the real library ...⠙ running a3 on the real library ...⠹ running a3 on the real library ...⠸ running a3 on the real library ...⠼ running a3 on the real library ...⠴ running a3 on the real library ...⠦ running a3 on the real library ...⠦ running a3 on the real library ...
+╭─────────────────────────────────────────────────── Phase 1  Initialization ────────────────────────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.0 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────── Phase 2  Registration (plain log) ───────────────────────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────── Phase 3a  Encrypt and tag (what the cloud stores) ───────────────────────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 223.5 ms ─────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────── Phase 3b  Blocks, R_RC proofs, AA check ────────────────────────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1625714 bytes in total, ~127 conjectured bits, 0.106 s                  │
+│  AA check     passed in 0.103 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 292.4 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 4  Anchor on the (simulated) blockchain ─────────────────────────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 5  Authorization proof R_Auth ──────────────────────────────────────────────╮
+│  request       auditor asks for COUNT and SUM(patients) where action = 7 (qid 1, predicate text "P1: A = x")                   │
+│  R_Auth proof  126789 bytes, 64 trace rows, proving 0.0038 s                                                                   │
+│  verifier      accepted                                                                                                        │
+╰───────────────────────────────────────────────────────── time 5.7 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────── Phase 6  Pruning and execution proof  <- ATTACK HERE ─────────────────────────────────────╮
+│  predicate        P1: action = 7 (EXPORT_RECORDS)                                                                              │
+│  pruning          20 blocks: 2 opened, 18 skipped by their Bloom summaries (zero-bit openings)                                 │
+│  claimed result   COUNT = 20, SUM(patients) = 6324                                                                             │
+│  R_Exec proof     1 run proof(s), 147749 bytes, 0.012 s, ~127 conjectured bits                                                 │
+│  homomorphic add  20 ciphertexts (only the records selected by the exact predicate) added under encryption                     │
+│  above            the honest run; red lines below = the attack                                                                 │
+│  ATTACK           the cloud fakes the 'nothing here' openings for the block with the matches                                   │
+╰───────────────────────────────────────────────────────── time 17.4 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 7  Requester verifies  <- REJECTED HERE ─────────────────────────────────────────╮
+│  honest verdict       ACCEPT                                                                                                   │
+│  verified result      COUNT = 20, SUM(patients) = 6324                                                                         │
+│  plaintext reference  COUNT = 20, SUM(patients) = 6324                                                                         │
+│  comparison           MATCH                                                                                                    │
+│  above                the honest run; red lines below = the attack                                                             │
+│  REJECTED             A3a: openings of another (empty) block presented for the hit block -> requester native check rejected:   │
+│                       block 14: Merkle path of leaf 3117 does not verify against MRoot(S)                                      │
+│  REJECTED             A3b: genuine openings of the hit block (paths verify) but its query bits are 1 -> requester native       │
+│                       check rejected: block 14: the opened zero bits do not show the query false                               │
+│  REJECTED             A3c: one bit of an honest opening word flipped -> requester native check rejected: block 1: Merkle path  │
+│                       of leaf 3117 does not verify against MRoot(S)                                                            │
+│  REJECTED             A3d: openings of a skipped block left out -> requester native check rejected: block 1 is outside the     │
+│                       runs and has no Bloom opening                                                                            │
+│  verdict now           REJECTED                                                                                                │
+╰───────────────────────────────────────────────────────── time 1.8 ms ──────────────────────────────────────────────────────────╯
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ What the attacker changed, and the verifier's answer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                                                                                ┃
+┃  changed  A3a: openings of another (empty) block presented for the hit block                                                   ┃
+┃           hit block 14 skipped; Bloom openings copied from block 1 and relabelled                                              ┃
+┃  changed  A3b: genuine openings of the hit block (paths verify) but its query bits are 1                                       ┃
+┃           hit block 14 skipped; 7 Bloom leaves opened with open_many (real paths against MRoot(S))                             ┃
+┃  changed  A3c: one bit of an honest opening word flipped                                                                       ┃
+┃           block 1: opening word of leaf 3117 changed by one bit                                                                ┃
+┃  changed  A3d: openings of a skipped block left out                                                                            ┃
+┃           openings of skipped block 1 removed                                                                                  ┃
+┃                                                                                                                                ┃
+┃   REJECTED                                                                                                                     ┃
+┃  first rejecting check: requester native check rejected: block 14: Merkle path of leaf 3117 does not verify against MRoot(S)   ┃
+┃  rejected in phase: 7  (attack acts in phase 6)                                                                                ┃
+┃  Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                            ┃
+┃  4 of 4 counted checks rejected. Time 583.4 ms including the honest setup.                                                     ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ A4  A stored record is changed after anchoring                                                                                 │
+│                                                                                                                                │
+│ What the cheater does: Someone edits a stored record after the epoch was anchored (for example, makes an export smaller) and   │
+│ rebuilds all blocks and proofs from the edited data.                                                                           │
+│ Why (real world): Change history after the fact, so the log tells a different story.                                           │
+│ What should catch it: The block list must rebuild the root R_e that is anchored on the blockchain; edited data gives another   │
+│ root.                                                                                                                          │
+│                                                                                                                                │
+│ Next: Phases 1-7 of the honest audit (question 1). A red panel marks where the attacker acts (Phase 3a) and where each check   │
+│ rejects.                                                                                                                       │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+⠋ running a4 on the real library ...⠙ running a4 on the real library ...⠹ running a4 on the real library ...⠸ running a4 on the real library ...⠼ running a4 on the real library ...⠴ running a4 on the real library ...⠦ running a4 on the real library ...⠧ running a4 on the real library ...⠇ running a4 on the real library ...⠏ running a4 on the real library ...⠋ running a4 on the real library ...⠋ running a4 on the real library ...
+╭─────────────────────────────────────────────────── Phase 1  Initialization ────────────────────────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.0 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────── Phase 2  Registration (plain log) ───────────────────────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────── Phase 3a  Encrypt and tag (what the cloud stores)  <- ATTACK HERE ───────────────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+│  above                       the honest run; red lines below = the attack                                                      │
+│  ATTACK                      a stored record is edited AFTER the anchor, and all blocks and proofs are rebuilt from the        │
+│                              edited data                                                                                       │
+╰──────────────────────────────────────────────────────── time 223.5 ms ─────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────── Phase 3b  Blocks, R_RC proofs, AA check ────────────────────────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1625714 bytes in total, ~127 conjectured bits, 0.106 s                  │
+│  AA check     passed in 0.103 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 292.4 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 4  Anchor on the (simulated) blockchain ─────────────────────────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 5  Authorization proof R_Auth ──────────────────────────────────────────────╮
+│  request       auditor asks for COUNT and SUM(patients) where action = 7 (qid 1, predicate text "P1: A = x")                   │
+│  R_Auth proof  126789 bytes, 64 trace rows, proving 0.0038 s                                                                   │
+│  verifier      accepted                                                                                                        │
+╰───────────────────────────────────────────────────────── time 5.7 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 6  Pruning and execution proof ─────────────────────────────────────────────╮
+│  predicate        P1: action = 7 (EXPORT_RECORDS)                                                                              │
+│  pruning          20 blocks: 2 opened, 18 skipped by their Bloom summaries (zero-bit openings)                                 │
+│  claimed result   COUNT = 20, SUM(patients) = 6324                                                                             │
+│  R_Exec proof     1 run proof(s), 147749 bytes, 0.012 s, ~127 conjectured bits                                                 │
+│  homomorphic add  20 ciphertexts (only the records selected by the exact predicate) added under encryption                     │
+╰───────────────────────────────────────────────────────── time 17.4 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 7  Requester verifies  <- REJECTED HERE ─────────────────────────────────────────╮
+│  honest verdict       ACCEPT                                                                                                   │
+│  verified result      COUNT = 20, SUM(patients) = 6324                                                                         │
+│  plaintext reference  COUNT = 20, SUM(patients) = 6324                                                                         │
+│  comparison           MATCH                                                                                                    │
+│  above                the honest run; red lines below = the attack                                                             │
+│  REJECTED             A4a: edited data, fully consistent response, checked against the anchored R_e -> requester native check  │
+│                       rejected: block list: R_e rebuilt from the blocks differs from the anchored R_e                          │
+│  REJECTED             A4b: cloud shows the ANCHORED block list but run proofs made over the edited data -> requester native    │
+│                       check rejected: run 0: s_out is not the anchored state after block 14                                    │
+│  verdict now           REJECTED                                                                                                │
+╰───────────────────────────────────────────────────────── time 1.8 ms ──────────────────────────────────────────────────────────╯
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ What the attacker changed, and the verifier's answer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                                                                                ┃
+┃  changed  A4a: edited data, fully consistent response, checked against the anchored R_e                                        ┃
+┃           stored record changed after anchoring; blocks, run proofs, openings all rebuilt from the edited data                 ┃
+┃  changed  A4b: cloud shows the ANCHORED block list but run proofs made over the edited data                                    ┃
+┃           block list honest (matches R_e), run proofs + claim from the edited records                                          ┃
+┃                                                                                                                                ┃
+┃   REJECTED                                                                                                                     ┃
+┃  first rejecting check: requester native check rejected: block list: R_e rebuilt from the blocks differs from the anchored     ┃
+┃  R_e                                                                                                                           ┃
+┃  rejected in phase: 7  (attack acts in phase 3a)                                                                               ┃
+┃  Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                            ┃
+┃  2 of 2 counted checks rejected. Time 948.7 ms including the honest setup.                                                     ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ A5  Authorization bound to a different epoch / Omega                                                                           │
+│                                                                                                                                │
+│ What the cheater does: An old authorization (made for an earlier epoch state Omega_0) is replayed for the new audit.           │
+│ Why (real world): Run an audit that was never approved for this log state, or reuse an old approval.                           │
+│ What should catch it: The proofs are tied to the authorization; the ledger gate and the contract reject an Omega that is not   │
+│ the current one. (A5b shows the proofs alone are consistent; the ledger check is what stops it.)                               │
+│                                                                                                                                │
+│ Next: Phases 1-7 of the honest audit (question 1). A red panel marks where the attacker acts (Phase 5) and where each check    │
+│ rejects.                                                                                                                       │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+⠋ running a5 on the real library ...⠙ running a5 on the real library ...⠹ running a5 on the real library ...⠸ running a5 on the real library ...⠼ running a5 on the real library ...⠴ running a5 on the real library ...⠦ running a5 on the real library ...⠦ running a5 on the real library ...
+╭─────────────────────────────────────────────────── Phase 1  Initialization ────────────────────────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.0 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────── Phase 2  Registration (plain log) ───────────────────────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────── Phase 3a  Encrypt and tag (what the cloud stores) ───────────────────────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 223.5 ms ─────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────── Phase 3b  Blocks, R_RC proofs, AA check ────────────────────────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1625714 bytes in total, ~127 conjectured bits, 0.106 s                  │
+│  AA check     passed in 0.103 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 292.4 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 4  Anchor on the (simulated) blockchain ─────────────────────────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+╭──────────────────────────────── Phase 5  Authorization proof R_Auth  <- ATTACK + REJECTED HERE ────────────────────────────────╮
+│  request       auditor asks for COUNT and SUM(patients) where action = 7 (qid 1, predicate text "P1: A = x")                   │
+│  R_Auth proof  126789 bytes, 64 trace rows, proving 0.0038 s                                                                   │
+│  verifier      accepted                                                                                                        │
+│  above         the honest run; red lines below = the attack                                                                    │
+│  ATTACK        an old authorization, bound to the earlier state Omega_0, is replayed                                           │
+│  REJECTED      A5c: ledger gate (ledger_read_gate) with the Omega the stale authorization is bound to -> Omega_e in the        │
+│                ledger differs from the Omega_e used in the Auth statement                                                      │
+│  REJECTED      A5d: Authorize transaction carrying the stale Omega_0 for epoch 1 -> contract rejected:                         │
+│                omega_not_canonical_state (OmegaNotCanonical)                                                                   │
+╰───────────────────────────────────────────────────────── time 5.7 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 6  Pruning and execution proof ─────────────────────────────────────────────╮
+│  predicate        P1: action = 7 (EXPORT_RECORDS)                                                                              │
+│  pruning          20 blocks: 2 opened, 18 skipped by their Bloom summaries (zero-bit openings)                                 │
+│  claimed result   COUNT = 20, SUM(patients) = 6324                                                                             │
+│  R_Exec proof     1 run proof(s), 147749 bytes, 0.012 s, ~127 conjectured bits                                                 │
+│  homomorphic add  20 ciphertexts (only the records selected by the exact predicate) added under encryption                     │
+╰───────────────────────────────────────────────────────── time 17.4 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 7  Requester verifies  <- REJECTED HERE ─────────────────────────────────────────╮
+│  honest verdict       ACCEPT                                                                                                   │
+│  verified result      COUNT = 20, SUM(patients) = 6324                                                                         │
+│  plaintext reference  COUNT = 20, SUM(patients) = 6324                                                                         │
+│  comparison           MATCH                                                                                                    │
+│  above                the honest run; red lines below = the attack                                                             │
+│  REJECTED             A5a: stale authorization (bound to Omega_0) presented with the honest run proofs -> requester native     │
+│                       check rejected: run 0: link: Exec ctx != exec_context(B_Q, Auth_Q, RID_Q) of the Auth statement          │
+│  note                 A5b (information, not counted): accepted (20, 6324)  (the proofs alone are internally consistent: this   │
+│                       is why the ledger gate exists)                                                                           │
+│  verdict now           REJECTED                                                                                                │
+╰───────────────────────────────────────────────────────── time 1.8 ms ──────────────────────────────────────────────────────────╯
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ What the attacker changed, and the verifier's answer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                                                                                ┃
+┃  changed  A5a: stale authorization (bound to Omega_0) presented with the honest run proofs                                     ┃
+┃           auth proof made for Omega e84210ea3952...536d48, run proofs bound to the current authorization                       ┃
+┃  info     A5b: cloud re-proves the runs for the stale authorization (requester proof checks only) (information, not counted)   ┃
+┃           run proofs re-made under the stale authorization's context                                                           ┃
+┃  changed  A5c: ledger gate (ledger_read_gate) with the Omega the stale authorization is bound to                               ┃
+┃           Omega in the Auth statement = Omega_0 (previous canonical state), ledger holds Omega_1                               ┃
+┃  info     A5d-control: Authorize with the current Omega_1 (honest) (information, not counted)                                  ┃
+┃           nothing                                                                                                              ┃
+┃  changed  A5d: Authorize transaction carrying the stale Omega_0 for epoch 1                                                    ┃
+┃           Omega field of the Authorize tx = Omega_0                                                                            ┃
+┃                                                                                                                                ┃
+┃   REJECTED                                                                                                                     ┃
+┃  first rejecting check: requester native check rejected: run 0: link: Exec ctx != exec_context(B_Q, Auth_Q, RID_Q) of the      ┃
+┃  Auth statement                                                                                                                ┃
+┃  rejected in phase: 5, 7  (attack acts in phase 5)                                                                             ┃
+┃  Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                            ┃
+┃  3 of 3 counted checks rejected. Time 586.0 ms including the honest setup.                                                     ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ A6  Authorization for a different query (d_Q)                                                                                  │
+│                                                                                                                                │
+│ What the cheater does: An authorization granted for one query (P1) is used for a different query.                              │
+│ Why (real world): Get approval for a harmless query, then run a more revealing one.                                            │
+│ What should catch it: The query digest d_Q is bound into the proofs, and the contract checks the predicate hash on Consume.    │
+│                                                                                                                                │
+│ Next: Phases 1-7 of the honest audit (question 1). A red panel marks where the attacker acts (Phase 5) and where each check    │
+│ rejects.                                                                                                                       │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+⠋ running a6 on the real library ...⠙ running a6 on the real library ...⠹ running a6 on the real library ...⠸ running a6 on the real library ...⠼ running a6 on the real library ...⠴ running a6 on the real library ...⠦ running a6 on the real library ...⠦ running a6 on the real library ...
+╭─────────────────────────────────────────────────── Phase 1  Initialization ────────────────────────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.0 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────── Phase 2  Registration (plain log) ───────────────────────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────── Phase 3a  Encrypt and tag (what the cloud stores) ───────────────────────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 223.5 ms ─────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────── Phase 3b  Blocks, R_RC proofs, AA check ────────────────────────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1625714 bytes in total, ~127 conjectured bits, 0.106 s                  │
+│  AA check     passed in 0.103 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 292.4 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 4  Anchor on the (simulated) blockchain ─────────────────────────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────── Phase 5  Authorization proof R_Auth  <- ATTACK HERE ──────────────────────────────────────╮
+│  request       auditor asks for COUNT and SUM(patients) where action = 7 (qid 1, predicate text "P1: A = x")                   │
+│  R_Auth proof  126789 bytes, 64 trace rows, proving 0.0038 s                                                                   │
+│  verifier      accepted                                                                                                        │
+│  above         the honest run; red lines below = the attack                                                                    │
+│  ATTACK        the authorization granted for query P1 is used for a different query                                            │
+╰───────────────────────────────────────────────────────── time 5.7 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 6  Pruning and execution proof ─────────────────────────────────────────────╮
+│  predicate        P1: action = 7 (EXPORT_RECORDS)                                                                              │
+│  pruning          20 blocks: 2 opened, 18 skipped by their Bloom summaries (zero-bit openings)                                 │
+│  claimed result   COUNT = 20, SUM(patients) = 6324                                                                             │
+│  R_Exec proof     1 run proof(s), 147749 bytes, 0.012 s, ~127 conjectured bits                                                 │
+│  homomorphic add  20 ciphertexts (only the records selected by the exact predicate) added under encryption                     │
+╰───────────────────────────────────────────────────────── time 17.4 ms ─────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────── Phase 7  Requester verifies  <- REJECTED HERE ─────────────────────────────────────────╮
+│  honest verdict       ACCEPT                                                                                                   │
+│  verified result      COUNT = 20, SUM(patients) = 6324                                                                         │
+│  plaintext reference  COUNT = 20, SUM(patients) = 6324                                                                         │
+│  comparison           MATCH                                                                                                    │
+│  above                the honest run; red lines below = the attack                                                             │
+│  REJECTED             A6a: authorization for a different query (different d_Q) with the honest run proofs -> requester native  │
+│                       check rejected: run 0: link: Exec ctx != exec_context(B_Q, Auth_Q, RID_Q) of the Auth statement          │
+│  REJECTED             A6b: ledger Consume with the hash of another predicate -> contract rejected: predicate_hash_mismatch     │
+│                       (PredicateMismatch)                                                                                      │
+│  verdict now           REJECTED                                                                                                │
+╰───────────────────────────────────────────────────────── time 1.8 ms ──────────────────────────────────────────────────────────╯
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ What the attacker changed, and the verifier's answer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                                                                                ┃
+┃  changed  A6a: authorization for a different query (different d_Q) with the honest run proofs                                  ┃
+┃           d_Q honest [5174721180460814168, 1802547671309111583, 17205963863366542530, 17796667322064207624] -> authorization   ┃
+┃           proof for another query, d_Q [13505967899665072968, 14722804034534760616, 13061506954570454558,                      ┃
+┃           8602217323243728031]                                                                                                 ┃
+┃  info     A6b-control: ledger Authorize for the predicate P1 (information, not counted)                                        ┃
+┃           nothing                                                                                                              ┃
+┃  changed  A6b: ledger Consume with the hash of another predicate                                                               ┃
+┃           Consume tx names predicate P2, the reservation was authorized for P1                                                 ┃
+┃                                                                                                                                ┃
+┃   REJECTED                                                                                                                     ┃
+┃  first rejecting check: requester native check rejected: run 0: link: Exec ctx != exec_context(B_Q, Auth_Q, RID_Q) of the      ┃
+┃  Auth statement                                                                                                                ┃
+┃  rejected in phase: 7  (attack acts in phase 5)                                                                                ┃
+┃  Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                            ┃
+┃  2 of 2 counted checks rejected. Time 585.6 ms including the honest setup.                                                     ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ A7  Forged or tampered ledger anchor                                                                                           │
+│                                                                                                                                │
+│ What the cheater does: The blockchain anchor is forged: an edited block header, too few validator votes (2 of 4), an edited    │
+│ stored value, or a fake anchor transaction.                                                                                    │
+│ Why (real world): Make the auditor trust a fake 'official' log state.                                                          │
+│ What should catch it: The light-client read needs a quorum certificate (3 of 4 votes) and a Merkle path; the contract          │
+│ recomputes Omega.                                                                                                              │
+│                                                                                                                                │
+│ Next: Phases 1-7 of the honest audit (question 1). A red panel marks where the attacker acts (Phase 4) and where each check    │
+│ rejects.                                                                                                                       │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+⠋ running a7 on the real library ...⠙ running a7 on the real library ...⠹ running a7 on the real library ...⠸ running a7 on the real library ...⠼ running a7 on the real library ...⠴ running a7 on the real library ...⠦ running a7 on the real library ...⠦ running a7 on the real library ...
+╭─────────────────────────────────────────────────── Phase 1  Initialization ────────────────────────────────────────────────────╮
+│  ledger       4 validators, quorum 3 (in-process simulation, no network)                                                       │
+│  Omega_0      e84210ea3952...536d48                                                                                            │
+│  epoch / log  e = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                │
+╰───────────────────────────────────────────────────────── time 4.0 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────────────── Phase 2  Registration (plain log) ───────────────────────────────────────────────╮
+│  insider burst  own seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            │
+│                 6900..6919)                                                                                                    │
+│                                                                                                                                │
+│  Plaintext log rows (only the hospital sees these)                                                                             │
+│                                                                                                                                │
+│    id     time       action   patients   dept   staff                                                                          │
+│   ────────────────────────────────────────────────────                                                                         │
+│    0      18:00:02   VIEW     1          310    984                                                                            │
+│    1      18:00:22   EDIT     1          205    170                                                                            │
+│    2      18:00:55   EDIT     1          118    799                                                                            │
+│    6900   10:15:07   EXPORT   16         140    417                                                                            │
+│    6901   10:15:40   EXPORT   791        140    417                                                                            │
+│    6902   10:16:01   EXPORT   401        140    417                                                                            │
+│                                                                                                                                │
+╰───────────────────────────────────────────────────────── time 0.4 ms ──────────────────────────────────────────────────────────╯
+╭────────────────────────────────────── Phase 3a  Encrypt and tag (what the cloud stores) ───────────────────────────────────────╮
+│  row 0 as the cloud sees it  ciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        │
+│  whole epoch                 10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     │
+│                              (20 blocks)                                                                                       │
+│  key holder check            row 0 decrypts back to the plaintext row: round trip OK                                           │
+╰──────────────────────────────────────────────────────── time 223.5 ms ─────────────────────────────────────────────────────────╯
+╭─────────────────────────────────────────── Phase 3b  Blocks, R_RC proofs, AA check ────────────────────────────────────────────╮
+│  blocks       20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                │
+│  R_RC proofs  10 chunk proofs (each chunk = 2 blocks), 1625714 bytes in total, ~127 conjectured bits, 0.106 s                  │
+│  AA check     passed in 0.103 s                                                                                                │
+╰──────────────────────────────────────────────────────── time 292.4 ms ─────────────────────────────────────────────────────────╯
+╭─────────────────────────── Phase 4  Anchor on the (simulated) blockchain  <- ATTACK + REJECTED HERE ───────────────────────────╮
+│  Omega_e            c7deeb48c1c7e1fd7c913d27...                                                                                │
+│  ledger block       height 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     │
+│  light-client read  verified in 0.0002 s                                                                                       │
+│  above              the honest run; red lines below = the attack                                                               │
+│  ATTACK             the blockchain anchor is forged (header, votes, stored entry, or anchor transaction)                       │
+│  REJECTED           A7a: forged ledger block header (state_root edited, QC kept) -> ledger read proof (QC + Merkle path) did   │
+│                     not verify                                                                                                 │
+│  REJECTED           A7b: quorum certificate with too few validator votes -> ledger read proof (QC + Merkle path) did not       │
+│                     verify                                                                                                     │
+│  REJECTED           A7c: tampered anchor entry (State value edited in the read proof) -> verify_read returned false (Merkle    │
+│                     path from the edited entry does not reach the QC-signed state_root); the library returns a bool, no text   │
+│  REJECTED           A7d: forged anchor transaction for epoch 2 (Omega not equal to H(label, e, Gamma, R_pol, v_auth)) ->       │
+│                     contract rejected: omega_recompute_mismatch (OmegaRecompute)                                               │
+╰───────────────────────────────────────────────────────── time 2.7 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 5  Authorization proof R_Auth ──────────────────────────────────────────────╮
+│  request       auditor asks for COUNT and SUM(patients) where action = 7 (qid 1, predicate text "P1: A = x")                   │
+│  R_Auth proof  126789 bytes, 64 trace rows, proving 0.0038 s                                                                   │
+│  verifier      accepted                                                                                                        │
+╰───────────────────────────────────────────────────────── time 5.7 ms ──────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────── Phase 6  Pruning and execution proof ─────────────────────────────────────────────╮
+│  predicate        P1: action = 7 (EXPORT_RECORDS)                                                                              │
+│  pruning          20 blocks: 2 opened, 18 skipped by their Bloom summaries (zero-bit openings)                                 │
+│  claimed result   COUNT = 20, SUM(patients) = 6324                                                                             │
+│  R_Exec proof     1 run proof(s), 147749 bytes, 0.012 s, ~127 conjectured bits                                                 │
+│  homomorphic add  20 ciphertexts (only the records selected by the exact predicate) added under encryption                     │
+╰───────────────────────────────────────────────────────── time 17.4 ms ─────────────────────────────────────────────────────────╯
+╭───────────────────────────────────────────────── Phase 7  Requester verifies ──────────────────────────────────────────────────╮
+│  honest verdict       ACCEPT                                                                                                   │
+│  verified result      COUNT = 20, SUM(patients) = 6324                                                                         │
+│  plaintext reference  COUNT = 20, SUM(patients) = 6324                                                                         │
+│  comparison           MATCH                                                                                                    │
+╰───────────────────────────────────────────────────────── time 1.8 ms ──────────────────────────────────────────────────────────╯
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ What the attacker changed, and the verifier's answer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                                                                                ┃
+┃  info     A7-control: honest ledger, light-client read (information, not counted)                                              ┃
+┃           nothing                                                                                                              ┃
+┃  changed  A7a: forged ledger block header (state_root edited, QC kept)                                                         ┃
+┃           one bit of the latest block's state_root                                                                             ┃
+┃  changed  A7b: quorum certificate with too few validator votes                                                                 ┃
+┃           QC cut to 2 votes, quorum is 3 of 4                                                                                  ┃
+┃  changed  A7c: tampered anchor entry (State value edited in the read proof)                                                    ┃
+┃           one bit of the stored State entry (Gamma/Omega) in the light-client read proof                                       ┃
+┃  changed  A7d: forged anchor transaction for epoch 2 (Omega not equal to H(label, e, Gamma, R_pol, v_auth))                    ┃
+┃           attacker-chosen Gamma and Omega in an Anchor tx                                                                      ┃
+┃                                                                                                                                ┃
+┃   REJECTED                                                                                                                     ┃
+┃  first rejecting check: ledger read proof (QC + Merkle path) did not verify                                                    ┃
+┃  rejected in phase: 4  (attack acts in phase 4)                                                                                ┃
+┃  Honest setup first: ACCEPT, result (20, 6324), plain reference (20, 6324) -> MATCH                                            ┃
+┃  4 of 4 counted checks rejected. Time 590.2 ms including the honest setup.                                                     ┃
+┃                                                                                                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛

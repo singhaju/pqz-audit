@@ -1054,7 +1054,7 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let get = |k: &str| args.iter().position(|a| a == k).and_then(|i| args.get(i + 1)).cloned();
     let sc = get("--scenario").unwrap_or_else(|| {
-        eprintln!("usage: demo_scenarios --scenario <s1|a1|a2|a3|a4|a5|a6|a7|search|custom> [--n N] [--q a=7,d=417,bmin=101] [--x 1..7 (s1: proved action code, default 7)]");
+        eprintln!("usage: demo_scenarios --scenario <s1|a1|a2|a3|a4|a5|a6|a7|search|custom|dump> [--n N] [--q a=7,d=417,bmin=101] [--x 1..7 (s1: proved action code, default 7)]");
         std::process::exit(2)
     });
     let n: usize = get("--n").map(|s| s.parse().expect("--n number")).unwrap_or(2000);
@@ -1070,6 +1070,15 @@ fn main() {
         "search" => search_scenario(n, None),
         "custom" => search_scenario(n, Some(get("--q").expect("--q a=..,d=..,c=..,bmin=..,bmax=.."))),
         "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" => attack(&sc, n),
+        // demo only: print the plaintext log (the same seeded records every scenario builds) as CSV, so COUNT and SUM
+        // can be re-checked with any other tool. In the protocol only encrypted records leave the producer.
+        "dump" => {
+            let (records, _) = make_records(n, 0xC0FFEE_5EED);
+            println!("id,time,action_code,action,patients,dept_code,dept,staff");
+            for r in &records {
+                println!("{},{},{},{},{},{},{},{}", r.id, fmt_ts(r.ts), r.a, action_name(r.a), r.b, r.c, dept_name(r.c).replace(',', ";"), r.d);
+            }
+        }
         o => {
             eprintln!("unknown scenario {o}");
             std::process::exit(2)

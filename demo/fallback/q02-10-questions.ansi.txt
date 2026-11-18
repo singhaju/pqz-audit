@@ -1,0 +1,575 @@
+[1;35mAuditor asks:[0m [1mDid the insider make big exports, more than 100 patients each?[0m
+[?25l[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m
+[?25h[1A[2K[32m╭─[0m[32m────────────────────────────────[0m[32m [0m[1;32mPhase 1  Initialization  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mledger     [0m[36m  [0m4 validators, quorum 3 (in-process simulation, no network)                                                       [32m│[0m
+[32m│[0m  [36mOmega_0    [0m[36m  [0me84210ea3952...536d48                                                                                            [32m│[0m
+[32m│[0m  [36mepoch / log[0m[36m  [0me = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 4.3 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────────────[0m[32m [0m[1;32mPhase 2  Registration (plain log)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36minsider burst[0m[36m  [0mown seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            [32m│[0m
+[32m│[0m  [36m               [0m6900..6919)                                                                                                    [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mPlaintext log rows (only the hospital sees these)     [0m                                                                        [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid  [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                         [32m│[0m
+[32m│[0m   ────────────────────────────────────────────────────                                                                         [32m│[0m
+[32m│[0m    0      18:00:02   VIEW     1          310    984                                                                            [32m│[0m
+[32m│[0m    1      18:00:22   EDIT     1          205    170                                                                            [32m│[0m
+[32m│[0m    2      18:00:55   EDIT     1          118    799                                                                            [32m│[0m
+[32m│[0m    [1;31m6900[0m   [1;31m10:15:07[0m   [1;31mEXPORT[0m   [1;31m16[0m         [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6901[0m   [1;31m10:15:40[0m   [1;31mEXPORT[0m   [1;31m791[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6902[0m   [1;31m10:16:01[0m   [1;31mEXPORT[0m   [1;31m401[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.4 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────[0m[32m [0m[1;32mPhase 3a  Encrypt and tag (what the cloud stores)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────[0m[32m─╮[0m
+[32m│[0m  [36mrow 0 as the cloud sees it[0m[36m  [0mciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        [32m│[0m
+[32m│[0m  [36mwhole epoch               [0m[36m  [0m10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     [32m│[0m
+[32m│[0m  [36m                            [0m(20 blocks)                                                                                       [32m│[0m
+[32m│[0m  [36mkey holder check          [0m[36m  [0mrow 0 decrypts back to the plaintext row: round trip OK                                           [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 218.4 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m────────────────────────[0m[32m [0m[1;32mPhase 3b  Blocks, R_RC proofs, AA check  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mblocks     [0m[36m  [0m20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                [32m│[0m
+[32m│[0m  [36mR_RC proofs[0m[36m  [0m10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  [32m│[0m
+[32m│[0m  [36mAA check   [0m[36m  [0mpassed in 0.089 s                                                                                                [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 289.7 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────[0m[32m [0m[1;32mPhase 4  Anchor on the (simulated) blockchain  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m─────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mOmega_e          [0m[36m  [0mc7deeb48c1c7e1fd7c913d27...                                                                                [32m│[0m
+[32m│[0m  [36mledger block     [0m[36m  [0mheight 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     [32m│[0m
+[32m│[0m  [36mlight-client read[0m[36m  [0mverified in 0.0002 s                                                                                       [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 2.7 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[?25l[32m⠋[0m [36mrunning custom on the real library ...[0m[2K[32m⠙[0m [36mrunning custom on the real library ...[0m[2K[32m⠹[0m [36mrunning custom on the real library ...[0m[2K[32m⠹[0m [36mrunning custom on the real library ...[0m
+[?25h[1A[2K[32m╭─[0m[32m─────────────────────────────────────[0m[32m [0m[1;32mPhase 5  Request: the query becomes a search token[0m[32m [0m[32m─────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mquery       [0m[36m  [0maction = 7 (EXPORT_RECORDS) AND patients >= 101                                                                 [32m│[0m
+[32m│[0m  [36msearch token[0m[36m  [0m18 distinct search tags in the formula (the cloud sees tags, not the values)                                    [32m│[0m
+[32m│[0m  [36mR_Auth proof[0m[36m  [0m[33mnot run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only[0m            [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[32m╭─[0m[32m───────────────────────────────────────[0m[32m [0m[1;32mPhase 6  Execution: skip blocks, test records[0m[32m [0m[32m────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mpruning     [0m[36m  [0m20 blocks: [1m1 opened[0m, 19 skipped by their Bloom summaries                                                        [32m│[0m
+[32m│[0m  [36mblocks      [0m[36m  [0m[2m1[0m [2m2[0m [2m3[0m [2m4[0m [2m5[0m [2m6[0m [2m7[0m [2m8[0m [2m9[0m [2m10[0m [2m11[0m [2m12[0m [2m13[0m [1;32m14[0m [2m15[0m [2m16[0m [2m17[0m [2m18[0m [2m19[0m [2m20[0m  [2m(green = opened)[0m                                            [32m│[0m
+[32m│[0m  [36mresult      [0m[36m  [0mCOUNT = 14 records, SUM = 6,213 patients, AVG = 443.8 patients per record  (search layer, not proved)           [32m│[0m
+[32m│[0m  [36mR_Exec proof[0m[36m  [0m[33mnot made on this path (search layer)[0m                                                                            [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.0 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────────────────────────────────[0m[32m [0m[1;32mPhase 7  Check the answer[0m[32m [0m[32m──────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mplaintext check[0m[36m  [0m[1;32mMATCH[0m  (the same condition run on the plain log)                                                             [32m│[0m
+[32m│[0m  [36mverdict        [0m[36m  [0m[33msearch answer, checked against the plain log; no proof to verify on this path[0m                                [32m│[0m
+[32m│[0m  [36mwhat this shows[0m[36m  [0ma rare condition: the Bloom summaries let the cloud skip almost every block.                                 [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mSelected records (plaintext shown only because this is[0m                                                                        [32m│[0m
+[32m│[0m  [3ma demo)                                               [0m                                                                        [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid  [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                         [32m│[0m
+[32m│[0m   ────────────────────────────────────────────────────                                                                         [32m│[0m
+[32m│[0m    6901   10:15:40   EXPORT   791        140    417                                                                            [32m│[0m
+[32m│[0m    6902   10:16:01   EXPORT   401        140    417                                                                            [32m│[0m
+[32m│[0m    6903   10:16:11   EXPORT   507        140    417                                                                            [32m│[0m
+[32m│[0m    6904   10:16:35   EXPORT   547        140    417                                                                            [32m│[0m
+[32m│[0m    6905   10:16:46   EXPORT   356        140    417                                                                            [32m│[0m
+[32m│[0m    6906   10:17:19   EXPORT   168        140    417                                                                            [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[1;35mAuditor asks:[0m [1mDid the insider make small exports, 100 patients or fewer?[0m
+[32m╭─[0m[32m────────────────────────────────[0m[32m [0m[1;32mPhase 1  Initialization  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mledger     [0m[36m  [0m4 validators, quorum 3 (in-process simulation, no network)                                                       [32m│[0m
+[32m│[0m  [36mOmega_0    [0m[36m  [0me84210ea3952...536d48                                                                                            [32m│[0m
+[32m│[0m  [36mepoch / log[0m[36m  [0me = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 4.3 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────────────[0m[32m [0m[1;32mPhase 2  Registration (plain log)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36minsider burst[0m[36m  [0mown seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            [32m│[0m
+[32m│[0m  [36m               [0m6900..6919)                                                                                                    [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mPlaintext log rows (only the hospital sees these)     [0m                                                                        [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid  [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                         [32m│[0m
+[32m│[0m   ────────────────────────────────────────────────────                                                                         [32m│[0m
+[32m│[0m    0      18:00:02   VIEW     1          310    984                                                                            [32m│[0m
+[32m│[0m    1      18:00:22   EDIT     1          205    170                                                                            [32m│[0m
+[32m│[0m    2      18:00:55   EDIT     1          118    799                                                                            [32m│[0m
+[32m│[0m    [1;31m6900[0m   [1;31m10:15:07[0m   [1;31mEXPORT[0m   [1;31m16[0m         [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6901[0m   [1;31m10:15:40[0m   [1;31mEXPORT[0m   [1;31m791[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6902[0m   [1;31m10:16:01[0m   [1;31mEXPORT[0m   [1;31m401[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.4 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────[0m[32m [0m[1;32mPhase 3a  Encrypt and tag (what the cloud stores)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────[0m[32m─╮[0m
+[32m│[0m  [36mrow 0 as the cloud sees it[0m[36m  [0mciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        [32m│[0m
+[32m│[0m  [36mwhole epoch               [0m[36m  [0m10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     [32m│[0m
+[32m│[0m  [36m                            [0m(20 blocks)                                                                                       [32m│[0m
+[32m│[0m  [36mkey holder check          [0m[36m  [0mrow 0 decrypts back to the plaintext row: round trip OK                                           [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 218.4 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m────────────────────────[0m[32m [0m[1;32mPhase 3b  Blocks, R_RC proofs, AA check  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mblocks     [0m[36m  [0m20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                [32m│[0m
+[32m│[0m  [36mR_RC proofs[0m[36m  [0m10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  [32m│[0m
+[32m│[0m  [36mAA check   [0m[36m  [0mpassed in 0.089 s                                                                                                [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 289.7 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────[0m[32m [0m[1;32mPhase 4  Anchor on the (simulated) blockchain  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m─────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mOmega_e          [0m[36m  [0mc7deeb48c1c7e1fd7c913d27...                                                                                [32m│[0m
+[32m│[0m  [36mledger block     [0m[36m  [0mheight 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     [32m│[0m
+[32m│[0m  [36mlight-client read[0m[36m  [0mverified in 0.0002 s                                                                                       [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 2.7 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[?25l[32m⠋[0m [36mrunning custom on the real library ...[0m[2K[32m⠙[0m [36mrunning custom on the real library ...[0m[2K[32m⠙[0m [36mrunning custom on the real library ...[0m
+[?25h[1A[2K[32m╭─[0m[32m─────────────────────────────────────[0m[32m [0m[1;32mPhase 5  Request: the query becomes a search token[0m[32m [0m[32m─────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mquery       [0m[36m  [0maction = 7 (EXPORT_RECORDS) AND 0 <= patients <= 100                                                            [32m│[0m
+[32m│[0m  [36msearch token[0m[36m  [0m5 distinct search tags in the formula (the cloud sees tags, not the values)                                     [32m│[0m
+[32m│[0m  [36mR_Auth proof[0m[36m  [0m[33mnot run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only[0m            [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[32m╭─[0m[32m───────────────────────────────────────[0m[32m [0m[1;32mPhase 6  Execution: skip blocks, test records[0m[32m [0m[32m────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mpruning     [0m[36m  [0m20 blocks: [1m1 opened[0m, 19 skipped by their Bloom summaries                                                        [32m│[0m
+[32m│[0m  [36mblocks      [0m[36m  [0m[2m1[0m [2m2[0m [2m3[0m [2m4[0m [2m5[0m [2m6[0m [2m7[0m [2m8[0m [2m9[0m [2m10[0m [2m11[0m [2m12[0m [2m13[0m [1;32m14[0m [2m15[0m [2m16[0m [2m17[0m [2m18[0m [2m19[0m [2m20[0m  [2m(green = opened)[0m                                            [32m│[0m
+[32m│[0m  [36mresult      [0m[36m  [0mCOUNT = 6 records, SUM = 111 patients, AVG = 18.5 patients per record  (search layer, not proved)               [32m│[0m
+[32m│[0m  [36mR_Exec proof[0m[36m  [0m[33mnot made on this path (search layer)[0m                                                                            [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.0 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────────────────────────────────[0m[32m [0m[1;32mPhase 7  Check the answer[0m[32m [0m[32m──────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mplaintext check[0m[36m  [0m[1;32mMATCH[0m  (the same condition run on the plain log)                                                             [32m│[0m
+[32m│[0m  [36mverdict        [0m[36m  [0m[33msearch answer, checked against the plain log; no proof to verify on this path[0m                                [32m│[0m
+[32m│[0m  [36mwhat this shows[0m[36m  [0ma range on the patients field, not only equality.                                                            [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mSelected records (plaintext shown only because this is[0m                                                                        [32m│[0m
+[32m│[0m  [3ma demo)                                               [0m                                                                        [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid  [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                         [32m│[0m
+[32m│[0m   ────────────────────────────────────────────────────                                                                         [32m│[0m
+[32m│[0m    6900   10:15:07   EXPORT   16         140    417                                                                            [32m│[0m
+[32m│[0m    6910   10:18:41   EXPORT   9          140    417                                                                            [32m│[0m
+[32m│[0m    6911   10:18:51   EXPORT   18         140    417                                                                            [32m│[0m
+[32m│[0m    6912   10:19:23   EXPORT   22         140    417                                                                            [32m│[0m
+[32m│[0m    6918   10:21:36   EXPORT   23         140    417                                                                            [32m│[0m
+[32m│[0m    6919   10:21:46   EXPORT   23         140    417                                                                            [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[1;35mAuditor asks:[0m [1mWhat else did the insider, staff 417, do in this epoch?[0m
+[32m╭─[0m[32m────────────────────────────────[0m[32m [0m[1;32mPhase 1  Initialization  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mledger     [0m[36m  [0m4 validators, quorum 3 (in-process simulation, no network)                                                       [32m│[0m
+[32m│[0m  [36mOmega_0    [0m[36m  [0me84210ea3952...536d48                                                                                            [32m│[0m
+[32m│[0m  [36mepoch / log[0m[36m  [0me = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 4.3 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────────────[0m[32m [0m[1;32mPhase 2  Registration (plain log)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36minsider burst[0m[36m  [0mown seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            [32m│[0m
+[32m│[0m  [36m               [0m6900..6919)                                                                                                    [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mPlaintext log rows (only the hospital sees these)     [0m                                                                        [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid  [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                         [32m│[0m
+[32m│[0m   ────────────────────────────────────────────────────                                                                         [32m│[0m
+[32m│[0m    0      18:00:02   VIEW     1          310    984                                                                            [32m│[0m
+[32m│[0m    1      18:00:22   EDIT     1          205    170                                                                            [32m│[0m
+[32m│[0m    2      18:00:55   EDIT     1          118    799                                                                            [32m│[0m
+[32m│[0m    [1;31m6900[0m   [1;31m10:15:07[0m   [1;31mEXPORT[0m   [1;31m16[0m         [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6901[0m   [1;31m10:15:40[0m   [1;31mEXPORT[0m   [1;31m791[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6902[0m   [1;31m10:16:01[0m   [1;31mEXPORT[0m   [1;31m401[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.4 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────[0m[32m [0m[1;32mPhase 3a  Encrypt and tag (what the cloud stores)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────[0m[32m─╮[0m
+[32m│[0m  [36mrow 0 as the cloud sees it[0m[36m  [0mciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        [32m│[0m
+[32m│[0m  [36mwhole epoch               [0m[36m  [0m10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     [32m│[0m
+[32m│[0m  [36m                            [0m(20 blocks)                                                                                       [32m│[0m
+[32m│[0m  [36mkey holder check          [0m[36m  [0mrow 0 decrypts back to the plaintext row: round trip OK                                           [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 218.4 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m────────────────────────[0m[32m [0m[1;32mPhase 3b  Blocks, R_RC proofs, AA check  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mblocks     [0m[36m  [0m20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                [32m│[0m
+[32m│[0m  [36mR_RC proofs[0m[36m  [0m10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  [32m│[0m
+[32m│[0m  [36mAA check   [0m[36m  [0mpassed in 0.089 s                                                                                                [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 289.7 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────[0m[32m [0m[1;32mPhase 4  Anchor on the (simulated) blockchain  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m─────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mOmega_e          [0m[36m  [0mc7deeb48c1c7e1fd7c913d27...                                                                                [32m│[0m
+[32m│[0m  [36mledger block     [0m[36m  [0mheight 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     [32m│[0m
+[32m│[0m  [36mlight-client read[0m[36m  [0mverified in 0.0002 s                                                                                       [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 2.7 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[?25l[32m⠋[0m [36mrunning custom on the real library ...[0m[2K[32m⠙[0m [36mrunning custom on the real library ...[0m[2K[32m⠹[0m [36mrunning custom on the real library ...[0m
+[?25h[1A[2K[32m╭─[0m[32m─────────────────────────────────────[0m[32m [0m[1;32mPhase 5  Request: the query becomes a search token[0m[32m [0m[32m─────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mquery       [0m[36m  [0mstaff = 417                                                                                                     [32m│[0m
+[32m│[0m  [36msearch token[0m[36m  [0m1 distinct search tags in the formula (the cloud sees tags, not the values)                                     [32m│[0m
+[32m│[0m  [36mR_Auth proof[0m[36m  [0m[33mnot run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only[0m            [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[32m╭─[0m[32m───────────────────────────────────────[0m[32m [0m[1;32mPhase 6  Execution: skip blocks, test records[0m[32m [0m[32m────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mpruning     [0m[36m  [0m20 blocks: [1m1 opened[0m, 19 skipped by their Bloom summaries                                                        [32m│[0m
+[32m│[0m  [36mblocks      [0m[36m  [0m[2m1[0m [2m2[0m [2m3[0m [2m4[0m [2m5[0m [2m6[0m [2m7[0m [2m8[0m [2m9[0m [2m10[0m [2m11[0m [2m12[0m [2m13[0m [1;32m14[0m [2m15[0m [2m16[0m [2m17[0m [2m18[0m [2m19[0m [2m20[0m  [2m(green = opened)[0m                                            [32m│[0m
+[32m│[0m  [36mresult      [0m[36m  [0mCOUNT = 27 records, SUM = 6,329 patients, AVG = 234.4 patients per record  (search layer, not proved)           [32m│[0m
+[32m│[0m  [36mR_Exec proof[0m[36m  [0m[33mnot made on this path (search layer)[0m                                                                            [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.1 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────────────────────────────────[0m[32m [0m[1;32mPhase 7  Check the answer[0m[32m [0m[32m──────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mplaintext check[0m[36m  [0m[1;32mMATCH[0m  (the same condition run on the plain log)                                                             [32m│[0m
+[32m│[0m  [36mverdict        [0m[36m  [0m[33msearch answer, checked against the plain log; no proof to verify on this path[0m                                [32m│[0m
+[32m│[0m  [36mwhat this shows[0m[36m  [0ma question about a person instead of an action: all their records, not only the exports.                     [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mSelected records (plaintext shown only because this is[0m                                                                        [32m│[0m
+[32m│[0m  [3ma demo)                                               [0m                                                                        [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid  [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                         [32m│[0m
+[32m│[0m   ────────────────────────────────────────────────────                                                                         [32m│[0m
+[32m│[0m    6894   10:13:03   LOGIN    0          140    417                                                                            [32m│[0m
+[32m│[0m    6895   10:13:23   VIEW     1          140    417                                                                            [32m│[0m
+[32m│[0m    6896   10:13:42   EDIT     1          140    417                                                                            [32m│[0m
+[32m│[0m    6897   10:14:15   VIEW     1          140    417                                                                            [32m│[0m
+[32m│[0m    6898   10:14:18   EDIT     1          140    417                                                                            [32m│[0m
+[32m│[0m    6899   10:14:43   VIEW     1          140    417                                                                            [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[1;35mAuditor asks:[0m [1mDid the insider export any Psychiatry (department 500) records?[0m
+[32m╭─[0m[32m────────────────────────────────[0m[32m [0m[1;32mPhase 1  Initialization  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mledger     [0m[36m  [0m4 validators, quorum 3 (in-process simulation, no network)                                                       [32m│[0m
+[32m│[0m  [36mOmega_0    [0m[36m  [0me84210ea3952...536d48                                                                                            [32m│[0m
+[32m│[0m  [36mepoch / log[0m[36m  [0me = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 4.3 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────────────[0m[32m [0m[1;32mPhase 2  Registration (plain log)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36minsider burst[0m[36m  [0mown seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            [32m│[0m
+[32m│[0m  [36m               [0m6900..6919)                                                                                                    [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mPlaintext log rows (only the hospital sees these)     [0m                                                                        [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid  [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                         [32m│[0m
+[32m│[0m   ────────────────────────────────────────────────────                                                                         [32m│[0m
+[32m│[0m    0      18:00:02   VIEW     1          310    984                                                                            [32m│[0m
+[32m│[0m    1      18:00:22   EDIT     1          205    170                                                                            [32m│[0m
+[32m│[0m    2      18:00:55   EDIT     1          118    799                                                                            [32m│[0m
+[32m│[0m    [1;31m6900[0m   [1;31m10:15:07[0m   [1;31mEXPORT[0m   [1;31m16[0m         [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6901[0m   [1;31m10:15:40[0m   [1;31mEXPORT[0m   [1;31m791[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6902[0m   [1;31m10:16:01[0m   [1;31mEXPORT[0m   [1;31m401[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.4 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────[0m[32m [0m[1;32mPhase 3a  Encrypt and tag (what the cloud stores)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────[0m[32m─╮[0m
+[32m│[0m  [36mrow 0 as the cloud sees it[0m[36m  [0mciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        [32m│[0m
+[32m│[0m  [36mwhole epoch               [0m[36m  [0m10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     [32m│[0m
+[32m│[0m  [36m                            [0m(20 blocks)                                                                                       [32m│[0m
+[32m│[0m  [36mkey holder check          [0m[36m  [0mrow 0 decrypts back to the plaintext row: round trip OK                                           [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 218.4 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m────────────────────────[0m[32m [0m[1;32mPhase 3b  Blocks, R_RC proofs, AA check  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mblocks     [0m[36m  [0m20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                [32m│[0m
+[32m│[0m  [36mR_RC proofs[0m[36m  [0m10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  [32m│[0m
+[32m│[0m  [36mAA check   [0m[36m  [0mpassed in 0.089 s                                                                                                [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 289.7 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────[0m[32m [0m[1;32mPhase 4  Anchor on the (simulated) blockchain  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m─────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mOmega_e          [0m[36m  [0mc7deeb48c1c7e1fd7c913d27...                                                                                [32m│[0m
+[32m│[0m  [36mledger block     [0m[36m  [0mheight 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     [32m│[0m
+[32m│[0m  [36mlight-client read[0m[36m  [0mverified in 0.0002 s                                                                                       [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 2.7 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[?25l[32m⠋[0m [36mrunning custom on the real library ...[0m[2K[32m⠙[0m [36mrunning custom on the real library ...[0m[2K[32m⠙[0m [36mrunning custom on the real library ...[0m
+[?25h[1A[2K[32m╭─[0m[32m─────────────────────────────────────[0m[32m [0m[1;32mPhase 5  Request: the query becomes a search token[0m[32m [0m[32m─────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mquery       [0m[36m  [0maction = 7 (EXPORT_RECORDS) AND dept = 500 (Psychiatry (restricted))                                            [32m│[0m
+[32m│[0m  [36msearch token[0m[36m  [0m2 distinct search tags in the formula (the cloud sees tags, not the values)                                     [32m│[0m
+[32m│[0m  [36mR_Auth proof[0m[36m  [0m[33mnot run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only[0m            [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[32m╭─[0m[32m───────────────────────────────────────[0m[32m [0m[1;32mPhase 6  Execution: skip blocks, test records[0m[32m [0m[32m────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mpruning     [0m[36m  [0m20 blocks: [1m0 opened[0m, 20 skipped by their Bloom summaries                                                        [32m│[0m
+[32m│[0m  [36mblocks      [0m[36m  [0m[2m1[0m [2m2[0m [2m3[0m [2m4[0m [2m5[0m [2m6[0m [2m7[0m [2m8[0m [2m9[0m [2m10[0m [2m11[0m [2m12[0m [2m13[0m [2m14[0m [2m15[0m [2m16[0m [2m17[0m [2m18[0m [2m19[0m [2m20[0m  [2m(green = opened)[0m                                            [32m│[0m
+[32m│[0m  [36mresult      [0m[36m  [0mCOUNT = 0 records, SUM = 0 patients, AVG = undefined (no record matches)  (search layer, not proved)            [32m│[0m
+[32m│[0m  [36mR_Exec proof[0m[36m  [0m[33mnot made on this path (search layer)[0m                                                                            [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.0 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────────────────────────────────[0m[32m [0m[1;32mPhase 7  Check the answer[0m[32m [0m[32m──────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mplaintext check[0m[36m  [0m[1;32mMATCH[0m  (the same condition run on the plain log)                                                             [32m│[0m
+[32m│[0m  [36mverdict        [0m[36m  [0m[33msearch answer, checked against the plain log; no proof to verify on this path[0m                                [32m│[0m
+[32m│[0m  [36mwhat this shows[0m[36m  [0ma question whose honest answer is 'none'. The empty answer is also checked against the plain log.            [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[1;35mAuditor asks:[0m [1mWhat did an ordinary staff member (staff 123) do?[0m
+[32m╭─[0m[32m────────────────────────────────[0m[32m [0m[1;32mPhase 1  Initialization  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mledger     [0m[36m  [0m4 validators, quorum 3 (in-process simulation, no network)                                                       [32m│[0m
+[32m│[0m  [36mOmega_0    [0m[36m  [0me84210ea3952...536d48                                                                                            [32m│[0m
+[32m│[0m  [36mepoch / log[0m[36m  [0me = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 4.3 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────────────[0m[32m [0m[1;32mPhase 2  Registration (plain log)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36minsider burst[0m[36m  [0mown seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            [32m│[0m
+[32m│[0m  [36m               [0m6900..6919)                                                                                                    [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mPlaintext log rows (only the hospital sees these)     [0m                                                                        [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid  [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                         [32m│[0m
+[32m│[0m   ────────────────────────────────────────────────────                                                                         [32m│[0m
+[32m│[0m    0      18:00:02   VIEW     1          310    984                                                                            [32m│[0m
+[32m│[0m    1      18:00:22   EDIT     1          205    170                                                                            [32m│[0m
+[32m│[0m    2      18:00:55   EDIT     1          118    799                                                                            [32m│[0m
+[32m│[0m    [1;31m6900[0m   [1;31m10:15:07[0m   [1;31mEXPORT[0m   [1;31m16[0m         [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6901[0m   [1;31m10:15:40[0m   [1;31mEXPORT[0m   [1;31m791[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6902[0m   [1;31m10:16:01[0m   [1;31mEXPORT[0m   [1;31m401[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.4 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────[0m[32m [0m[1;32mPhase 3a  Encrypt and tag (what the cloud stores)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────[0m[32m─╮[0m
+[32m│[0m  [36mrow 0 as the cloud sees it[0m[36m  [0mciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        [32m│[0m
+[32m│[0m  [36mwhole epoch               [0m[36m  [0m10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     [32m│[0m
+[32m│[0m  [36m                            [0m(20 blocks)                                                                                       [32m│[0m
+[32m│[0m  [36mkey holder check          [0m[36m  [0mrow 0 decrypts back to the plaintext row: round trip OK                                           [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 218.4 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m────────────────────────[0m[32m [0m[1;32mPhase 3b  Blocks, R_RC proofs, AA check  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mblocks     [0m[36m  [0m20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                [32m│[0m
+[32m│[0m  [36mR_RC proofs[0m[36m  [0m10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  [32m│[0m
+[32m│[0m  [36mAA check   [0m[36m  [0mpassed in 0.089 s                                                                                                [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 289.7 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────[0m[32m [0m[1;32mPhase 4  Anchor on the (simulated) blockchain  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m─────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mOmega_e          [0m[36m  [0mc7deeb48c1c7e1fd7c913d27...                                                                                [32m│[0m
+[32m│[0m  [36mledger block     [0m[36m  [0mheight 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     [32m│[0m
+[32m│[0m  [36mlight-client read[0m[36m  [0mverified in 0.0002 s                                                                                       [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 2.7 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[?25l[32m⠋[0m [36mrunning custom on the real library ...[0m[2K[32m⠙[0m [36mrunning custom on the real library ...[0m[2K[32m⠹[0m [36mrunning custom on the real library ...[0m
+[?25h[1A[2K[32m╭─[0m[32m─────────────────────────────────────[0m[32m [0m[1;32mPhase 5  Request: the query becomes a search token[0m[32m [0m[32m─────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mquery       [0m[36m  [0mstaff = 123                                                                                                     [32m│[0m
+[32m│[0m  [36msearch token[0m[36m  [0m1 distinct search tags in the formula (the cloud sees tags, not the values)                                     [32m│[0m
+[32m│[0m  [36mR_Auth proof[0m[36m  [0m[33mnot run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only[0m            [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[32m╭─[0m[32m───────────────────────────────────────[0m[32m [0m[1;32mPhase 6  Execution: skip blocks, test records[0m[32m [0m[32m────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mpruning     [0m[36m  [0m20 blocks: [1m9 opened[0m, 11 skipped by their Bloom summaries                                                        [32m│[0m
+[32m│[0m  [36mblocks      [0m[36m  [0m[1;32m1[0m [2m2[0m [1;32m3[0m [2m4[0m [1;32m5[0m [1;32m6[0m [2m7[0m [2m8[0m [2m9[0m [2m10[0m [2m11[0m [1;32m12[0m [2m13[0m [2m14[0m [1;32m15[0m [1;32m16[0m [2m17[0m [1;32m18[0m [2m19[0m [1;32m20[0m  [2m(green = opened)[0m                                            [32m│[0m
+[32m│[0m  [36mresult      [0m[36m  [0mCOUNT = 15 records, SUM = 135 patients, AVG = 9.0 patients per record  (search layer, not proved)               [32m│[0m
+[32m│[0m  [36mR_Exec proof[0m[36m  [0m[33mnot made on this path (search layer)[0m                                                                            [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.1 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────────────────────────────────[0m[32m [0m[1;32mPhase 7  Check the answer[0m[32m [0m[32m──────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mplaintext check[0m[36m  [0m[1;32mMATCH[0m  (the same condition run on the plain log)                                                             [32m│[0m
+[32m│[0m  [36mverdict        [0m[36m  [0m[33msearch answer, checked against the plain log; no proof to verify on this path[0m                                [32m│[0m
+[32m│[0m  [36mwhat this shows[0m[36m  [0ma normal user's records are spread over the epoch, so many more blocks are opened than for the insider.      [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mSelected records (plaintext shown only because this is[0m                                                                        [32m│[0m
+[32m│[0m  [3ma demo)                                               [0m                                                                        [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid  [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                         [32m│[0m
+[32m│[0m   ────────────────────────────────────────────────────                                                                         [32m│[0m
+[32m│[0m    227    19:19:42   VIEW     1          310    123                                                                            [32m│[0m
+[32m│[0m    1294   01:33:05   VIEW     2          310    123                                                                            [32m│[0m
+[32m│[0m    2058   06:00:24   VIEW     1          310    123                                                                            [32m│[0m
+[32m│[0m    2357   07:45:11   VIEW     1          310    123                                                                            [32m│[0m
+[32m│[0m    2573   09:00:38   VIEW     2          310    123                                                                            [32m│[0m
+[32m│[0m    5723   03:23:06   LOGOUT   0          310    123                                                                            [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[1;35mAuditor asks:[0m [1mWho opened records in Psychiatry (department 500)?[0m
+[32m╭─[0m[32m────────────────────────────────[0m[32m [0m[1;32mPhase 1  Initialization  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mledger     [0m[36m  [0m4 validators, quorum 3 (in-process simulation, no network)                                                       [32m│[0m
+[32m│[0m  [36mOmega_0    [0m[36m  [0me84210ea3952...536d48                                                                                            [32m│[0m
+[32m│[0m  [36mepoch / log[0m[36m  [0me = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 4.3 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────────────[0m[32m [0m[1;32mPhase 2  Registration (plain log)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36minsider burst[0m[36m  [0mown seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            [32m│[0m
+[32m│[0m  [36m               [0m6900..6919)                                                                                                    [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mPlaintext log rows (only the hospital sees these)     [0m                                                                        [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid  [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                         [32m│[0m
+[32m│[0m   ────────────────────────────────────────────────────                                                                         [32m│[0m
+[32m│[0m    0      18:00:02   VIEW     1          310    984                                                                            [32m│[0m
+[32m│[0m    1      18:00:22   EDIT     1          205    170                                                                            [32m│[0m
+[32m│[0m    2      18:00:55   EDIT     1          118    799                                                                            [32m│[0m
+[32m│[0m    [1;31m6900[0m   [1;31m10:15:07[0m   [1;31mEXPORT[0m   [1;31m16[0m         [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6901[0m   [1;31m10:15:40[0m   [1;31mEXPORT[0m   [1;31m791[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6902[0m   [1;31m10:16:01[0m   [1;31mEXPORT[0m   [1;31m401[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.4 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────[0m[32m [0m[1;32mPhase 3a  Encrypt and tag (what the cloud stores)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────[0m[32m─╮[0m
+[32m│[0m  [36mrow 0 as the cloud sees it[0m[36m  [0mciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        [32m│[0m
+[32m│[0m  [36mwhole epoch               [0m[36m  [0m10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     [32m│[0m
+[32m│[0m  [36m                            [0m(20 blocks)                                                                                       [32m│[0m
+[32m│[0m  [36mkey holder check          [0m[36m  [0mrow 0 decrypts back to the plaintext row: round trip OK                                           [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 218.4 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m────────────────────────[0m[32m [0m[1;32mPhase 3b  Blocks, R_RC proofs, AA check  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mblocks     [0m[36m  [0m20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                [32m│[0m
+[32m│[0m  [36mR_RC proofs[0m[36m  [0m10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  [32m│[0m
+[32m│[0m  [36mAA check   [0m[36m  [0mpassed in 0.089 s                                                                                                [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 289.7 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────[0m[32m [0m[1;32mPhase 4  Anchor on the (simulated) blockchain  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m─────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mOmega_e          [0m[36m  [0mc7deeb48c1c7e1fd7c913d27...                                                                                [32m│[0m
+[32m│[0m  [36mledger block     [0m[36m  [0mheight 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     [32m│[0m
+[32m│[0m  [36mlight-client read[0m[36m  [0mverified in 0.0002 s                                                                                       [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 2.7 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[?25l[32m⠋[0m [36mrunning custom on the real library ...[0m[2K[32m⠙[0m [36mrunning custom on the real library ...[0m[2K[32m⠹[0m [36mrunning custom on the real library ...[0m[2K[32m⠹[0m [36mrunning custom on the real library ...[0m
+[?25h[1A[2K[32m╭─[0m[32m─────────────────────────────────────[0m[32m [0m[1;32mPhase 5  Request: the query becomes a search token[0m[32m [0m[32m─────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mquery       [0m[36m  [0mdept = 500 (Psychiatry (restricted))                                                                            [32m│[0m
+[32m│[0m  [36msearch token[0m[36m  [0m1 distinct search tags in the formula (the cloud sees tags, not the values)                                     [32m│[0m
+[32m│[0m  [36mR_Auth proof[0m[36m  [0m[33mnot run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only[0m            [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[32m╭─[0m[32m───────────────────────────────────────[0m[32m [0m[1;32mPhase 6  Execution: skip blocks, test records[0m[32m [0m[32m────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mpruning     [0m[36m  [0m20 blocks: [1m1 opened[0m, 19 skipped by their Bloom summaries                                                        [32m│[0m
+[32m│[0m  [36mblocks      [0m[36m  [0m[1;32m1[0m [2m2[0m [2m3[0m [2m4[0m [2m5[0m [2m6[0m [2m7[0m [2m8[0m [2m9[0m [2m10[0m [2m11[0m [2m12[0m [2m13[0m [2m14[0m [2m15[0m [2m16[0m [2m17[0m [2m18[0m [2m19[0m [2m20[0m  [2m(green = opened)[0m                                            [32m│[0m
+[32m│[0m  [36mresult      [0m[36m  [0mCOUNT = 3 records, SUM = 3 patients, AVG = 1.0 patients per record  (search layer, not proved)                  [32m│[0m
+[32m│[0m  [36mR_Exec proof[0m[36m  [0m[33mnot made on this path (search layer)[0m                                                                            [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.0 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────────────────────────────────[0m[32m [0m[1;32mPhase 7  Check the answer[0m[32m [0m[32m──────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mplaintext check[0m[36m  [0m[1;32mMATCH[0m  (the same condition run on the plain log)                                                             [32m│[0m
+[32m│[0m  [36mverdict        [0m[36m  [0m[33msearch answer, checked against the plain log; no proof to verify on this path[0m                                [32m│[0m
+[32m│[0m  [36mwhat this shows[0m[36m  [0ma sensitive department: only a few records, so only a few blocks are opened.                                 [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mSelected records (plaintext shown only because this  [0m                                                                         [32m│[0m
+[32m│[0m  [3mis a demo)                                           [0m                                                                         [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                          [32m│[0m
+[32m│[0m   ───────────────────────────────────────────────────                                                                          [32m│[0m
+[32m│[0m    59    18:20:47   VIEW     1          500    664                                                                             [32m│[0m
+[32m│[0m    176   19:01:52   VIEW     1          500    813                                                                             [32m│[0m
+[32m│[0m    346   20:01:14   VIEW     1          500    898                                                                             [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[1;35mAuditor asks:[0m [1mHow many chart views touched 50 or more patients?[0m
+[32m╭─[0m[32m────────────────────────────────[0m[32m [0m[1;32mPhase 1  Initialization  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mledger     [0m[36m  [0m4 validators, quorum 3 (in-process simulation, no network)                                                       [32m│[0m
+[32m│[0m  [36mOmega_0    [0m[36m  [0me84210ea3952...536d48                                                                                            [32m│[0m
+[32m│[0m  [36mepoch / log[0m[36m  [0me = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 4.3 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────────────[0m[32m [0m[1;32mPhase 2  Registration (plain log)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36minsider burst[0m[36m  [0mown seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            [32m│[0m
+[32m│[0m  [36m               [0m6900..6919)                                                                                                    [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mPlaintext log rows (only the hospital sees these)     [0m                                                                        [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid  [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                         [32m│[0m
+[32m│[0m   ────────────────────────────────────────────────────                                                                         [32m│[0m
+[32m│[0m    0      18:00:02   VIEW     1          310    984                                                                            [32m│[0m
+[32m│[0m    1      18:00:22   EDIT     1          205    170                                                                            [32m│[0m
+[32m│[0m    2      18:00:55   EDIT     1          118    799                                                                            [32m│[0m
+[32m│[0m    [1;31m6900[0m   [1;31m10:15:07[0m   [1;31mEXPORT[0m   [1;31m16[0m         [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6901[0m   [1;31m10:15:40[0m   [1;31mEXPORT[0m   [1;31m791[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m    [1;31m6902[0m   [1;31m10:16:01[0m   [1;31mEXPORT[0m   [1;31m401[0m        [1;31m140[0m    [1;31m417[0m                                                                            [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.4 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────[0m[32m [0m[1;32mPhase 3a  Encrypt and tag (what the cloud stores)  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m───────────────────[0m[32m─╮[0m
+[32m│[0m  [36mrow 0 as the cloud sees it[0m[36m  [0mciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        [32m│[0m
+[32m│[0m  [36mwhole epoch               [0m[36m  [0m10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     [32m│[0m
+[32m│[0m  [36m                            [0m(20 blocks)                                                                                       [32m│[0m
+[32m│[0m  [36mkey holder check          [0m[36m  [0mrow 0 decrypts back to the plaintext row: round trip OK                                           [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 218.4 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m────────────────────────[0m[32m [0m[1;32mPhase 3b  Blocks, R_RC proofs, AA check  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mblocks     [0m[36m  [0m20 blocks, each with a Bloom summary; R_e = 477448240652...d83c88                                                [32m│[0m
+[32m│[0m  [36mR_RC proofs[0m[36m  [0m10 chunk proofs (each chunk = 2 blocks), 1622610 bytes in total, ~127 conjectured bits, 0.111 s                  [32m│[0m
+[32m│[0m  [36mAA check   [0m[36m  [0mpassed in 0.089 s                                                                                                [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 289.7 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────[0m[32m [0m[1;32mPhase 4  Anchor on the (simulated) blockchain  [0m[1;2;32m(same log and anchor as question 1)[0m[32m [0m[32m─────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mOmega_e          [0m[36m  [0mc7deeb48c1c7e1fd7c913d27...                                                                                [32m│[0m
+[32m│[0m  [36mledger block     [0m[36m  [0mheight 1, 1 tx, state_root ca735c5592de...ec0171, quorum certificate: 3 votes (need 3 of 4 validators)     [32m│[0m
+[32m│[0m  [36mlight-client read[0m[36m  [0mverified in 0.0002 s                                                                                       [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 2.7 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[?25l[32m⠋[0m [36mrunning custom on the real library ...[0m[2K[32m⠙[0m [36mrunning custom on the real library ...[0m[2K[32m⠹[0m [36mrunning custom on the real library ...[0m[2K[32m⠹[0m [36mrunning custom on the real library ...[0m
+[?25h[1A[2K[32m╭─[0m[32m─────────────────────────────────────[0m[32m [0m[1;32mPhase 5  Request: the query becomes a search token[0m[32m [0m[32m─────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mquery       [0m[36m  [0maction = 1 (VIEW_CHART) AND patients >= 50                                                                      [32m│[0m
+[32m│[0m  [36msearch token[0m[36m  [0m18 distinct search tags in the formula (the cloud sees tags, not the values)                                    [32m│[0m
+[32m│[0m  [36mR_Auth proof[0m[36m  [0m[33mnot run on this path: in the prototype, R_Auth and R_Exec cover the proved predicate action = x only[0m            [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[32m╭─[0m[32m───────────────────────────────────────[0m[32m [0m[1;32mPhase 6  Execution: skip blocks, test records[0m[32m [0m[32m────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mpruning     [0m[36m  [0m20 blocks: [1m20 opened[0m, 0 skipped by their Bloom summaries                                                        [32m│[0m
+[32m│[0m  [36mblocks      [0m[36m  [0m[1;32m1[0m [1;32m2[0m [1;32m3[0m [1;32m4[0m [1;32m5[0m [1;32m6[0m [1;32m7[0m [1;32m8[0m [1;32m9[0m [1;32m10[0m [1;32m11[0m [1;32m12[0m [1;32m13[0m [1;32m14[0m [1;32m15[0m [1;32m16[0m [1;32m17[0m [1;32m18[0m [1;32m19[0m [1;32m20[0m  [2m(green = opened)[0m                                            [32m│[0m
+[32m│[0m  [36mresult      [0m[36m  [0mCOUNT = 281 records, SUM = 18,162 patients, AVG = 64.6 patients per record  (search layer, not proved)          [32m│[0m
+[32m│[0m  [36mR_Exec proof[0m[36m  [0m[33mnot made on this path (search layer)[0m                                                                            [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 1.2 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────────────────────────────────[0m[32m [0m[1;32mPhase 7  Check the answer[0m[32m [0m[32m──────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mplaintext check[0m[36m  [0m[1;32mMATCH[0m  (the same condition run on the plain log)                                                             [32m│[0m
+[32m│[0m  [36mverdict        [0m[36m  [0m[33msearch answer, checked against the plain log; no proof to verify on this path[0m                                [32m│[0m
+[32m│[0m  [36mwhat this shows[0m[36m  [0ma common condition: every block may match, so nothing is skipped. Pruning helps only rare conditions.        [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mSelected records (plaintext shown only because this  [0m                                                                         [32m│[0m
+[32m│[0m  [3mis a demo)                                           [0m                                                                         [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid [0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                          [32m│[0m
+[32m│[0m   ───────────────────────────────────────────────────                                                                          [32m│[0m
+[32m│[0m    158   18:55:22   VIEW     61         101    434                                                                             [32m│[0m
+[32m│[0m    181   19:03:35   VIEW     63         220    472                                                                             [32m│[0m
+[32m│[0m    276   19:36:38   VIEW     69         330    922                                                                             [32m│[0m
+[32m│[0m    298   19:44:33   VIEW     71         101    217                                                                             [32m│[0m
+[32m│[0m    304   19:46:40   VIEW     72         101    385                                                                             [32m│[0m
+[32m│[0m    412   20:24:26   VIEW     56         220    458                                                                             [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯[0m
+[1;35mAuditor asks:[0m [1mHow many prints were there? (proved)[0m
+[?25l[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m
+[?25h[1A[2K[32m╭─[0m[32m──────────────────────────────────────────────────[0m[32m [0m[1;32mPhase 1  Initialization[0m[32m [0m[32m───────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mledger     [0m[36m  [0m4 validators, quorum 3 (in-process simulation, no network)                                                       [32m│[0m
+[32m│[0m  [36mOmega_0    [0m[36m  [0me84210ea3952...536d48                                                                                            [32m│[0m
+[32m│[0m  [36mepoch / log[0m[36m  [0me = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 3.1 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────────────────────────────[0m[32m [0m[1;32mPhase 2  Registration (plain log)[0m[32m [0m[32m──────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36minsider burst[0m[36m  [0mown seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            [32m│[0m
+[32m│[0m  [36m               [0m6900..6919)                                                                                                    [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mPlaintext log rows (only the hospital sees these)   [0m                                                                          [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid[0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                           [32m│[0m
+[32m│[0m   ──────────────────────────────────────────────────                                                                           [32m│[0m
+[32m│[0m    0    18:00:02   VIEW     1          310    984                                                                              [32m│[0m
+[32m│[0m    1    18:00:22   EDIT     1          205    170                                                                              [32m│[0m
+[32m│[0m    2    18:00:55   EDIT     1          118    799                                                                              [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.3 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────────────────────[0m[32m [0m[1;32mPhase 3a  Encrypt and tag (what the cloud stores)[0m[32m [0m[32m──────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mrow 0 as the cloud sees it[0m[36m  [0mciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        [32m│[0m
+[32m│[0m  [36mwhole epoch               [0m[36m  [0m10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     [32m│[0m
+[32m│[0m  [36m                            [0m(20 blocks)                                                                                       [32m│[0m
+[32m│[0m  [36mkey holder check          [0m[36m  [0mrow 0 decrypts back to the plaintext row: round trip OK                                           [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 225.5 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m──────────────────────────────────────────[0m[32m [0m[1;32mPhase 3b  Blocks, R_RC proofs, AA check[0m[32m [0m[32m───────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mblocks     [0m[36m  [0m20 blocks, each with a Bloom summary; R_e = f7dd18dc187f...595b92                                                [32m│[0m
+[32m│[0m  [36mR_RC proofs[0m[36m  [0m10 chunk proofs (each chunk = 2 blocks), 1623602 bytes in total, ~127 conjectured bits, 0.105 s                  [32m│[0m
+[32m│[0m  [36mAA check   [0m[36m  [0mpassed in 0.096 s                                                                                                [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 293.2 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────────────────────────[0m[32m [0m[1;32mPhase 4  Anchor on the (simulated) blockchain[0m[32m [0m[32m────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mOmega_e          [0m[36m  [0mf09339448da3aec9d30c6fd8...                                                                                [32m│[0m
+[32m│[0m  [36mledger block     [0m[36m  [0mheight 1, 1 tx, state_root aa647f32759e...ba2656, quorum certificate: 3 votes (need 3 of 4 validators)     [32m│[0m
+[32m│[0m  [36mlight-client read[0m[36m  [0mverified in 0.0002 s                                                                                       [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 3.9 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m────────────────────────────────────────────[0m[32m [0m[1;32mPhase 5  Authorization proof R_Auth[0m[32m [0m[32m─────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mrequest     [0m[36m  [0mauditor asks for COUNT and SUM(patients) where action = 3 (qid 1, predicate text "P1: A = x")                   [32m│[0m
+[32m│[0m  [36mR_Auth proof[0m[36m  [0m127301 bytes, 64 trace rows, proving 0.0046 s                                                                   [32m│[0m
+[32m│[0m  [36mverifier    [0m[36m  [0maccepted                                                                                                        [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 6.5 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m────────────────────────────────────────────[0m[32m [0m[1;32mPhase 6  Pruning and execution proof[0m[32m [0m[32m────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mpredicate      [0m[36m  [0mP1: action = 3 (PRINT)                                                                                       [32m│[0m
+[32m│[0m  [36mpruning        [0m[36m  [0m20 blocks: 20 opened, 0 skipped by their Bloom summaries (zero-bit openings)                                 [32m│[0m
+[32m│[0m  [36mclaimed result [0m[36m  [0mCOUNT = 401, SUM(patients) = 590                                                                             [32m│[0m
+[32m│[0m  [36mR_Exec proof   [0m[36m  [0m1 run proof(s), 174789 bytes, 0.107 s, ~127 conjectured bits                                                 [32m│[0m
+[32m│[0m  [36mhomomorphic add[0m[36m  [0m401 ciphertexts (only the records selected by the exact predicate) added under encryption                    [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 107.7 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m────────────────────────────────────────────────[0m[32m [0m[1;32mPhase 7  Requester verifies[0m[32m [0m[32m─────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mverdict            [0m[36m  [0m[1;32mACCEPT[0m                                                                                                   [32m│[0m
+[32m│[0m  [36mverified result    [0m[36m  [0mCOUNT = 401, SUM(patients) = 590                                                                         [32m│[0m
+[32m│[0m  [36mplaintext reference[0m[36m  [0mCOUNT = 401, SUM(patients) = 590                                                                         [32m│[0m
+[32m│[0m  [36mcomparison         [0m[36m  [0m[1;32mMATCH[0m                                                                                                    [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 1.9 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[2mSum of phase times 642.1 ms (BFV pool setup excluded). Timings: this laptop, one run, not a paper number.[0m
+[1;33mWhat this shows:[0m[33m a common action: the proof still verifies, but no block is skipped. Note: x is fixed when the log is built, so [0m
+[33mthe epoch was rebuilt and re-anchored for action = 3.[0m
+[1;35mAuditor asks:[0m [1mHow many logins were there? (proved)[0m
+[?25l[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m[2K[32m⠼[0m [36mrunning s1 on the real library ...[0m[2K[32m⠴[0m [36mrunning s1 on the real library ...[0m[2K[32m⠦[0m [36mrunning s1 on the real library ...[0m[2K[32m⠧[0m [36mrunning s1 on the real library ...[0m[2K[32m⠇[0m [36mrunning s1 on the real library ...[0m[2K[32m⠏[0m [36mrunning s1 on the real library ...[0m[2K[32m⠋[0m [36mrunning s1 on the real library ...[0m[2K[32m⠙[0m [36mrunning s1 on the real library ...[0m[2K[32m⠹[0m [36mrunning s1 on the real library ...[0m[2K[32m⠸[0m [36mrunning s1 on the real library ...[0m
+[?25h[1A[2K[32m╭─[0m[32m──────────────────────────────────────────────────[0m[32m [0m[1;32mPhase 1  Initialization[0m[32m [0m[32m───────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mledger     [0m[36m  [0m4 validators, quorum 3 (in-process simulation, no network)                                                       [32m│[0m
+[32m│[0m  [36mOmega_0    [0m[36m  [0me84210ea3952...536d48                                                                                            [32m│[0m
+[32m│[0m  [36mepoch / log[0m[36m  [0me = 1, N = 10000 records in 20 blocks of 500, chunk = 2 blocks, stream format p2r                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 3.1 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────────────────────────────[0m[32m [0m[1;32mPhase 2  Registration (plain log)[0m[32m [0m[32m──────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36minsider burst[0m[36m  [0mown seeded generator (xorshift), 10000 records; action = 7 appears only in the insider's burst (ids            [32m│[0m
+[32m│[0m  [36m               [0m6900..6919)                                                                                                    [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m  [3mPlaintext log rows (only the hospital sees these)   [0m                                                                          [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m│[0m   [36m [0m[36mid[0m[36m [0m [36m [0m[36mtime    [0m[36m [0m [36m [0m[36maction[0m[36m [0m [36m [0m[36mpatients[0m[36m [0m [36m [0m[36mdept[0m[36m [0m [36m [0m[36mstaff[0m[36m [0m                                                                           [32m│[0m
+[32m│[0m   ──────────────────────────────────────────────────                                                                           [32m│[0m
+[32m│[0m    0    18:00:02   VIEW     1          310    984                                                                              [32m│[0m
+[32m│[0m    1    18:00:22   EDIT     1          205    170                                                                              [32m│[0m
+[32m│[0m    2    18:00:55   EDIT     1          118    799                                                                              [32m│[0m
+[32m│[0m                                                                                                                                [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 0.3 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m─────────────────────────────────────[0m[32m [0m[1;32mPhase 3a  Encrypt and tag (what the cloud stores)[0m[32m [0m[32m──────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mrow 0 as the cloud sees it[0m[36m  [0mciphertext 9ca278904be6f5d2...  (32 bytes), 45 search tags                                        [32m│[0m
+[32m│[0m  [36mwhole epoch               [0m[36m  [0m10000 records encrypted, 45 tags each, descriptors, Merkle leaves, one Bloom filter per block     [32m│[0m
+[32m│[0m  [36m                            [0m(20 blocks)                                                                                       [32m│[0m
+[32m│[0m  [36mkey holder check          [0m[36m  [0mrow 0 decrypts back to the plaintext row: round trip OK                                           [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 237.6 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m──────────────────────────────────────────[0m[32m [0m[1;32mPhase 3b  Blocks, R_RC proofs, AA check[0m[32m [0m[32m───────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mblocks     [0m[36m  [0m20 blocks, each with a Bloom summary; R_e = 2aa3a99e18fc...d5ffdb                                                [32m│[0m
+[32m│[0m  [36mR_RC proofs[0m[36m  [0m10 chunk proofs (each chunk = 2 blocks), 1623474 bytes in total, ~127 conjectured bits, 0.109 s                  [32m│[0m
+[32m│[0m  [36mAA check   [0m[36m  [0mpassed in 0.089 s                                                                                                [32m│[0m
+[32m╰─[0m[32m───────────────────────────────────────────────────────[0m[32m time 288.1 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m───────────────────────────────────────[0m[32m [0m[1;32mPhase 4  Anchor on the (simulated) blockchain[0m[32m [0m[32m────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mOmega_e          [0m[36m  [0m82aac0e506b0f9e0eeb8e277...                                                                                [32m│[0m
+[32m│[0m  [36mledger block     [0m[36m  [0mheight 1, 1 tx, state_root 27323ccc1518...5716f6, quorum certificate: 3 votes (need 3 of 4 validators)     [32m│[0m
+[32m│[0m  [36mlight-client read[0m[36m  [0mverified in 0.0002 s                                                                                       [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 4.4 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m────────────────────────────────────────────[0m[32m [0m[1;32mPhase 5  Authorization proof R_Auth[0m[32m [0m[32m─────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mrequest     [0m[36m  [0mauditor asks for COUNT and SUM(patients) where action = 4 (qid 1, predicate text "P1: A = x")                   [32m│[0m
+[32m│[0m  [36mR_Auth proof[0m[36m  [0m126917 bytes, 64 trace rows, proving 0.0044 s                                                                   [32m│[0m
+[32m│[0m  [36mverifier    [0m[36m  [0maccepted                                                                                                        [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 5.4 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m────────────────────────────────────────────[0m[32m [0m[1;32mPhase 6  Pruning and execution proof[0m[32m [0m[32m────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mpredicate      [0m[36m  [0mP1: action = 4 (LOGIN)                                                                                       [32m│[0m
+[32m│[0m  [36mpruning        [0m[36m  [0m20 blocks: 20 opened, 0 skipped by their Bloom summaries (zero-bit openings)                                 [32m│[0m
+[32m│[0m  [36mclaimed result [0m[36m  [0mCOUNT = 1152, SUM(patients) = 0                                                                              [32m│[0m
+[32m│[0m  [36mR_Exec proof   [0m[36m  [0m1 run proof(s), 174117 bytes, 0.095 s, ~127 conjectured bits                                                 [32m│[0m
+[32m│[0m  [36mhomomorphic add[0m[36m  [0m1152 ciphertexts (only the records selected by the exact predicate) added under encryption                   [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 95.3 ms [0m[32m────────────────────────────────────────────────────────[0m[32m─╯[0m
+[32m╭─[0m[32m────────────────────────────────────────────────[0m[32m [0m[1;32mPhase 7  Requester verifies[0m[32m [0m[32m─────────────────────────────────────────────────[0m[32m─╮[0m
+[32m│[0m  [36mverdict            [0m[36m  [0m[1;32mACCEPT[0m                                                                                                   [32m│[0m
+[32m│[0m  [36mverified result    [0m[36m  [0mCOUNT = 1152, SUM(patients) = 0                                                                          [32m│[0m
+[32m│[0m  [36mplaintext reference[0m[36m  [0mCOUNT = 1152, SUM(patients) = 0                                                                          [32m│[0m
+[32m│[0m  [36mcomparison         [0m[36m  [0m[1;32mMATCH[0m                                                                                                    [32m│[0m
+[32m╰─[0m[32m────────────────────────────────────────────────────────[0m[32m time 2.1 ms [0m[32m─────────────────────────────────────────────────────────[0m[32m─╯[0m
+[2mSum of phase times 636.3 ms (BFV pool setup excluded). Timings: this laptop, one run, not a paper number.[0m
+[1;33mWhat this shows:[0m[33m a login touches no patient records, so SUM(patients) = 0 is the correct proved answer. Note: x is fixed when the [0m
+[33mlog is built, so the epoch was rebuilt and re-anchored for action = 4.[0m

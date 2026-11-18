@@ -1,13 +1,14 @@
 # PQZ-Audit live demo
 
-Use case: hospital EHR access-log audit (insider data theft). Audit question: how many EXPORT_RECORDS actions in this
-epoch, and how many patient records in total? (COUNT and SUM(patients) where action = 7.)
+Use case: hospital EHR access-log audit (insider data theft by staff 417). Audit question: how many
+EXPORT_RECORDS actions in this epoch, and how many patient records in total? (COUNT and SUM(patients) where action = 7;
+in this log every export is part of staff 417's burst.)
 Record fields on screen: action (code 1-7), patients (number of patient records touched), dept, staff. The Rust
 program and its JSON use the short names a, b, c, d; `demo.py` only renames them for display.
 
 ## Run (from the `PQZ-Audit-code` folder; any other folder also works)
 ```
-bash demo/demo.sh                    # TALK mode (about 3 min): intro, 8 phase panels (ENTER after each), then a menu
+bash demo/demo.sh                    # TALK mode (about 3 min): ONE audit menu first; choose 1 for the 8 phase panels (ENTER after each)
 bash demo/demo.sh --no-pause         # talk mode without pauses: intro, phases, attack A2, then exit (no menu)
 bash demo/demo.sh --full             # the long view: every table of S1, ENTER pauses, then one attack from a menu
 bash demo/demo.sh --scenario a2      # one scenario, full view, no menu: s1 a1 a2 a3 a4 a5 a6 a7 search
@@ -15,16 +16,43 @@ bash demo/demo.sh --all-attacks      # A1..A7, one results table
 bash demo/demo.sh --n 2000           # smaller log (default N = 10000, as on slide 27)
 bash demo/show.sh list               # code browser menu (VS Code at file:line); add --term for bat in the terminal
 ```
-Talk-mode menu after the phases: [1] attack A2 (Enter), [2] other attacks a1..a7 (table in plain words: what the
-cheater does, what catches it), [3] predicate examples (Q1..Q5, search layer only, no proof; hits, blocks opened of 20,
-plaintext check), [4] all attacks in one table, [5] your own query (action, staff, department, patients; search layer;
-`demo_scenarios --scenario custom --q a=7,d=417,bmin=101`), [6] full PROVED audit for another action code
-(phases 1-7 rebuilt with P1 = (action = x): `demo_scenarios --scenario s1 --x 3`; then optional attack A1 with the same x), [q] quit. Each attack screen starts with a card: what the
-cheater does, why, what should catch it. After each choice the menu returns.
+Talk mode has ONE audit menu on one page, shown FIRST and redrawn after every answer. Items 1-10 are the
+10 normal cases; 11-15 are extras:
+[1] the insider question (proved, full Phases 1-7); [2]-[5] follow-ups on the insider (search layer, no proof);
+[6]-[8] normal activity for contrast (search layer); [9]-[10] other proved audits; [11] any action code you choose
+(proved); [12]-[14] attacks; [15] your own query; [q] quit. Enter = question 1.
+Every question goes phase by phase like question 1: 2-8 and 15 show Phases 1-4 (the same log as question 1) and then
+Phases 5-7 of the search query (no proof on that path, said on screen); 9-11 rebuild and prove Phases 1-7 for action = x
+(11 then offers attack A1); 12-13 show Phases 1-7 of the honest audit with red panels where the attacker acts and where
+each check rejects; 14 shows one table of attacks x phases (ATTACK / REJECT). Questions 2-8 then show "Auditor asks:" and "What
+this shows:"; question 15 first prints the query syntax and examples. Proved and attack panels end with the verdict.
 First run builds once (`cargo build --release --locked --bin demo_scenarios`, with a spinner). Needs cargo, python3 with `rich`.
 Saved output in case the live run fails: `demo/fallback/*.txt` (plain) and `*.ansi.txt` (colour; view with `cat`):
-`talk-nopause`, `talk-menu` (scripted: A2, a1, predicates, all attacks), `s1`, `a1`..`a7`, `search`, `all-attacks`,
-`attack-list`, `custom-a7-staff417`, `custom-view-b50`, `proved-a3` (menu 6, PRINT, then A1).
+`talk-nopause`, `q01-story`, `q02-10-questions`, `q11-proved-print-then-a1`, `q12-attack-a2`, `q13-attacks-a1-a7`,
+`q14-all-attacks-matrix`, `q15-custom-export-psychiatry`, and the raw scenario runs `s1`, `a1`..`a7`, `all-attacks`.
+
+Menu answers (N = 10,000, this laptop; the program prints what each run returns):
+
+| # | Question | Query | Answer | Blocks opened |
+|---|---|---|---|---|
+| 1 | the main question (proved) | proved: action = 7 | ACCEPT, COUNT 20, SUM 6,324, MATCH | 2 of 20 |
+| 2 | big exports, more than 100 patients each | action = 7, patients >= 101 | 14 records, 6,213 patients | 1 of 20 |
+| 3 | small exports, 100 patients or fewer | action = 7, patients <= 100 | 6 records, 111 patients | 1 of 20 |
+| 4 | what else did the insider, staff 417, do | staff = 417 | 27 records, 6,329 patients | 1 of 20 |
+| 5 | did the insider export Psychiatry records | action = 7, dept = 500 | 0 records | 0 of 20 |
+| 6 | an ordinary staff member | staff = 123 | 15 records, 135 patients | 9 of 20 |
+| 7 | who opened Psychiatry records | dept = 500 | 3 records, 3 patients | 1 of 20 |
+| 8 | chart views touching 50+ patients | action = 1, patients >= 50 | 281 records, 18,162 patients | 20 of 20 |
+| 9 | prints (proved) | proved: action = 3 | ACCEPT, COUNT 401, SUM 590, MATCH | 20 of 20 |
+| 10 | logins (proved) | proved: action = 4 | ACCEPT, COUNT 1,152, SUM 0, MATCH | 20 of 20 |
+| 11 | any action code you choose (proved) | proved: action = x | phases 1-7 again for x | depends on x |
+| 12 | A2: the cloud hides a block with matches | attack a2 | REJECTED, 2 of 2 counted checks, in phase 6 and 7 | - |
+| 13 | choose another attack | attack a1..a7 | each REJECTED; acts / rejected in phase: A1 6/7, A3 6/7, A4 3a/7, A5 5/5+7, A6 5/7, A7 4/4 | - |
+| 14 | all seven attacks, attacks x phases table | all attacks | A1..A7 all rejected | - |
+| 15 | your own query | action, staff, dept, patients | search layer, checked against the plain log | varies |
+
+Questions 1-10 are the 10 normal cases; 11-15 are extras. Questions 2-8 and 15 are search layer only (no proof); every
+one is checked against the same condition on the plain log (MATCH). Questions 1, 9, 10 and 11 are proved runs (phases 1-7).
 
 ## What is real and what is simulated
 - Real: all numbers, hashes, proof sizes, ACCEPT/REJECT and error texts come from the library code run by
@@ -59,6 +87,6 @@ Saved output in case the live run fails: `demo/fallback/*.txt` (plain) and `*.an
   `prove_runs` / `verify_requester35_fmt` take no predicate. So compound predicates are shown at the search layer only (scenario `search`), labelled as such.
 - A7c: `verify_read` returns a bool, so no error text exists; the demo says so.
 
-## Files added (nothing existing was changed)
+## Demo files
 `pqz-integrated-w46/src/bin/demo_scenarios.rs`, `demo/demo.py`, `demo/demo.sh`, `demo/show.sh`, `demo/CODE-MAP.md`, `demo/DEMO-README.md`, `demo/fallback/`.
 `demo/CODE-MAP.md` and `demo/show.sh` hold the same table; `bash demo/show.sh check` re-checks every file:line.

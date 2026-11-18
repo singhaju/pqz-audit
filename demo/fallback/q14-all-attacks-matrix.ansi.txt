@@ -1,0 +1,56 @@
+[3mThe seven attacks (each changes ONE thing, then the real verifier runs)                                        [0m
+                                                                                                               
+ [36m [0m[36mkey[0m[36m [0m [36m [0m[36mwhat the cheater does                               [0m[36m [0m [36m [0m[36mwhat should catch it                          [0m[36m [0m 
+ ───────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+ [1m [0m[1ma1 [0m[1m [0m  The cloud changes the answer: it says COUNT or SUM     The claimed result must equal the sum over the  
+ [1m     [0m  is one more than the truth. In A1c it also edits the   proved runs; in A1c the R_Exec proof no longer  
+ [1m     [0m  proof's public numbers so that everything adds up.     verifies.                                       
+ [1m [0m[1ma2 [0m[1m [0m  The cloud hides the block with the EXPORT records      A skipped block needs a Bloom opening that      
+ [1m     [0m  (block 14 when N = 10,000) and says it was skipped     shows the query is NOT in it. That block's      
+ [1m     [0m  because nothing matched.                               filter says the query may be there, so it       
+ [1m     [0m                                                         cannot be shown absent.                         
+ [1m [0m[1ma3 [0m[1m [0m  The cloud fakes the 'nothing here' evidence for the    Each opening must have a Merkle path to the     
+ [1m     [0m  hit block: copies the openings of an empty block,      anchored Bloom root, and the opened bits must   
+ [1m     [0m  shows real openings whose bits are 1, flips one bit,   be 0.                                           
+ [1m     [0m  or leaves the openings out.                                                                            
+ [1m [0m[1ma4 [0m[1m [0m  Someone edits a stored record after the epoch was      The block list must rebuild the root R_e that   
+ [1m     [0m  anchored (for example, makes an export smaller) and    is anchored on the blockchain; edited data      
+ [1m     [0m  rebuilds all blocks and proofs from the edited data.   gives another root.                             
+ [1m [0m[1ma5 [0m[1m [0m  An old authorization (made for an earlier epoch        The proofs are tied to the authorization; the   
+ [1m     [0m  state Omega_0) is replayed for the new audit.          ledger gate and the contract reject an Omega    
+ [1m     [0m                                                         that is not the current one. (A5b shows the     
+ [1m     [0m                                                         proofs alone are consistent; the ledger check   
+ [1m     [0m                                                         is what stops it.)                              
+ [1m [0m[1ma6 [0m[1m [0m  An authorization granted for one query (P1) is used    The query digest d_Q is bound into the proofs,  
+ [1m     [0m  for a different query.                                 and the contract checks the predicate hash on   
+ [1m     [0m                                                         Consume.                                        
+ [1m [0m[1ma7 [0m[1m [0m  The blockchain anchor is forged: an edited block       The light-client read needs a quorum            
+ [1m     [0m  header, too few validator votes (2 of 4), an edited    certificate (3 of 4 votes) and a Merkle path;   
+ [1m     [0m  stored value, or a fake anchor transaction.            the contract recomputes Omega.                  
+                                                                                                               
+[?25l[32m⠋[0m [36mrunning a1 on the real library ...[0m[2K[32m⠙[0m [36mrunning a1 on the real library ...[0m[2K[32m⠹[0m [36mrunning a1 on the real library ...[0m[2K[32m⠸[0m [36mrunning a1 on the real library ...[0m[2K[32m⠼[0m [36mrunning a1 on the real library ...[0m[2K[32m⠴[0m [36mrunning a1 on the real library ...[0m[2K[32m⠦[0m [36mrunning a1 on the real library ...[0m[2K[32m⠦[0m [36mrunning a1 on the real library ...[0m
+[?25h[1A[2K[?25l[32m⠋[0m [36mrunning a2 on the real library ...[0m[2K[32m⠙[0m [36mrunning a2 on the real library ...[0m[2K[32m⠹[0m [36mrunning a2 on the real library ...[0m[2K[32m⠸[0m [36mrunning a2 on the real library ...[0m[2K[32m⠼[0m [36mrunning a2 on the real library ...[0m[2K[32m⠴[0m [36mrunning a2 on the real library ...[0m[2K[32m⠴[0m [36mrunning a2 on the real library ...[0m
+[?25h[1A[2K[?25l[32m⠋[0m [36mrunning a3 on the real library ...[0m[2K[32m⠙[0m [36mrunning a3 on the real library ...[0m[2K[32m⠹[0m [36mrunning a3 on the real library ...[0m[2K[32m⠸[0m [36mrunning a3 on the real library ...[0m[2K[32m⠼[0m [36mrunning a3 on the real library ...[0m[2K[32m⠴[0m [36mrunning a3 on the real library ...[0m[2K[32m⠦[0m [36mrunning a3 on the real library ...[0m[2K[32m⠦[0m [36mrunning a3 on the real library ...[0m
+[?25h[1A[2K[?25l[32m⠋[0m [36mrunning a4 on the real library ...[0m[2K[32m⠙[0m [36mrunning a4 on the real library ...[0m[2K[32m⠹[0m [36mrunning a4 on the real library ...[0m[2K[32m⠸[0m [36mrunning a4 on the real library ...[0m[2K[32m⠼[0m [36mrunning a4 on the real library ...[0m[2K[32m⠴[0m [36mrunning a4 on the real library ...[0m[2K[32m⠦[0m [36mrunning a4 on the real library ...[0m[2K[32m⠧[0m [36mrunning a4 on the real library ...[0m[2K[32m⠇[0m [36mrunning a4 on the real library ...[0m[2K[32m⠏[0m [36mrunning a4 on the real library ...[0m[2K[32m⠋[0m [36mrunning a4 on the real library ...[0m[2K[32m⠋[0m [36mrunning a4 on the real library ...[0m
+[?25h[1A[2K[?25l[32m⠋[0m [36mrunning a5 on the real library ...[0m[2K[32m⠙[0m [36mrunning a5 on the real library ...[0m[2K[32m⠹[0m [36mrunning a5 on the real library ...[0m[2K[32m⠸[0m [36mrunning a5 on the real library ...[0m[2K[32m⠼[0m [36mrunning a5 on the real library ...[0m[2K[32m⠴[0m [36mrunning a5 on the real library ...[0m[2K[32m⠦[0m [36mrunning a5 on the real library ...[0m[2K[32m⠦[0m [36mrunning a5 on the real library ...[0m
+[?25h[1A[2K[?25l[32m⠋[0m [36mrunning a6 on the real library ...[0m[2K[32m⠙[0m [36mrunning a6 on the real library ...[0m[2K[32m⠹[0m [36mrunning a6 on the real library ...[0m[2K[32m⠸[0m [36mrunning a6 on the real library ...[0m[2K[32m⠼[0m [36mrunning a6 on the real library ...[0m[2K[32m⠴[0m [36mrunning a6 on the real library ...[0m[2K[32m⠦[0m [36mrunning a6 on the real library ...[0m[2K[32m⠦[0m [36mrunning a6 on the real library ...[0m
+[?25h[1A[2K[?25l[32m⠋[0m [36mrunning a7 on the real library ...[0m[2K[32m⠙[0m [36mrunning a7 on the real library ...[0m[2K[32m⠹[0m [36mrunning a7 on the real library ...[0m[2K[32m⠸[0m [36mrunning a7 on the real library ...[0m[2K[32m⠼[0m [36mrunning a7 on the real library ...[0m[2K[32m⠴[0m [36mrunning a7 on the real library ...[0m[2K[32m⠦[0m [36mrunning a7 on the real library ...[0m[2K[32m⠦[0m [36mrunning a7 on the real library ...[0m
+[?25h[1A[2K[3mAll seven attacks against Phases 1-7 (ATTACK = where the cheater acts, REJECT = where a check stops it)                         [0m
+                                                                                                                                
+ [36m        [0m [36m [0m[36m P1 [0m[36m [0m [36m [0m[36m   P2   [0m[36m [0m [36m [0m[36m  P3a  [0m[36m [0m [36m [0m[36m P3b  [0m[36m [0m [36m [0m[36m   P4    [0m[36m [0m [36m [0m[36m   P5    [0m[36m [0m [36m [0m[36m   P6    [0m[36m [0m [36m [0m[36m   P7    [0m[36m [0m [36m                 [0m [36m              [0m 
+ [36m [0m[36mattack[0m[36m [0m [36m [0m[36mInit[0m[36m [0m [36m [0m[36mRegister[0m[36m [0m [36m [0m[36mEncrypt[0m[36m [0m [36m [0m[36mBlocks[0m[36m [0m [36m [0m[36m Anchor  [0m[36m [0m [36m [0m[36mAuthorize[0m[36m [0m [36m [0m[36m Execute [0m[36m [0m [36m [0m[36m Verify  [0m[36m [0m [36m [0m[36mchecks rejected[0m[36m [0m [36m [0m[36m   result   [0m[36m [0m 
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+ [1m [0m[1mA1    [0m[1m [0m   [2m.[0m        [2m.[0m          [2m.[0m        [2m.[0m          [2m.[0m           [2m.[0m        [1;33mATTACK[0m     [1;31mREJECT x3[0m       3 of 3        [1;32mall rejected[0m  
+ [1m [0m[1mA2    [0m[1m [0m   [2m.[0m        [2m.[0m          [2m.[0m        [2m.[0m          [2m.[0m           [2m.[0m        [1;33mATTACK[0m     [1;31mREJECT x1[0m       2 of 2        [1;32mall rejected[0m  
+ [1m        [0m                                                               [1;31mREJECT x1[0m                                               
+ [1m [0m[1mA3    [0m[1m [0m   [2m.[0m        [2m.[0m          [2m.[0m        [2m.[0m          [2m.[0m           [2m.[0m        [1;33mATTACK[0m     [1;31mREJECT x4[0m       4 of 4        [1;32mall rejected[0m  
+ [1m [0m[1mA4    [0m[1m [0m   [2m.[0m        [2m.[0m       [1;33mATTACK[0m      [2m.[0m          [2m.[0m           [2m.[0m           [2m.[0m       [1;31mREJECT x2[0m       2 of 2        [1;32mall rejected[0m  
+ [1m [0m[1mA5    [0m[1m [0m   [2m.[0m        [2m.[0m          [2m.[0m        [2m.[0m          [2m.[0m        [1;33mATTACK[0m         [2m.[0m       [1;31mREJECT x1[0m       3 of 3        [1;32mall rejected[0m  
+ [1m        [0m                                                   [1;31mREJECT x2[0m                                                           
+ [1m [0m[1mA6    [0m[1m [0m   [2m.[0m        [2m.[0m          [2m.[0m        [2m.[0m          [2m.[0m        [1;33mATTACK[0m         [2m.[0m       [1;31mREJECT x2[0m       2 of 2        [1;32mall rejected[0m  
+ [1m [0m[1mA7    [0m[1m [0m   [2m.[0m        [2m.[0m          [2m.[0m        [2m.[0m       [1;33mATTACK[0m         [2m.[0m           [2m.[0m           [2m.[0m           4 of 4        [1;32mall rejected[0m  
+ [1m        [0m                                       [1;31mREJECT x4[0m                                                                       
+                                                                                                                                
+[2mPhase 4 = anchor transaction and the light-client read of the anchor; Phase 5 = ledger gate and Authorize on the contract; Phase 6[0m
+[2m= the cloud cannot even build the evidence; Phase 7 = the requester's checks and Consume. Every attack is caught in or before [0m
+[2mPhase 7; nothing is accepted.[0m
